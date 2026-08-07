@@ -1,0 +1,80 @@
+# Query grid for the harvest phase.
+#
+# One query per line, `#` starts a comment. Concepts are separated by ` AND `
+# so the same file works across all three search backends:
+#   OpenAlex  passes it to title_and_abstract.search verbatim
+#   arXiv     rewrites each side as all:"..."
+#   S2        drops the AND and treats it as a relevance query
+#
+# Roughly (LLM vocabulary) x (analysis/verification/testing task). Recall
+# beats precision here: the topic gate in topic.py and the screening pass in
+# prompts/literature-review.md both narrow afterwards.
+
+# --- static analysis -------------------------------------------------------
+large language model AND static analysis
+large language model AND abstract interpretation
+large language model AND dataflow analysis
+large language model AND taint analysis
+large language model AND points-to analysis
+large language model AND type inference
+
+# --- fuzzing and test generation ------------------------------------------
+large language model AND fuzzing
+large language model AND fuzz testing
+large language model AND unit test generation
+large language model AND test oracle
+large language model AND property-based testing
+large language model AND mutation testing
+large language model AND differential testing
+LLM AND seed generation AND fuzzer
+
+# --- symbolic execution ----------------------------------------------------
+large language model AND symbolic execution
+large language model AND concolic testing
+large language model AND path constraint
+
+# --- formal verification and proof -----------------------------------------
+large language model AND formal verification
+large language model AND theorem proving
+large language model AND proof assistant
+large language model AND model checking
+large language model AND deductive verification
+large language model AND autoformalization
+large language model AND premise selection
+large language model AND proof synthesis
+LLM AND Coq AND proof
+LLM AND Lean AND theorem prover
+LLM AND Isabelle AND proof
+LLM AND Dafny AND verification
+
+# --- program logic and specifications --------------------------------------
+large language model AND loop invariant
+large language model AND invariant generation
+large language model AND separation logic
+large language model AND Hoare logic
+large language model AND specification inference
+large language model AND program contract generation
+large language model AND assertion generation
+large language model AND temporal logic specification
+
+# --- solving ---------------------------------------------------------------
+large language model AND SMT solver
+large language model AND constraint solving
+
+# --- repair, bugs, vulnerabilities -----------------------------------------
+large language model AND automated program repair
+large language model AND patch generation
+large language model AND fault localization
+large language model AND vulnerability detection
+large language model AND bug detection
+
+# --- synthesis and binaries ------------------------------------------------
+large language model AND program synthesis
+large language model AND decompilation
+large language model AND binary analysis
+large language model AND reverse engineering
+
+# --- agentic / repository scale --------------------------------------------
+LLM agent AND software engineering
+LLM agent AND program verification
+repository-level AND large language model AND code
