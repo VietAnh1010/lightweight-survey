@@ -101,3 +101,4 @@
 {"ts": "2026-08-10T04:35:39", "kind": "snowball", "direction": "both", "seeds": 67, "seeds_without_doi": 4, "added": 224}
 {"ts": "2026-08-10T04:42:12", "kind": "enrich", "crossref": 0, "published": 13, "arxiv": 29, "revised": 0, "no_abstract": 72, "no_doi": 1055}
 {"ts": "2026-08-10T04:42:41", "kind": "screen_apply", "applied": 72, "failed": 0}
+{"ts": "2026-08-10T04:44:30", "kind": "screen_apply", "applied": 25, "failed": 0}
