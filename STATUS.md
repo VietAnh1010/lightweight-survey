@@ -79,8 +79,13 @@ What the rounds could not reach:
 
 **The run ended on the time budget, not on saturation.** Round 2 yielded 27 new
 candidates, above the fewer-than-5 threshold in `SCOPE.md`. No claim of
-saturation is supported. Round 1 to round 2 fell from 224 to 27, which is
-consistent with approaching saturation but does not establish it.
+saturation is supported. Round 1 to round 2 fell from 224 to 27, and that fall
+is an artefact of the seed set, not evidence about the literature:
+
+- All 27 round-2 records are attributable to the 9 seeds added between rounds.
+- The 67 round-1 seeds contributed nothing, their queries being already cached.
+- Yield per seed: 3.3 in round 1, 3.0 per new seed in round 2. Flat, not falling.
+- Round 2 therefore argues against saturation rather than towards it.
 
 ## Open questions
 
@@ -160,9 +165,21 @@ unavailable, 1688 never reached.
 
 **Which stopping criterion ended the run: the time budget.** Snowball round 2
 yielded 27 new candidates, well above the fewer-than-5 threshold in `SCOPE.md`.
-No claim of saturation is supported by this run. The fall from 224 new
-candidates in round 1 to 27 in round 2 is consistent with approaching
-saturation and does not establish it.
+No claim of saturation is supported by this run.
+
+The fall from 224 new candidates in round 1 to 27 in round 2 measures the seed
+set, not the literature. Attributing each round-2 record to the seed that found
+it, via `discovered_via`:
+
+- All 27 came from the 9 seeds added between rounds.
+- The 67 round-1 seeds contributed nothing; their queries were already cached
+  and their results already in the library.
+- Per-seed yield held flat: 3.3 in round 1, 3.0 per new seed in round 2.
+- The citation graph was not thinning. It was asked 9 questions instead of 67.
+
+So round 2 is evidence against saturation, not weak evidence for it. The
+bottleneck was the screening backlog: the round-1 harvest was never screened
+through, so the seed set barely grew.
 
 **Categories that came out thin, and whether that is the literature or the run.**
 
@@ -205,9 +222,10 @@ published-year gap, which `SCOPE.md` resolves in favour of the first arXiv date.
    - The tail was therefore ordered by title rather than by promise.
 2. Fix that ranking: `rank_key` needs a fourth key for the `unknown` tier.
    - Recency alone leaves the 2026 preprints unordered against each other.
-3. Run snowball rounds 3 and 4 from the final 40, and test saturation properly.
-   - Round 2 expanded seeds round 1 had already expanded.
-   - Its low yield is partly an artefact of not re-screening between rounds.
+3. Run snowball rounds 3 and 4, and test saturation properly.
+   - Round 2's whole yield came from the 9 seeds added between rounds.
+   - Per-seed yield was flat, so expect roughly 3 new candidates per new seed.
+   - Screen each round's harvest through before expanding again, or the test is void.
 4. Read the excluded surveys and mine their reference lists.
    - Phase 3 prescribes this. Six surveys were excluded and none were mined.
 5. Fetch full text for the notes that flag an unreported number.
