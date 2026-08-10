@@ -89,3 +89,4 @@
 {"ts": "2026-08-10T04:05:57", "kind": "query", "source": "arxiv", "query": "The Hitchhiker's Guide to Program Analysis Part III Mostly Harmless LLMs", "hits": 1, "kept": 0, "new": 0, "skipped": 1}
 {"ts": "2026-08-10T04:06:09", "kind": "query", "source": "arxiv", "query": "VeriStruct AI-assisted Automated Verification of Data-Structure Modules in Verus", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
 {"ts": "2026-08-10T04:06:23", "kind": "query", "source": "arxiv", "query": "The Hitchhiker's Guide to Program Analysis Part III Mostly Harmless LLMs", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T04:24:00", "kind": "enrich", "crossref": 82, "published": 514, "arxiv": 0, "revised": 0, "no_abstract": 0, "no_doi": 1022}

@@ -71,3 +71,16 @@ Append one line per batch: what ran, what it yielded.
   - Snowballing: Crossref reference lists backward, OpenCitations citations forward.
   - `enrich.py` now finds published DOIs by title, which is what snowballing needs.
   - Verified end to end on 15 arXiv hits: 6 DOIs resolved, 8 papers snowballed.
+- `2026-08-10` — Phase 1 harvest. Network allowlist covers all four API hosts.
+  - Grid pass: 51 queries, 1449 candidates after dedup and the topic gate.
+  - `large language model AND program contract generation` returned 0 hits.
+    - The arXiv phrase match is literal; shortened to `contract generation`.
+  - `temporal logic specification` returned 1 hit; shortened to `temporal logic`.
+  - Widening pass: 36 queries added for concepts the grid missed, 241 more.
+    - Proof repair, fuzz driver generation, GUI and metamorphic testing.
+    - Equivalence checking, translation validation, runtime verification.
+    - Generic `program analysis` and `program verification` phrasings.
+  - Both `SCOPE.md` seed papers resolved through `search_arxiv.py --query`.
+    - `arxiv:2606.15122` needed `--no-topic-gate`; its abstract trips no
+      category pattern, so the gate dropped it.
+  - Library: 1692 candidates.
