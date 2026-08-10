@@ -7,9 +7,15 @@ dies, this file plus the git log is the entire handoff.
 
 ## Current
 
-- **Phase:** 5 — notes. Phases 1-4 complete, 40 papers selected
+- **Phase:** complete. All seven phases done, both gates clean
 - **Last updated:** 2026-08-10
-- **Next action:** fill `papers/notes/*.md`, then synthesis and the two gates
+- **Next action:** none required. See "Closing summary" for what another session would do
+
+Both gates pass:
+
+- `style_check.py`: 41 files, 0 errors, 0 warnings.
+- `verify_citations.py --all`: 40 papers, every DOI and arXiv id re-resolved live.
+  - 0 errors, 2 warnings, both explained under "Closing summary".
 
 ## Counts
 
@@ -134,3 +140,76 @@ Append one line per batch: what ran, what it yielded.
     - `arxiv:2606.15122` needed `--no-topic-gate`; its abstract trips no
       category pattern, so the gate dropped it.
   - Library: 1692 candidates.
+  - `enrich.py`: 514 published DOIs matched by title, 0 records without an abstract.
+- `2026-08-10` — Phase 2 screening, 7 batches of 25, target-venue tier first.
+  - Batches 1-5 exhausted all 109 target-venue candidates: 67 included.
+  - Batch 6 screened the snowballed pool, which carried the well-cited older work.
+  - Batch 7 was targeted at `program-logic` and `decompilation`, the two thin categories.
+  - 82 records had no abstract after two enrichment passes; all marked `unavailable`.
+- `2026-08-10` — Phase 3 snowballing, two rounds. Numbers in the table above.
+- `2026-08-10` — Phase 4 selection. 87 included cut to 40 for category balance.
+  - Every demotion carries a `reason` naming the paper it duplicates.
+  - Both seed papers were still unscreened at this point; caught and screened by hand.
+- `2026-08-10` — Phase 5, 40 notes written in four batches of 10.
+- `2026-08-10` — Phases 6 and 7. Synthesis written, both gates clean.
+
+## Closing summary
+
+**Counts.** 1943 candidates seen, 255 screened, 40 included, 133 excluded, 82
+unavailable, 1688 never reached.
+
+**Which stopping criterion ended the run: the time budget.** Snowball round 2
+yielded 27 new candidates, well above the fewer-than-5 threshold in `SCOPE.md`.
+No claim of saturation is supported by this run. The fall from 224 new
+candidates in round 1 to 27 in round 2 is consistent with approaching
+saturation and does not establish it.
+
+**Categories that came out thin, and whether that is the literature or the run.**
+
+- `decompilation`, `symbolic-execution`, and `constraint-solving` hold 3 each.
+- For all three this is the run, not the literature.
+  - A targeted pass on `decompilation` found 11 more includable papers in one batch.
+  - Six were cut in Phase 4 for balance, not for want of candidates.
+- `formal-verification` holds 12 of 40, above the one-quarter guideline.
+  - Two verification papers were cut for this and the count did not fall further.
+  - The tag attaches to any paper composing a model with a sound checker.
+- No category is empty, so no claim that the literature is empty anywhere is needed.
+
+**The two citation-gate warnings.** Both are the arXiv-date against
+published-year gap, which `SCOPE.md` resolves in favour of the first arXiv date.
+
+- `wang2024perfgen`: stored 2024, Crossref says 2026 (FSE Companion).
+- `wang2023boosting`: stored 2023, Crossref says 2025 (ICSE).
+- Neither affects inclusion; both papers are post-2020 on either reading.
+
+**What I was unsure about, and the calls I made.**
+
+- Criterion 2 against pre-LLM neural models: read strictly.
+  - Recoder and RewardRepair were excluded as task-specific neural models.
+  - Both are cited throughout the included repair papers.
+  - A reader may reasonably want them back.
+- Criterion 3 against artefacts that are not programs: read strictly.
+  - Plan verification, ATL strategy synthesis, and a Lean maths proof were cut.
+  - All three compose a model with a sound checker.
+  - They fit the architecture the synthesis describes, but not the scope.
+- Papers whose contribution is what goes in the prompt: read as `wrapper`.
+  - This cut the fact-selection and layered-context repair papers.
+  - Both carry findings worth reading; neither proposes a technique.
+- 47 papers were demoted in Phase 4 on balance rather than on merit.
+  - The excluded set is part of the result, and every entry carries its reason.
+
+**What another eight hours would buy.**
+
+1. Screen the 1688 untouched candidates, or at least re-rank them.
+   - The queue collapsed to alphabetical order once venue and citations tied.
+   - The tail was therefore ordered by title rather than by promise.
+2. Fix that ranking: `rank_key` needs a fourth key for the `unknown` tier.
+   - Recency alone leaves the 2026 preprints unordered against each other.
+3. Run snowball rounds 3 and 4 from the final 40, and test saturation properly.
+   - Round 2 expanded seeds round 1 had already expanded.
+   - Its low yield is partly an artefact of not re-screening between rounds.
+4. Read the excluded surveys and mine their reference lists.
+   - Phase 3 prescribes this. Six surveys were excluded and none were mined.
+5. Fetch full text for the notes that flag an unreported number.
+   - Replace "not measured in the abstract" with what the paper measured.
+6. Re-screen the 82 `unavailable` records by fetching their landing pages.
