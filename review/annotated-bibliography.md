@@ -29,17 +29,33 @@
 
 **Why included:** replaces one-pass reasoning over a fixed static representation with a reasoning-action-observation loop, and bounds each agent's context with a dynamic forest so long-horizon multi-path analysis stays stable; 1,274 vulnerabilities at 72.3% precision
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Binary analysis with models runs one pass over a representation static tools built in advance.
+- A fixed representation cannot be extended when an intermediate result suggests where to look next.
+- Long-horizon, multi-path analysis then exceeds the context the model can hold.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - FORGE recasts the analysis as a feedback-driven execution process rather than a single query.
+- A reasoning-action-observation loop interleaves model reasoning with tool interaction.
+- Exploration is incremental, and evidence is accumulated as the loop proceeds.
+- A Dynamic Forest of Agents decomposes the work so each agent's context stays bounded.
+- Parallel exploration is coordinated dynamically, which is what keeps long horizons stable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 3,457 real-world firmware binaries.
+- 1,274 vulnerabilities identified across 591 unique binaries, at 72.3% precision.
+- Broader coverage of vulnerability types than prior approaches.
+- Scale here is unusual for this literature; most binary papers evaluate on tens of samples.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 72.3% precision means over a quarter of the 1,274 reports are false.
+- Ours: no recall figure, so it is unknown what share of real vulnerabilities the loop misses.
+- Ours: no cost is reported, and a forest of agents multiplies model calls per binary.
+- Authors: long-horizon reasoning is unstable, which is the problem the forest bounds.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Pair reports with a reachability check, as Evident does, to remove the false quarter.
+- Report recall on a labelled firmware subset, so precision has a counterpart.
+- Measure how forest width trades off against cost and against precision.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches largely adopt a one-pass execution paradigm, where reasoning operates over a fixed program representation constructed by static analysis tools" — abstract
+> "FORGE interleaves reasoning and tool interaction through a reasoning-action-observation loop, enabling incremental exploration and evidence construction." — abstract
+> "FORGE identifies 1,274 vulnerabilities across 591 unique binaries, achieving 72.3% precision while covering a broader range of vulnerability types than prior approaches." — abstract
 
 ### Exposing Hidden Interfaces: LLM-Guided Type Inference for Reverse Engineering macOS Private Frameworks
 
@@ -49,17 +65,33 @@
 
 **Why included:** recovers Objective-C method signatures from stripped binaries with a fine-tuned type-inference model whose candidates the agent checks against runtime metadata and constraints until the headers compile; 15% to 86% recovery
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Private macOS frameworks underpin critical services but ship as stripped, undocumented binaries.
+- Without method signatures there is no interface to audit, so security analysis stalls.
+- Static tooling alone recovers a small fraction of Objective-C signatures.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - MOTIF is an agent that drives tools while a fine-tuned model specializes in Objective-C type inference.
+- The agent handles runtime metadata extraction, binary inspection, and constraint checking.
+- The model proposes candidate method signatures; the agent validates and refines them.
+- Compilability is the acceptance test: a signature is kept when the header compiles.
+- Specializing the model and delegating tool use separates guessing from checking.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - MOTIF-Bench, built from public frameworks that have ground-truth headers.
+- Signature recovery rises from 15% to 86% against baseline static analysis tooling.
+- Reported gains in tool-use correctness and inference stability alongside recovery.
+- Case studies on private frameworks: reconstructed headers compile and link.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the benchmark uses public frameworks, while the target is private ones with no ground truth.
+- Ours: compiling and linking do not establish that a recovered signature is the original one.
+- Ours: the fine-tuned model is Objective-C specific, so transfer to other ABIs is untested.
+- Authors: private frameworks remain undocumented, so case-study results cannot be scored.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Cross-check recovered signatures against runtime call traces, which is an independent oracle.
+- Measure how recovery degrades with optimization level and stripping aggressiveness.
+- Test whether the agent plus specialized model split transfers to C++ name recovery.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The agent manages runtime metadata extraction, binary inspection, and constraint checking, while the model generates candidate method signatures that are validated and refined into compilable headers." — abstract
+> "MOTIF improves signature recovery from 15% to 86% compared to baseline static analysis tooling, with consistent gains in tool-use correctness and inference stability" — abstract
+> "Private macOS frameworks underpin critical services and daemons but remain undocumented and distributed only as stripped binaries, complicating security analysis." — abstract
 
 ### Harnessing Code Agents for Automatic Software Verification
 
@@ -69,17 +101,34 @@
 
 **Why included:** argues the fixed human-designed proof strategy is the limit, not the model: a general code agent choosing its own approach inside a harness enforcing soundness, completeness, and termination proves all 4,257 Iris core lemmas
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Interactive theorem proving does not scale: Coq proofs demand enormous expert effort.
+- Existing LLM provers hardwire a human-designed proof strategy and force the model to follow it.
+- Step-wise tactic prediction and divide-and-conquer both prove only a fraction of their targets.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Aria's claim is negative and structural: the imposed strategy is what limits the prior systems.
+- A general code agent receives the whole lemma and chooses its own approach.
+- A verification harness supplies feedback and hard constraints instead of a proof strategy.
+- The harness enforces three properties: soundness, completeness, and termination.
+- Soundness means acceptance only when the prover's kernel closes the proof, so the agent cannot bluff.
+- Completeness means no obligation may be left unproved or silently dropped.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Iris core logic: all 4,257 lemmas of four core modules proved, plus 217 for Rust's standard libraries.
+- reglang: all 318 lemmas proved, where prior provers manage roughly one in eight.
+- iris-lean: 72 not-yet-ported lemmas proved, so the approach is not Coq-specific.
+- No Coq expert intervention is reported for any of the three.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: full coverage on a chosen corpus is not the same as full coverage on arbitrary lemmas.
+- Ours: no cost per lemma is reported, and a frontier model with agent scaffolding is expensive.
+- Ours: Iris lemmas come with an existing proof in the repository, so leakage is not ruled out.
+- Authors: the result is tied to a state-of-the-art model, which they name explicitly.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report token and wall-clock cost per lemma, so the harness can be compared against step-wise provers.
+- Run on lemmas with no published proof, which removes the leakage question the corpora raise.
+- Test which of the three harness constraints is doing the work by relaxing each in turn.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches wire a fixed, human-designed proof strategy into the system and constrain the model to follow it (retrieving premises and predicting tactics one step at a time, or splitting goals by divide-and-conquer), and still prove only a fraction of their target theorems" — abstract
+> "The agent writes the proofs under feedback and hard constraints from the harness that keep each one sound (accepted only when the prover's kernel closes it), complete (no obligation left unproved or silently dropped), and terminating (no divergent tactics)." — abstract
+> "Aria proves all 4,257 lemmas of the four core modules and the 217 lemmas verifying Rust's standard libraries built on it, fully automatically" — abstract
 
 ### RepairAgent: An Autonomous, LLM-Based Agent for Program Repair
 
@@ -89,17 +138,33 @@
 
 **Why included:** drives repair with a finite state machine over a repair-specific tool set, letting the agent interleave bug investigation, ingredient gathering, and validation instead of following a fixed feedback loop
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Repair pipelines fix the control flow in advance: one prompt, or one prompt-validate loop.
+- A fixed loop cannot spend more effort on a bug that needs more investigation.
+- The order in which to gather context, propose a fix, and validate it depends on the bug.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - RepairAgent treats the model as an agent that plans and invokes tools rather than filling a template.
+- A tool set specific to repair covers bug investigation, ingredient gathering, and fix validation.
+- A finite state machine constrains which tools the agent may invoke next, bounding the search.
+- The prompt format is rewritten as the run proceeds, carrying tool results and past attempt feedback.
+- The agent interleaves the three activities freely instead of running them in a fixed order.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Defects4J: 164 bugs repaired autonomously, including 39 not fixed by prior techniques.
+- Cost reported: about 270,000 tokens per bug, roughly 14 US cents at GPT-3.5 pricing.
+- Not measured: how much the finite state machine contributes relative to free tool choice.
+- No ablation of the tool set is reported in the abstract.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: Defects4J predates the model's training cutoff, so leakage is not ruled out here.
+- Ours: 'repaired' on Defects4J means test-suite passing, which admits overfitted patches.
+- Ours: the finite state machine is hand-designed, so the fixed control flow moved rather than left.
+- Authors: cost per bug is reported but not compared against the cost of the fixed-loop baselines.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Ablate the state machine to separate the value of tools from the value of constraining their order.
+- Replace test-suite passing with a specification oracle, as the Dafny repair work does.
+- Learn the state machine from successful trajectories rather than hand-writing it.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Unlike existing deep learning-based approaches, which prompt a model with a fixed prompt or in a fixed feedback loop, our work treats the LLM as an agent capable of autonomously planning and executing actions to fix bugs by invoking suitable tools." — abstract
+> "Key contributions that enable RepairAgent include a set of tools that are useful for program repair, a dynamically updated prompt format that allows the LLM to interact with these tools, and a finite state machine that guides the agent in invoking the tools." — abstract
+> "repairing 164 bugs, including 39 bugs not fixed by prior techniques" — abstract
 
 ### SpecRover: Code Intent Extraction via LLMs
 
@@ -109,17 +174,34 @@
 
 **Why included:** infers the intended behaviour iteratively alongside code search, then has a reviewer agent vet each patch against that inferred specification and attach a confidence to it, so patches carry an explanation a developer can check
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Repair needs a specification of intended behaviour, and a GitHub issue is not one.
+- An agent that searches code and edits it never states what behaviour it was aiming for.
+- Without a stated intent, a developer cannot tell a good patch from a plausible one.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecRover interleaves specification inference with the code search, rather than running it once.
+- Intent is inferred from both project structure and program behaviour.
+- A separate reviewer agent vets patches against that inferred intent.
+- The reviewer also attaches a confidence measure, so patches arrive ranked by credibility.
+- The explanation produced is the signal the developer reads, not the patch alone.
+- Built on the open-source AutoCodeRover agent, so the delta is the specification machinery.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Full SWE-Bench, 2294 GitHub issues: more than 50% improvement in efficacy over AutoCodeRover.
+- Cost about $0.65 per issue on SWE-Bench lite, modest against comparable open-source agents.
+- Building on a named baseline agent makes the improvement attributable.
+- Not measured: whether the inferred specification is correct, only whether patches improve.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: SWE-Bench issues predate model training cutoffs, so leakage is a standing concern.
+- Ours: resolution on SWE-Bench means the project's tests pass, which is a weak specification oracle.
+- Ours: the reviewer agent shares a model family with the patcher, so its errors may correlate.
+- Authors: the work is positioned as demonstrating that specification inference still matters.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Score inferred specifications directly against maintainer-written descriptions of intended behaviour.
+- Use a reviewer from a different model family to test whether correlated errors inflate confidence.
+- Report calibration of the confidence measure, which is what a developer would act on.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "In this work, we examine efficient and low-cost workflows for iterative specification inference within an LLM agent." — abstract
+> "The intent thus captured is examined by a reviewer agent with the goal of vetting the patches as well as providing a measure of confidence in the vetted patches." — abstract
+> "In an evaluation on the full SWE-Bench consisting of 2294 GitHub issues, it shows more than 50% improvement in efficacy over AutoCodeRover." — abstract
 
 ### ChatDBG: Augmenting Debugging with Large Language Models
 
@@ -129,17 +211,33 @@
 
 **Why included:** gives the model control of the debugger itself — it sets breakpoints, walks stacks, and inspects state through LLDB, GDB, or Pdb — so root-cause claims rest on observed program state rather than on reading source
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Debugging requires questions about program state that source text alone cannot answer.
+- A model reading source can only guess at runtime values such as why a variable is null.
+- Conventional debuggers expose that state but require the programmer to drive them.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ChatDBG gives the model control of the debugger rather than a transcript of it.
+- The model acts as an agent that queries and controls the debugger to navigate stacks and inspect state.
+- Root-cause claims therefore rest on observed program state, not on reading the source.
+- Control returns to the programmer once the model reports its findings.
+- It integrates with standard debuggers: LLDB and GDB for native code, Pdb for Python.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - C and C++ code with known bugs, plus Python scripts and Jupyter notebooks.
+- Python: a single query yields an actionable fix 67% of the time, 85% with one follow-up.
+- Adoption reported: over 75,000 downloads.
+- Not measured: how often the model's debugger commands are wrong, or the cost of a session.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the reported 67% and 85% are for Python only; the C and C++ result is stated qualitatively.
+- Ours: an actionable fix judged by the authors is not the same as a verified correct fix.
+- Ours: download count measures uptake, not correctness, and appears alongside the accuracy claims.
+- Authors: the approach depends on real-world knowledge embedded in the model for domain reasoning.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report per-language accuracy with an independent oracle, such as the project's test suite.
+- Measure whether debugger autonomy beats simply pasting a stack trace and locals into the prompt.
+- Instrument which debugger commands the agent issues, to find where autonomy pays.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ChatDBG grants the LLM autonomy to \"take the wheel\": it can act as an independent agent capable of querying and controlling the debugger to navigate through stacks and inspect program state" — abstract
+> "For the Python programs, a single query led to an actionable bug fix 67% of the time; one additional follow-up query increased the success rate to 85%." — abstract
+> "Our ChatDBG prototype integrates with standard debuggers including LLDB and GDB for native code and Pdb for Python." — abstract
 
 ### Abstain and Validate: A Dual-LLM Policy for Reducing Noise in Agentic Program Repair
 
@@ -149,17 +247,33 @@
 
 **Why included:** puts two gatekeeping policies around an agentic repair system — abstain on bugs it will likely fail, reject patches unlikely to be right — trading recall for reviewer trust; measured on Google's own bug streams
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Agentic repair now produces patches for repository-level bugs, but a human still reviews each one.
+- Patches that will be rejected cost reviewer time and erode trust in the whole system.
+- Raising patch quality is one route; not showing the bad ones is a separate, cheaper route.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Two gatekeeping policies wrap an existing repair system rather than changing how it generates.
+- Bug abstention drops bugs the system is unlikely to fix, before any patch is generated.
+- Patch validation rejects generated patches unlikely to fix the bug they target.
+- Both policies are themselves LLM-based, so the architecture is a model judging model output.
+- The two compose: filtering the input and the output attacks noise at both ends.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Three bug sets from Google's codebase, with patches from an internal agentic repair system.
+- On 174 human-reported bugs: up to 13 and 15 percentage points separately, 39 combined.
+- Patch validation also raises single-sample success on null pointer and sanitizer-reported bugs.
+- Not measured: how many real fixes the policies discard, which is the cost side of the trade.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: success rate rises partly by removing hard bugs, so it is not comparable to an unfiltered rate.
+- Ours: no false-abstention rate is reported, so the recall cost of the policies is unknown.
+- Ours: evaluation is on one company's internal system, so transfer is untested.
+- Authors: the patches still require human review; the policies reduce noise rather than remove review.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report precision and recall of the policies themselves, not only the downstream success rate.
+- Compare an LLM validator against running the test suite, which is a cheaper and sound signal.
+- Test whether abstention transfers across repair systems or is tuned to one generator's failures.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We introduce two complementary LLM-based policies to reduce such noise: bug abstention and patch validation policies." — abstract
+> "removing bugs and patches rejected by our policies can raise success rates by up to 13 percentage points and 15 percentage points, respectively, and by up to 39 percentage points in combination" — abstract
+> "Showing patches unlikely to be accepted can lead to substantial noise, wasting valuable developer time and eroding trust in automated code changes." — abstract
 
 ## bug-detection
 
@@ -171,17 +285,33 @@
 
 **Why included:** replaces one-pass reasoning over a fixed static representation with a reasoning-action-observation loop, and bounds each agent's context with a dynamic forest so long-horizon multi-path analysis stays stable; 1,274 vulnerabilities at 72.3% precision
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Binary analysis with models runs one pass over a representation static tools built in advance.
+- A fixed representation cannot be extended when an intermediate result suggests where to look next.
+- Long-horizon, multi-path analysis then exceeds the context the model can hold.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - FORGE recasts the analysis as a feedback-driven execution process rather than a single query.
+- A reasoning-action-observation loop interleaves model reasoning with tool interaction.
+- Exploration is incremental, and evidence is accumulated as the loop proceeds.
+- A Dynamic Forest of Agents decomposes the work so each agent's context stays bounded.
+- Parallel exploration is coordinated dynamically, which is what keeps long horizons stable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 3,457 real-world firmware binaries.
+- 1,274 vulnerabilities identified across 591 unique binaries, at 72.3% precision.
+- Broader coverage of vulnerability types than prior approaches.
+- Scale here is unusual for this literature; most binary papers evaluate on tens of samples.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 72.3% precision means over a quarter of the 1,274 reports are false.
+- Ours: no recall figure, so it is unknown what share of real vulnerabilities the loop misses.
+- Ours: no cost is reported, and a forest of agents multiplies model calls per binary.
+- Authors: long-horizon reasoning is unstable, which is the problem the forest bounds.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Pair reports with a reachability check, as Evident does, to remove the false quarter.
+- Report recall on a labelled firmware subset, so precision has a counterpart.
+- Measure how forest width trades off against cost and against precision.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches largely adopt a one-pass execution paradigm, where reasoning operates over a fixed program representation constructed by static analysis tools" — abstract
+> "FORGE interleaves reasoning and tool interaction through a reasoning-action-observation loop, enabling incremental exploration and evidence construction." — abstract
+> "FORGE identifies 1,274 vulnerabilities across 591 unique binaries, achieving 72.3% precision while covering a broader range of vulnerability types than prior approaches." — abstract
 
 ### Mizzle: A Complete Concurrent Incorrectness Logic for Preventing False Alarms in Agentic Bug Finding
 
@@ -191,17 +321,34 @@
 
 **Why included:** makes a bug report carry a machine-checked proof of its own reachability: an incorrectness separation logic for concurrent OCaml, mechanised in Rocq over Iris, proved sound so no false alarm passes and complete so no real bug is rejected
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Models find real bugs in real programs and also emit a flood of false alarms.
+- A false alarm costs developer time, so precision matters more than raw detection count.
+- Filtering alarms with another model moves the problem rather than deciding it.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Mizzle requires each bug report to carry a machine-checked proof that the bug is real.
+- Incorrectness logic is the right frame: under-approximate reasoning shows a behaviour is reachable.
+- The logic must model a realistic language, be mechanized, and be complete, or it rejects real bugs.
+- Mizzle is an incorrectness separation logic for concurrent programs in a substantial OCaml subset.
+- It is parametric in the notion of incorrectness, so one logic serves several bug classes.
+- Mechanized in Rocq on top of Iris, with soundness and completeness both proved.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Three instantiations: stuckness, non-linearizability of a data structure, and the presence of a race.
+- Soundness proved: the logic never justifies a false alarm.
+- Completeness proved: every incorrect execution admits a derivation.
+- The model-facing part is a proof of concept only, not a measured bug-finding evaluation.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: the LLM use is illustrated as a proof of concept rather than evaluated.
+- Ours: no measurement of how often a model produces a Mizzle derivation that checks.
+- Ours: the language is a substantial OCaml subset, so C and Java bug reports are out of reach.
+- Ours: completeness guarantees a derivation exists, not that any prover or model will find it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure the rate at which a model produces checkable derivations for real reported bugs.
+- Instantiate the logic for a memory-unsafe language, where LLM bug finding is most used.
+- Compare proof-carrying bug reports against LLM-judge filtering on the same alarm stream.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We propose a method to prevent these false alarms by requiring an LLM to accompany each bug report with a machine-checked proof, in a program logic, that the reported bug is real." — abstract
+> "we prove that it is both sound (that is, it never justifies a false alarm) and complete (that is, every incorrect execution admits a derivation)" — abstract
+> "As a proof of concept, we illustrate how an LLM can use Mizzle in order to certify the existence of a bug." — abstract
 
 ### Clozemaster: Fuzzing Rust Compiler by Harnessing Llms for Infilling Masked Real Programs
 
@@ -211,17 +358,33 @@
 
 **Why included:** masks bracket-delimited structures inside programs that historically crashed rustc and has the model infill them, keeping the bug-triggering scaffold that free generation loses to Rust's strict syntax; 27 confirmed compiler bugs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Rust's syntax and borrow rules make most freely generated test programs invalid.
+- An invalid program never reaches the compiler stages a fuzzer wants to exercise.
+- Programs that historically triggered compiler bugs are known to be productive seeds.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - clozeMask extracts test code from historical rustc issue reports rather than generating from nothing.
+- It identifies bracket-delimited code snippets with specific structures and masks them.
+- The model infills the masked regions, so the surrounding bug-triggering scaffold survives intact.
+- Masking at bracket boundaries keeps the infill syntactically self-contained.
+- Generation is constrained by structure, which is why validity does not collapse as in free generation.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 27 confirmed bugs in rustc and mrustc; 10 fixed by developers.
+- Outperforms existing fuzzers on code coverage and effectiveness.
+- Confirmed-and-fixed bug counts are a stronger signal than coverage, and both are reported.
+- Not measured: how many masked programs remain valid, the quantity the design targets.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: seeding from historical issues biases the search toward already-explored compiler regions.
+- Ours: no validity rate is reported, so the mechanism's stated benefit is not directly measured.
+- Ours: the approach needs a public issue tracker with reproducer programs.
+- Authors: directly using LLMs to generate Rust programs yields many invalid test cases.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report the validity rate before and after masking, which isolates what the structure buys.
+- Mask at other structural boundaries, for example trait bounds or lifetimes, and compare yields.
+- Test the method on a compiler with no public reproducer corpus to measure the seed dependency.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The clozeMask strategy involves extracting test code from historical issue reports, identifying and masking code snippets with specific structures, and using an LLM to fill in the masked portions for synthesizing new test programs." — abstract
+> "This approach harnesses the generative capabilities of LLMs while retaining the ability to trigger Rust compiler bugs." — abstract
+> "CLOZEMASTER has identified 27 confirmed bugs for rustc and mrustc, of which 10 have been fixed by developers." — abstract
 
 ### Your Fix Is My Exploit: Enabling Comprehensive DL Library API Fuzzing with Large Language Models
 
@@ -231,17 +394,33 @@
 
 **Why included:** has the model read API implementations for error-triggering edge cases and transfer that reasoning to untested APIs, which is how it covers a 1,000-API surface no seed corpus reaches; found 37 bugs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Deep learning libraries carry memory-safety bugs and expose over 1,000 APIs each.
+- Traditional fuzzing cannot cover that API surface: inputs are complex and usage varies.
+- Existing model-based fuzzers lack knowledge of API edge cases and generate weak inputs.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - DFUZZ gives the model a white-box view of API implementations rather than signatures alone.
+- First insight: the model can reason about error-triggering edge cases from the API code itself.
+- That reasoning transfers, so edge cases learned from one API are applied to untested APIs.
+- Transfer is what makes a 1,000-API surface tractable without per-API effort.
+- Second insight: the model synthesizes the test programs, so API testing needs no harness authoring.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - TensorFlow and PyTorch; higher API coverage than state-of-the-art fuzzers.
+- 37 bugs uncovered, 8 fixed and 19 under developer investigation.
+- Developer engagement on 27 of 37 is a meaningful external signal.
+- Not reported: how many APIs were covered in absolute terms, or the cost per API.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the white-box view needs source access, so closed-source libraries are out of reach.
+- Ours: transfer of edge cases is claimed but not measured separately from generation quality.
+- Ours: 37 bugs across two libraries is modest against a 1,000-API surface.
+- Authors: existing LLM-based fuzzers lack deep knowledge of API edge cases.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure edge-case transfer directly: hold out APIs and test whether their bugs are still found.
+- Report per-API cost, since a white-box view means reading implementation code for each.
+- Combine with PromptFuzz's coverage-guided prompt mutation, which optimises a different signal.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "DFUZZ leverages two insights: (1) LLMs can reason about error-triggering edge cases from API code and apply this knowledge to untested APIs, and (2) LLMs can accurately synthesize test programs to automate API testing." — abstract
+> "By providing LLMs with a \"white-box view\" of APIs, DFUZZ enhances reasoning and generation for comprehensive fuzzing." — abstract
+> "DFUZZ outperforms state-of-the-art fuzzers in API coverage for TensorFlow and PyTorch, uncovering 37 bugs, with 8 fixed and 19 under developer investigation" — abstract
 
 ### Revisiting Unnaturalness for Automated Program Repair in the Era of Large Language Models
 
@@ -251,17 +430,33 @@
 
 **Why included:** uses token entropy — an intermediate value the model already computes — as a repair signal, re-ranking suspicious lines and scoring patch naturalness before any test runs, which sidesteps both test-suite overfitting and data leakage
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Fault localization scores lack diversity, so many statements tie in the ranking.
+- Patch generation is inefficient: every test must run before a patch's plausibility is known.
+- Patch ranking overfits the test suite, and using an LLM directly raises data leakage concerns.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Entropy is an intermediate value the model already computes, and it measures token naturalness.
+- Using entropy rather than model output sidesteps the leakage concern the authors raise.
+- Entropy re-ranks suspicious statements and is complementary to existing localization tools.
+- entropy-delta measures patch naturalness, so plausible patches are ranked before any test runs.
+- The same signal therefore serves localization, generation efficiency, and patch classification.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Re-ranking achieves a 50% Top-5 improvement over spectrum-based fault localization.
+- entropy-delta ranks correct patches better than state-of-the-art machine learning tools, 49% Top-1.
+- The claim of complementarity is measured against prior tools rather than replacing them.
+- Not measured: cost of computing entropy over every candidate.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: naturalness correlates with correctness, and the paper does not claim causation.
+- Ours: entropy comes from a model trained on public code, so leakage is reduced, not removed.
+- Ours: improvements are relative percentages, so the absolute Top-1 and Top-5 levels are unclear.
+- Authors: test-suite overfitting and data leakage are the two problems this design minimises.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report absolute Top-1 and Top-5 alongside the relative gains.
+- Test whether entropy from a model that never saw the project still ranks patches well.
+- Apply entropy-delta as an early-exit signal inside an agentic repair loop, before validation.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "One intermediate value an LLM can emit is entropy, which measures the naturalness of a token of code." — abstract
+> "We propose a patch-naturalness measurement, entropy-delta, to improve the efficiency of template-based repair techniques by ranking plausible patches before undergoing testing." — abstract
+> "Our proposed re-ranking method achieves a 50% Top-5 score improvement over SBFL." — abstract
 
 ### GPTScan: Detecting Logic Vulnerabilities in Smart Contracts by Combining GPT with Program Analysis
 
@@ -271,17 +466,35 @@
 
 **Why included:** decomposes each logic-vulnerability type into scenarios and properties for GPT matching, then validates the key variables and statements GPT names with static confirmation; the confirmation stage is the contribution and cuts two-thirds of false positives
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Smart contract tools target fixed control-flow or data-flow patterns such as re-entrancy.
+- About 80% of Web3 security bugs escape those tools for want of domain-specific properties.
+- Asking a model directly gives high false positives and is bounded by its pretrained knowledge.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - GPTScan uses the model as a code understanding tool, not as the vulnerability oracle.
+- Each logic vulnerability type is decomposed into scenarios and properties the model can match.
+- Matching produces candidates, which is a recall step, deliberately permissive.
+- The model is then asked to name the key variables and statements behind each candidate.
+- Static confirmation validates those named variables and statements, which is the precision step.
+- Separating recall from precision is what makes the composition work.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - About 400 contract projects and 3K Solidity files.
+- Precision over 90% on token contracts, 57.14% on large projects such as Web3Bugs.
+- Recall over 70% on ground-truth logic vulnerabilities, including 9 missed by human auditors.
+- Cost: 14.39 seconds and 0.01 USD per thousand lines of Solidity.
+- Static confirmation removes two-thirds of false positives.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 57.14% precision on large projects means nearly half of reports there are still false.
+- Ours: scenarios and properties are hand-written per vulnerability type, so new types need manual work.
+- Ours: recall is measured against ground truth, so vulnerability types outside the taxonomy are invisible.
+- Authors: relying solely on GPT gives high false positives and is limited by pretrained knowledge.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Generate the scenario and property decomposition itself, which is the remaining manual step.
+- Explain the precision gap between token contracts and large projects, and target it.
+- Compare static confirmation against symbolic confirmation on the same candidate set.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Instead of relying solely on GPT to identify vulnerabilities, which can lead to high false positives and is limited by GPT's pre-trained knowledge, we utilize GPT as a versatile code understanding tool." — abstract
+> "GPTScan further instructs GPT to intelligently recognize key variables and statements, which are then validated by static confirmation" — abstract
+> "Moreover, static confirmation helps GPTScan reduce two-thirds of false positives." — abstract
 
 ### The Hitchhiker's Guide to Program Analysis, Part III: Mostly Harmless LLMs
 
@@ -291,17 +504,33 @@
 
 **Why included:** seed paper — separates the two jobs explicitly: the model may only build a warning-specific analysis harness, which is validated, and the backend analysis alone decides whether the error state is unreachable under it
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Models are used to judge whether a reported bug can trigger, with promising empirical results.
+- Empirical effectiveness does not make a plausible rationale sufficient to discharge a warning.
+- Dismissing a warning requires showing the error state is unreachable, not explaining why it may not occur.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Evident separates model assistance from program-behavior reasoning, and delegates the latter.
+- The model's only job is to construct a warning-specific analysis harness.
+- Evident validates the harness before the backend is invoked, so a bad harness is caught first.
+- The backend answers one question: is the error state unreachable under this harness and its assumptions.
+- The claim is relative to the harness, which makes the assumptions explicit rather than implicit.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 200 real Android kernel driver warnings from two existing static detectors.
+- 151 of 200 classified correctly (76%), including 111 false alarms discharged.
+- No confirmed bug in the dataset was discharged, which is the safety property that matters here.
+- Remaining cases are unresolved or conservatively retained as potential bugs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: soundness holds relative to the harness, so a harness with wrong assumptions still discharges wrongly.
+- Ours: 76% correct classification means a quarter of warnings still need human triage.
+- Ours: one warning domain, Android kernel drivers, from two detectors.
+- Authors: the remaining cases are unresolved rather than decided, which is the conservative choice.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check generated harnesses against a second, independent harness for the same warning.
+- Measure how harness quality degrades outside kernel drivers, where aliasing patterns differ.
+- Report the cost of the validation step, since it gates every backend invocation.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "empirical effectiveness does not make a plausible model-generated rationale sufficient for discharging warnings" — abstract
+> "Evident uses an LLM only to construct a warning-specific analysis harness. Evident then validates the harness before invoking the backend." — abstract
+> "Evident correctly classifies 151 cases (76%), including discharging 111 false alarms, without discharging any confirmed bug in the dataset" — abstract
 
 ### Boosting Static Resource Leak Detection via LLM-based Resource-Oriented Intention Inference
 
@@ -311,17 +540,33 @@
 
 **Why included:** has the model infer resource acquisition, release, and reachability-validation intentions, then feeds those as facts into a two-stage control-flow analysis; the ablation shows neither half detects leaks alone
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Resource leak detectors match predefined acquisition and release APIs mechanically.
+- An incomplete API list produces false negatives: unlisted resources are never tracked.
+- Incomplete reachability-validation identification produces false positives on validated paths.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - InferROI asks the model for intentions, not for verdicts: acquisition, release, and reachability validation.
+- Intentions are facts about the code that the analyser lacked, expressed in the analyser's vocabulary.
+- A two-stage static analysis then checks control-flow paths using those inferred intentions.
+- The division is clean: the model supplies the API semantics, the analysis does the path reasoning.
+- This attacks both error sources at once, since both stem from incomplete predefined knowledge.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - DroidLeaks and JLeaks: detection rates 59.3% and 62.5%, false alarm rates 18.6% and 19.5%.
+- Against three industrial static detectors: 14-45 more bugs on DroidLeaks, 149-485 more on JLeaks.
+- 29 previously unknown leaks found in open-source projects, 7 confirmed by developers.
+- An ablation study shows the combination matters, not either half alone.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: a false alarm rate near 19% is high for a detector meant to reduce triage effort.
+- Ours: inferred intentions are unchecked, so a wrong intention silently corrupts the path analysis.
+- Ours: 29 confirmed-by-authors bugs with 7 developer confirmations is a modest external signal.
+- Authors: existing detectors suffer both false negatives and false positives from incompleteness.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate inferred intentions against observed runtime behaviour before the analysis consumes them.
+- Apply intention inference to other analyses whose API models are hand-maintained, such as taint sources.
+- Report how the false alarm rate moves as intention confidence thresholds change.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose InferROI, a novel approach that leverages the exceptional code comprehension capability of large language models (LLMs) to directly infer resource-oriented intentions (acquisition, release, and reachability validation) in code" — abstract
+> "InferROI first prompts the LLM to infer involved intentions for a given code snippet, and then incorporates a two-stage static analysis approach to check control-flow paths for resource leak detection based on the inferred intentions." — abstract
+> "the results of an ablation study underscores the importance of combining LLM-based inference with static analysis" — abstract
 
 ### ChatDBG: Augmenting Debugging with Large Language Models
 
@@ -331,17 +576,33 @@
 
 **Why included:** gives the model control of the debugger itself — it sets breakpoints, walks stacks, and inspects state through LLDB, GDB, or Pdb — so root-cause claims rest on observed program state rather than on reading source
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Debugging requires questions about program state that source text alone cannot answer.
+- A model reading source can only guess at runtime values such as why a variable is null.
+- Conventional debuggers expose that state but require the programmer to drive them.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ChatDBG gives the model control of the debugger rather than a transcript of it.
+- The model acts as an agent that queries and controls the debugger to navigate stacks and inspect state.
+- Root-cause claims therefore rest on observed program state, not on reading the source.
+- Control returns to the programmer once the model reports its findings.
+- It integrates with standard debuggers: LLDB and GDB for native code, Pdb for Python.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - C and C++ code with known bugs, plus Python scripts and Jupyter notebooks.
+- Python: a single query yields an actionable fix 67% of the time, 85% with one follow-up.
+- Adoption reported: over 75,000 downloads.
+- Not measured: how often the model's debugger commands are wrong, or the cost of a session.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the reported 67% and 85% are for Python only; the C and C++ result is stated qualitatively.
+- Ours: an actionable fix judged by the authors is not the same as a verified correct fix.
+- Ours: download count measures uptake, not correctness, and appears alongside the accuracy claims.
+- Authors: the approach depends on real-world knowledge embedded in the model for domain reasoning.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report per-language accuracy with an independent oracle, such as the project's test suite.
+- Measure whether debugger autonomy beats simply pasting a stack trace and locals into the prompt.
+- Instrument which debugger commands the agent issues, to find where autonomy pays.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ChatDBG grants the LLM autonomy to \"take the wheel\": it can act as an independent agent capable of querying and controlling the debugger to navigate through stacks and inspect program state" — abstract
+> "For the Python programs, a single query led to an actionable bug fix 67% of the time; one additional follow-up query increased the success rate to 85%." — abstract
+> "Our ChatDBG prototype integrates with standard debuggers including LLDB and GDB for native code and Pdb for Python." — abstract
 
 ### Large Language Models are Few-shot Testers: Exploring LLM-based General Bug Reproduction
 
@@ -351,17 +612,33 @@
 
 **Why included:** turns a bug report into a failure-reproducing test by ranking candidates on validity, so the model's inability to execute code is handled in post-processing; re-evaluated on 31 reports filed after the training cutoff
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Test generation targets coverage or exploratory inputs, not semantic goals like reproducing a report.
+- Turning the expected semantics in a bug report into an oracle is the hard part.
+- Existing failure reproduction handles crashes only, a small share of all bug reports.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - LIBRO takes the bug report as the input and asks the model for a reproducing test.
+- The model cannot execute the buggy code, so the design puts the judgement in post-processing.
+- Post-processing discerns when the model is effective rather than trusting each generation.
+- Generated tests are ranked by validity, so the developer sees the most credible candidate first.
+- Ranking is what converts an unreliable generator into a usable suggestion list.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Defects4J: reproducing tests for 33% of cases, 251 of 750; a correct test ranked first for 149 bugs.
+- Contamination check: 31 reports filed after the training data cutoff, 32% reproduced.
+- The post-cutoff rate matching the benchmark rate is the strongest evidence in the paper.
+- An empirical study establishes that issue-driven tests are about 28% of project suite size.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: models cannot execute the target buggy code, which is why post-processing carries the design.
+- Ours: 33% reproduction leaves the majority of reports unaddressed.
+- Ours: 31 post-cutoff reports is a small sample for a contamination claim.
+- Ours: validity ranking measures whether a test runs and fails, not whether it captures the report.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Grow the post-cutoff evaluation set, since it is the only leakage-free measurement here.
+- Combine report-driven generation with differential testing to strengthen the oracle.
+- Measure whether reproducing tests improve downstream repair, the use the paper motivates.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Since LLMs themselves cannot execute the target buggy code, we focus on post-processing steps that help us discern when LLMs are effective, and rank the produced tests according to their validity." — abstract
+> "LIBRO can generate failure reproducing test cases for 33% of all studied cases (251 out of 750), while suggesting a bug reproducing test in first place for 149 bugs" — abstract
+> "To mitigate data contamination, we also evaluate LIBRO against 31 bug reports submitted after the collection of the LLM training data terminated: LIBRO produces bug reproducing tests for 32% of the studied bug reports." — abstract
 
 ## constraint-solving
 
@@ -373,17 +650,33 @@
 
 **Why included:** makes the fuzzer language-agnostic by using the model as the generation and mutation engine, with autoprompting to build a fuzzing-suited prompt and a loop that rewrites that prompt as it goes; 98 bugs across GCC, Clang, Z3, CVC5, OpenJDK
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Compilers, runtime engines, constraint solvers, and API libraries take formal languages as input.
+- Each existing fuzzer targets one language, and often one version of it.
+- Generated inputs stick to the language features the fuzzer's grammar encodes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Fuzz4All uses the model as the input generation and mutation engine, so no grammar is written.
+- One fuzzer therefore targets many input languages and many features of each.
+- Autoprompting constructs prompts suited to fuzzing rather than reusing a task prompt.
+- The fuzzing loop rewrites its own prompt each round to produce new inputs.
+- The prompt, not a corpus of seeds, is the state that the search carries forward.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Nine systems under test across six languages: C, C++, Go, SMT2, Java, Python.
+- Higher coverage than existing language-specific fuzzers in all six languages.
+- 98 bugs found in GCC, Clang, Z3, CVC5, OpenJDK, and Qiskit; 64 confirmed as previously unknown.
+- Beating specialised fuzzers on their own languages is the strongest form of the universality claim.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: no soundness or completeness notion applies, so coverage is the only guidance signal.
+- Ours: cost per bug is not reported, and every input is a model generation.
+- Ours: generation quality depends on how much of each language appeared in pretraining.
+- Authors: existing fuzzers cannot be applied across languages or even versions, the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report cost per bug against language-specific fuzzers, which generate inputs almost for free.
+- Measure whether coverage advantage holds for a language with little public code.
+- Combine autoprompting with structural masking, as Clozemaster does, to raise input validity.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The key idea behind Fuzz4All is to leverage large language models (LLMs) as an input generation and mutation engine, which enables the approach to produce diverse and realistic inputs for any practically relevant language." — abstract
+> "we present a novel autoprompting technique, which creates LLM prompts that are wellsuited for fuzzing, and a novel LLM-powered fuzzing loop, which iteratively updates the prompt to create new fuzzing inputs" — abstract
+> "Fuzz4All has identified 98 bugs in widely used systems, such as GCC, Clang, Z3, CVC5, OpenJDK, and the Qiskit quantum computing platform, with 64 bugs already confirmed by developers as previously unknown." — abstract
 
 ### Guiding Enumerative Program Synthesis with Large Language Models
 
@@ -393,17 +686,33 @@
 
 **Why included:** puts the model inside a weighted probabilistic enumerative search over SyGuS grammars: the enumerator reports its progress to the model and the model returns syntactic guidance, beating either component alone
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Formal synthesis from precise logical specifications is still won by enumerative algorithms.
+- Language models dominate synthesis from natural language but not from logical specifications.
+- A model used one-shot has no way to learn what the enumerator has already ruled out.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The model is placed inside a weighted probabilistic enumerative search, not in front of it.
+- Information flows both ways: the enumerator reports progress, the model returns syntactic guidance.
+- The loop iterates, so guidance is conditioned on the search state rather than on the problem alone.
+- One-shot synthesis is tried first; the integrated algorithm is the fallback when it fails.
+- The enumerator retains its completeness argument; the model only reweights the search.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Benchmarks from the Syntax-Guided Synthesis competition.
+- GPT-3.5 alone is easily outperformed by state-of-the-art formal synthesis algorithms.
+- The integration beats the model alone, the enumerator alone, and the winning SyGuS competition tool.
+- Reporting all three baselines is what makes the composition claim checkable.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: a stand-alone model is easily outperformed on formal synthesis benchmarks.
+- Ours: gains are reported qualitatively as significant, with no per-benchmark numbers in the abstract.
+- Ours: a library of prompts is crafted for the domain, so part of the result is prompt engineering.
+- Ours: SyGuS benchmarks are public and predate the model, so leakage is not addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report solve counts and times per SyGuS track, so the composition's cost is visible.
+- Test whether guidance still helps once the enumerator's grammar is unfamiliar to the model.
+- Apply the two-way loop to invariant synthesis, where the checker also reports partial progress.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose a novel enumerative synthesis algorithm, which integrates calls to an LLM into a weighted probabilistic search" — abstract
+> "This allows the synthesizer to provide the LLM with information about the progress of the enumerator, and the LLM to provide the enumerator with syntactic guidance in an iterative loop." — abstract
+> "our approach integrating the LLM into an enumerative synthesis algorithm shows significant performance gains over both the LLM and the enumerative synthesizer alone and the winning SyGuS competition tool" — abstract
 
 ### SolSearch: An LLM-Driven Framework for Efficient SAT-Solving Code Generation
 
@@ -413,17 +722,33 @@
 
 **Why included:** inverts the usual arrangement — the LLM rewrites the solver's own code under a curriculum, improving Z3's PAR-2 by 11%, so the model is a search heuristic over solver implementations rather than a proposer of answers
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - SAT solving underlies automated testing, configuration management, and program verification.
+- Solver heuristics are hand-designed, and improving them is slow expert work.
+- Model-based work targets the problems given to solvers, not the solvers themselves.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SolSearch inverts the usual arrangement: the model edits the solver, not the query.
+- The model iteratively modifies and generates SAT solver code to improve solving efficiency.
+- A curriculum-based trial-and-error process supplies the training signal.
+- The result is plug-and-play: any SAT solver can be the starting point.
+- The model's output is code that runs without the model, so inference cost stays offline.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Improves state-of-the-art SAT solvers on general SAT benchmarks.
+- Z3 improves by 11% on PAR-2 score.
+- The authors describe the results as preliminary.
+- Not reported: search cost, number of curriculum rounds, or variance across runs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: the experimental results are preliminary and future work is needed to validate them.
+- Ours: PAR-2 on general benchmarks can improve by overfitting to that benchmark distribution.
+- Ours: no check that the modified solver remains sound, which is the risk when editing a solver.
+- Ours: a four-page New Ideas paper, so the evaluation is thin against the claim's reach.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check the modified solver against a proof checker, so an unsound speedup cannot pass.
+- Report held-out benchmark families to separate real gains from distribution fitting.
+- Apply the same loop to SMT theory solvers, where hand-tuned heuristics are also the bottleneck.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Leveraging a curriculum-based, trial-and-error process, SolSearch enables the LLM to iteratively modify and generate SAT solver code, thereby improving solving efficiency and performance." — abstract
+> "Our preliminary experimental results are encouraging by demonstrating that the LLM-powered paradigm improves state-of-the-art SAT solvers on general SAT benchmarks and significantly enhances the performance of the widely used Z3 solver" — abstract
+> "This automated SAT-solving paradigm has the advantage of being plug-and-play, allowing integration with any SAT solver" — abstract
 
 ## decompilation
 
@@ -435,17 +760,33 @@
 
 **Why included:** replaces one-pass reasoning over a fixed static representation with a reasoning-action-observation loop, and bounds each agent's context with a dynamic forest so long-horizon multi-path analysis stays stable; 1,274 vulnerabilities at 72.3% precision
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Binary analysis with models runs one pass over a representation static tools built in advance.
+- A fixed representation cannot be extended when an intermediate result suggests where to look next.
+- Long-horizon, multi-path analysis then exceeds the context the model can hold.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - FORGE recasts the analysis as a feedback-driven execution process rather than a single query.
+- A reasoning-action-observation loop interleaves model reasoning with tool interaction.
+- Exploration is incremental, and evidence is accumulated as the loop proceeds.
+- A Dynamic Forest of Agents decomposes the work so each agent's context stays bounded.
+- Parallel exploration is coordinated dynamically, which is what keeps long horizons stable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 3,457 real-world firmware binaries.
+- 1,274 vulnerabilities identified across 591 unique binaries, at 72.3% precision.
+- Broader coverage of vulnerability types than prior approaches.
+- Scale here is unusual for this literature; most binary papers evaluate on tens of samples.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 72.3% precision means over a quarter of the 1,274 reports are false.
+- Ours: no recall figure, so it is unknown what share of real vulnerabilities the loop misses.
+- Ours: no cost is reported, and a forest of agents multiplies model calls per binary.
+- Authors: long-horizon reasoning is unstable, which is the problem the forest bounds.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Pair reports with a reachability check, as Evident does, to remove the false quarter.
+- Report recall on a labelled firmware subset, so precision has a counterpart.
+- Measure how forest width trades off against cost and against precision.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches largely adopt a one-pass execution paradigm, where reasoning operates over a fixed program representation constructed by static analysis tools" — abstract
+> "FORGE interleaves reasoning and tool interaction through a reasoning-action-observation loop, enabling incremental exploration and evidence construction." — abstract
+> "FORGE identifies 1,274 vulnerabilities across 591 unique binaries, achieving 72.3% precision while covering a broader range of vulnerability types than prior approaches." — abstract
 
 ### Exposing Hidden Interfaces: LLM-Guided Type Inference for Reverse Engineering macOS Private Frameworks
 
@@ -455,17 +796,33 @@
 
 **Why included:** recovers Objective-C method signatures from stripped binaries with a fine-tuned type-inference model whose candidates the agent checks against runtime metadata and constraints until the headers compile; 15% to 86% recovery
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Private macOS frameworks underpin critical services but ship as stripped, undocumented binaries.
+- Without method signatures there is no interface to audit, so security analysis stalls.
+- Static tooling alone recovers a small fraction of Objective-C signatures.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - MOTIF is an agent that drives tools while a fine-tuned model specializes in Objective-C type inference.
+- The agent handles runtime metadata extraction, binary inspection, and constraint checking.
+- The model proposes candidate method signatures; the agent validates and refines them.
+- Compilability is the acceptance test: a signature is kept when the header compiles.
+- Specializing the model and delegating tool use separates guessing from checking.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - MOTIF-Bench, built from public frameworks that have ground-truth headers.
+- Signature recovery rises from 15% to 86% against baseline static analysis tooling.
+- Reported gains in tool-use correctness and inference stability alongside recovery.
+- Case studies on private frameworks: reconstructed headers compile and link.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the benchmark uses public frameworks, while the target is private ones with no ground truth.
+- Ours: compiling and linking do not establish that a recovered signature is the original one.
+- Ours: the fine-tuned model is Objective-C specific, so transfer to other ABIs is untested.
+- Authors: private frameworks remain undocumented, so case-study results cannot be scored.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Cross-check recovered signatures against runtime call traces, which is an independent oracle.
+- Measure how recovery degrades with optimization level and stripping aggressiveness.
+- Test whether the agent plus specialized model split transfers to C++ name recovery.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The agent manages runtime metadata extraction, binary inspection, and constraint checking, while the model generates candidate method signatures that are validated and refined into compilable headers." — abstract
+> "MOTIF improves signature recovery from 15% to 86% compared to baseline static analysis tooling, with consistent gains in tool-use correctness and inference stability" — abstract
+> "Private macOS frameworks underpin critical services and daemons but remain undocumented and distributed only as stripped binaries, complicating security analysis." — abstract
 
 ### WaDec: Decompiling WebAssembly Using Large Language Model
 
@@ -475,17 +832,33 @@
 
 **Why included:** fine-tunes on wat-c pairs so decompilation works at snippet granularity rather than whole functions, and reports recompilability and re-execution rather than similarity alone
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - WebAssembly ships as a compact binary, so debugging and analysing web applications is hard.
+- Traditional decompilers produce output that is not readable.
+- General LLM decompilers handle ordinary binaries but not Wasm's structure.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - WaDec fine-tunes a model specifically to decompile Wasm into a higher-level representation.
+- Training uses a specialized dataset of wat-c snippet pairs with self-supervised learning.
+- Snippet-level training is what lets it decompile fragments, not only whole wat functions.
+- The reported metrics are execution-facing: recompilability, re-execution, output consistency.
+- Code inflation is treated as a first-class quality measure rather than an afterthought.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Code inflation 3.34%, against 116.94% for the prior state of the art, a 97% reduction.
+- Recompilability 52.11%, re-execution 43.55%, output consistency 27.15%.
+- Baseline output cannot be compiled or executed at all, so these three are new measurements.
+- AST edit distance similarity up 185%, cyclomatic complexity 8%, cosine similarity 41%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: output consistency of 27.15% means most decompiled code does not behave identically.
+- Ours: recompilability at 52.11% leaves half the output unusable as source.
+- Ours: fine-tuning is Wasm-specific, so nothing transfers to other binary formats.
+- Authors: general LLM decompilers face specific challenges on Wasm, which motivated specialization.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Pair decompilation with a differential check, as RustAssure does, to raise consistency past 27%.
+- Report which Wasm constructs drive the re-execution failures, to target the next training set.
+- Test whether snippet-level training helps other stack machine bytecodes.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The LLM was meticulously fine-tuned using a specialized dataset of wat-c code snippets, employing self-supervised learning techniques. This enables WaDec to effectively decompile not only complete wat functions but also finer-grained wat code snippets." — abstract
+> "It achieves a code inflation rate of only 3.34%, a dramatic 97% reduction compared to the state-of-the-art's 116.94%." — abstract
+> "WaDec maintains a recompilability rate of 52.11%, a re-execution rate of 43.55%, and an output consistency of 27.15%" — abstract
 
 ## formal-verification
 
@@ -497,17 +870,34 @@
 
 **Why included:** argues the fixed human-designed proof strategy is the limit, not the model: a general code agent choosing its own approach inside a harness enforcing soundness, completeness, and termination proves all 4,257 Iris core lemmas
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Interactive theorem proving does not scale: Coq proofs demand enormous expert effort.
+- Existing LLM provers hardwire a human-designed proof strategy and force the model to follow it.
+- Step-wise tactic prediction and divide-and-conquer both prove only a fraction of their targets.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Aria's claim is negative and structural: the imposed strategy is what limits the prior systems.
+- A general code agent receives the whole lemma and chooses its own approach.
+- A verification harness supplies feedback and hard constraints instead of a proof strategy.
+- The harness enforces three properties: soundness, completeness, and termination.
+- Soundness means acceptance only when the prover's kernel closes the proof, so the agent cannot bluff.
+- Completeness means no obligation may be left unproved or silently dropped.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Iris core logic: all 4,257 lemmas of four core modules proved, plus 217 for Rust's standard libraries.
+- reglang: all 318 lemmas proved, where prior provers manage roughly one in eight.
+- iris-lean: 72 not-yet-ported lemmas proved, so the approach is not Coq-specific.
+- No Coq expert intervention is reported for any of the three.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: full coverage on a chosen corpus is not the same as full coverage on arbitrary lemmas.
+- Ours: no cost per lemma is reported, and a frontier model with agent scaffolding is expensive.
+- Ours: Iris lemmas come with an existing proof in the repository, so leakage is not ruled out.
+- Authors: the result is tied to a state-of-the-art model, which they name explicitly.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report token and wall-clock cost per lemma, so the harness can be compared against step-wise provers.
+- Run on lemmas with no published proof, which removes the leakage question the corpora raise.
+- Test which of the three harness constraints is doing the work by relaxing each in turn.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches wire a fixed, human-designed proof strategy into the system and constrain the model to follow it (retrieving premises and predicting tactics one step at a time, or splitting goals by divide-and-conquer), and still prove only a fraction of their target theorems" — abstract
+> "The agent writes the proofs under feedback and hard constraints from the harness that keep each one sound (accepted only when the prover's kernel closes it), complete (no obligation left unproved or silently dropped), and terminating (no divergent tactics)." — abstract
+> "Aria proves all 4,257 lemmas of the four core modules and the 217 lemmas verifying Rust's standard libraries built on it, fully automatically" — abstract
 
 ### Mizzle: A Complete Concurrent Incorrectness Logic for Preventing False Alarms in Agentic Bug Finding
 
@@ -517,17 +907,34 @@
 
 **Why included:** makes a bug report carry a machine-checked proof of its own reachability: an incorrectness separation logic for concurrent OCaml, mechanised in Rocq over Iris, proved sound so no false alarm passes and complete so no real bug is rejected
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Models find real bugs in real programs and also emit a flood of false alarms.
+- A false alarm costs developer time, so precision matters more than raw detection count.
+- Filtering alarms with another model moves the problem rather than deciding it.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Mizzle requires each bug report to carry a machine-checked proof that the bug is real.
+- Incorrectness logic is the right frame: under-approximate reasoning shows a behaviour is reachable.
+- The logic must model a realistic language, be mechanized, and be complete, or it rejects real bugs.
+- Mizzle is an incorrectness separation logic for concurrent programs in a substantial OCaml subset.
+- It is parametric in the notion of incorrectness, so one logic serves several bug classes.
+- Mechanized in Rocq on top of Iris, with soundness and completeness both proved.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Three instantiations: stuckness, non-linearizability of a data structure, and the presence of a race.
+- Soundness proved: the logic never justifies a false alarm.
+- Completeness proved: every incorrect execution admits a derivation.
+- The model-facing part is a proof of concept only, not a measured bug-finding evaluation.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: the LLM use is illustrated as a proof of concept rather than evaluated.
+- Ours: no measurement of how often a model produces a Mizzle derivation that checks.
+- Ours: the language is a substantial OCaml subset, so C and Java bug reports are out of reach.
+- Ours: completeness guarantees a derivation exists, not that any prover or model will find it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure the rate at which a model produces checkable derivations for real reported bugs.
+- Instantiate the logic for a memory-unsafe language, where LLM bug finding is most used.
+- Compare proof-carrying bug reports against LLM-judge filtering on the same alarm stream.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We propose a method to prevent these false alarms by requiring an LLM to accompany each bug report with a machine-checked proof, in a program logic, that the reported bug is real." — abstract
+> "we prove that it is both sound (that is, it never justifies a false alarm) and complete (that is, every incorrect execution admits a derivation)" — abstract
+> "As a proof of concept, we illustrate how an LLM can use Mizzle in order to certify the existence of a bug." — abstract
 
 ### Specification-Guided Repair of Arithmetic Errors in Dafny Programs using LLMs
 
@@ -537,17 +944,34 @@
 
 **Why included:** uses the Dafny specification as the oracle instead of a test suite, and applies Hoare logic to compute per-statement state for fault localization before the LLM proposes a fix
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - When a program fails to verify, finding and fixing the fault is slow.
+- Repair tools validate with test suites, which do not capture every scenario.
+- A verification-aware language already carries stronger correctness criteria than any test suite.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The Dafny specification, not a test suite, is the oracle for both localization and repair.
+- Pre-conditions, post-conditions, and invariants are assumed correct; the code is what is wrong.
+- Hoare logic determines the state at each statement, which is how faults are localized.
+- Localization is therefore deductive rather than statistical, unlike spectrum-based ranking.
+- The model synthesizes candidate fixes at the located statement.
+- Scope is narrowed to arithmetic bugs, which keeps the state reasoning tractable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - DafnyBench, a benchmark of real-world Dafny programs.
+- Fault localization coverage 89.6%.
+- Repair success 74.18% with GPT-4o mini, the best of four models tried.
+- Four models compared: GPT-4o mini, Llama 3, Mistral 7B, Llemma 7B.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: correctness of the specifications is assumed, and the scope is arithmetic bugs.
+- Ours: assuming the specification is right inverts the common case, where the specification is also new.
+- Ours: arithmetic bugs are the subset where per-statement state reasoning stays cheap.
+- Ours: a smaller model reaching 74.18% is not reported, so cost-quality trade-offs are unclear.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Relax the assumption: decide from the counterexample whether the code or the specification is wrong.
+- Extend past arithmetic to heap and aliasing bugs, where the state reasoning is harder.
+- Compare Hoare-logic localization against spectrum-based localization on the same programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we present an APR tool for Dafny, a verification-aware programming language that uses formal specifications - including pre-conditions, post-conditions, and invariants - as oracles for fault localization and repair" — abstract
+> "we localize faults through a series of steps, which include using Hoare logic to determine the state of each statement within the program, and applying Large Language Models (LLMs) to synthesize candidate fixes" — abstract
+> "Our tool achieves 89.6% fault localization coverage and GPT-4o mini yields the highest repair success rate of 74.18%." — abstract
 
 ### VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
 
@@ -557,17 +981,34 @@
 
 **Why included:** seed paper — a planner orchestrates abstractions, type invariants, specifications, and proof code for a whole data-structure module, with a repair stage for Verus annotation errors
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - AI-assisted verification had been demonstrated on single functions, not on modules.
+- A data-structure module needs abstractions and type invariants before any function can be verified.
+- Models misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - VeriStruct raises the unit of verification from the function to the data-structure module.
+- A planner module orchestrates generation in order: abstractions, type invariants, specifications, proofs.
+- Ordering matters because later artefacts depend on the abstractions chosen earlier.
+- Syntax guidance is embedded in prompts to address the Verus-specific misunderstanding directly.
+- A repair stage corrects annotation errors automatically, so syntax failures do not end the run.
+- Verus itself decides success, so the framework never certifies its own output.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Eleven Rust data structure modules; VeriStruct succeeds on ten.
+- 128 of 129 functions verified, 99.2%.
+- Verification is by Verus, so the pass criterion is machine-checked rather than judged.
+- Not measured: specification strength, so a weak invariant that verifies still counts as success.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: eleven modules is a small evaluation for a 99.2% figure.
+- Ours: verifying against generated specifications risks specifications weak enough to be easy.
+- Ours: no comparison against a function-at-a-time baseline on the same modules.
+- Authors: models often misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure specification strength, for example by mutating the data structure and checking that proofs break.
+- Scale past eleven modules and report where the planner's ordering assumption fails.
+- Compare against verifying each function separately, to isolate what module-level planning buys.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "VeriStruct employs a planner module to orchestrate the systematic generation of abstractions, type invariants, specifications, and proof code." — abstract
+> "To address the challenge that LLMs often misunderstand Verus' annotation syntax and verification-specific semantics, VeriStruct embeds syntax guidance within prompts and includes a repair stage to automatically correct annotation errors." — abstract
+> "In an evaluation on eleven Rust data structure modules, VeriStruct succeeds on ten of the eleven, successfully verifying 128 out of 129 functions (99.2%) in total." — abstract
 
 ### ConVer: Using Contracts and Loop Invariant Synthesis for Scalable Formal Software Verification
 
@@ -577,17 +1018,35 @@
 
 **Why included:** synthesises function contracts from the top-level property so bounded model checking can decompose instead of unrolling, and refines them inside a CEGAR-CEGIS loop with ICE learning when a check fails
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Bounded model checking of large C programs hits state-space explosion.
+- The tool must encode the whole state space up to the bound by unrolling every nested construct.
+- Compositional verification avoids this but needs function contracts, which nobody writes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ConVer synthesises the missing contracts with an LLM, taking the top-level assertion as the goal.
+- Verification then decomposes top-down instead of unrolling bottom-up.
+- System-level and function-level checks alternate inside a CEGAR-CEGIS loop.
+- A failed check refines the contracts through SMART ICE learning, so failure is informative.
+- The model proposes; the model checker and the learner decide, so no contract is trusted unchecked.
+- ESBMC-LF converts Lingua Franca models to C, extending the tool's reach to that benchmark family.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Frama-C benchmark, 45 simple C programs: 82-96% success across three LLM backends.
+- 93-95% of converged programs need only one CEGAR-CEGIS iteration.
+- X.509 parser: 33-50% on 6 programs. LF2C-Simple: 82-88% on 17 programs.
+- VerifyThis, 11 recursive and loop-intensive programs: 55-64% with the Pre-Abstraction strategy.
+- LF-Hard, transpiled from the LF Verifier Benchmarks: 67% verified.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: success drops from 82-96% on simple programs to 33-50% on the X.509 parser.
+- Ours: the harder suites hold 6 to 17 programs, so those percentages rest on few cases.
+- Ours: three backends give a range, which shows the result depends on the model chosen.
+- Authors: state-space explosion is the premise, and the top-down split is what avoids it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Characterise which program shapes defeat contract synthesis, since the X.509 gap is the informative one.
+- Compare ICE learning against feeding the counterexample straight back to the model.
+- Report verification time, since the single-iteration convergence claim implies a cost argument.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "it uses a large language model (LLM) to synthesise function contracts from the system property, then alternates system-level and function-level checks in a CEGAR-CEGIS loop, refining contracts whenever a check fails via SMART ICE learning" — abstract
+> "On the Frama-C benchmark of 45 simple C programs, ConVer achieves 82-96% verification success across three LLM backends, with 93-95% of converged programs requiring only a single CEGAR-CEGIS iteration." — abstract
+> "Formal verification of large C programs is impeded by state-space explosion" — abstract
 
 ### Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification
 
@@ -597,17 +1056,34 @@
 
 **Why included:** decomposes the program to focus the model, then validates each candidate specification against the verifier every round so errors cannot accumulate across the interaction; verifies 79% of programs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - A full proof needs specifications, and writing them takes domain expertise and manpower.
+- Existing synthesis is narrow: loop invariants for numerical programs, or one program family.
+- Arrays, pointers, nested loops, and function calls fall outside those approaches.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - AutoSpec is driven by static analysis and program verification, with the model as generator.
+- Programs are decomposed so the model attends to one part at a time.
+- Candidate specifications are validated every round, not once at the end.
+- Per-round validation is what stops errors accumulating across a long interaction.
+- The loop is incremental: each validated specification becomes context for the next.
+- The target is satisfiable and adequate specifications, so both directions of failure are named.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 79% of programs verified through automatic specification synthesis.
+- A 1.592x improvement over existing work.
+- Applied to a real-world X509-parser project, not only to benchmarks.
+- Not reported in the abstract: the benchmark size behind the 79%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: adequacy is checked by whether the proof closes, which a weak specification can also achieve.
+- Ours: no ablation separates decomposition from per-round validation.
+- Ours: the abstract gives no runtime, and per-round validation implies repeated verifier calls.
+- Authors: existing automated approaches are limited in versatility, which is the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Separate the contributions of decomposition and per-round validation with an ablation.
+- Measure specification adequacy independently, for example against mutants of the program.
+- Compare against ConVer's CEGAR-CEGIS refinement on the same C programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "AutoSpec addresses the practical challenges in three ways: (1) driving \\name by static analysis and program verification, LLMs serve as generators to generate candidate specifications, (2) programs are decomposed to direct the attention of LLMs, and (3) candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs." — abstract
+> "it outperforms existing works by successfully verifying 79% of programs through automatic specification synthesis, a significant improvement of 1.592x" — abstract
+> "It can also be successfully applied to verify the programs in a real-world X509-parser project." — abstract
 
 ### A Learning Method for Symbolic Systems Using Large Language Models
 
@@ -617,17 +1093,33 @@
 
 **Why included:** mines reusable Ltac tactics from a proof corpus and integrates the validated ones into symbolic provers, so the model is paid for once offline and never runs at proving time; CoqHammer proves 23.87% more theorems
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - End-to-end neural provers are expensive to run and opaque about why a proof succeeded.
+- Symbolic provers are cheap and inspectable but cannot improve themselves from a proof corpus.
+- Nothing connects the two: the corpus of formal proofs does not feed back into the symbolic tools.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - LLM2Ltac uses the model as a synthesizer of tactics, not as a prover.
+- It asks the model to identify latent proof strategies in a corpus and formalize them as tactics.
+- Mined tactics are checked for validity and generalizability before they are kept.
+- Surviving tactics are integrated into symbolic provers, so proving costs no model calls.
+- The model is paid for once, offline; the improvement it produces is a permanent symbolic artifact.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Tactics mined from 11,725 theorems in the Rocq 8.20.0 standard library.
+- Evaluated on 6,199 theorems from compcert, Coq-Art, Ext-Lib, and VFA.
+- CoqHammer proves 23.87% more theorems with the mined tactics.
+- Improved CoqHammer combined with Claude Code raises the total proved by a further 9.90%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: mining and evaluation both draw on Rocq, so cross-prover transfer is untested.
+- Ours: no count of mined tactics or of those rejected by the validity check is reported.
+- Ours: gains are relative to CoqHammer, not to an end-to-end neural prover on the same theorems.
+- Authors: end-to-end LLM provers are resource-intensive and opaque, the cost this design avoids.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report how many mined tactics survive validation, which measures the yield of the mining step.
+- Mine tactics from project corpora rather than the standard library, and test domain specialization.
+- Compare against retrieval-based proving on equal compute, since both reuse a corpus.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "LLM2Ltac, the first approach that leverages the reasoning power of LLMs not as end-to-end provers, but as intelligent synthesizers to mine purely symbolic tactics from data" — abstract
+> "These tactics are verified for validity and generalizability, and finally integrated into symbolic provers to enhance their automated proving capabilities without the runtime cost of LLMs." — abstract
+> "Results show that the mined tactics improve CoqHammer to prove 23.87% more theorems" — abstract
 
 ### Proof Automation with Large Language Models
 
@@ -637,17 +1129,33 @@
 
 **Why included:** a formative study of 520 GPT-3.5 errors shows the high-level proof structure is usually right and the low-level details wrong, so the technique keeps the generated skeleton and repairs details with targeted symbolic methods
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Coq guarantees correctness but demands manual effort and expertise.
+- Models write informal proofs well and formal proofs badly, and the reason was not established.
+- Without knowing which part fails, a system cannot decide what to automate and what to check.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - A formative study of 520 GPT-3.5 proof errors supplies the design premise rather than an intuition.
+- The finding: the high-level proof structure is usually right, the low-level details usually wrong.
+- PALM therefore generates a whole proof first, then repairs it, rather than predicting tactic by tactic.
+- Repair uses targeted symbolic methods, so the corrections come from the prover, not the model.
+- Repair iterates, so each symbolic fix exposes the next low-level defect.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - More than 10K theorems.
+- 76.6% to 180.4% more theorems proved than state-of-the-art approaches.
+- 1270 theorems proved that existing approaches cannot reach.
+- Generalizability shown across different LLMs, which separates the method from one model.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the formative study used GPT-3.5, so the structure-right details-wrong premise may not hold later.
+- Ours: the repair methods are targeted, so unfamiliar low-level failures fall outside their reach.
+- Ours: percentage ranges without absolute counts make the baselines hard to place.
+- Authors: models are less effective at formal proofs than at informal ones, the gap being attacked.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Repeat the error study on a current model to test whether the structure-details split survives.
+- Compare generate-then-repair against agent-driven proving on the same corpus and compute budget.
+- Report which symbolic repair rules fire most, which shows where models still fail systematically.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "By analyzing 520 proof generation errors made by GPT-3.5, we found that GPT-3.5 often identified the correct high-level structure of a proof, but struggled to get the lower-level details correct." — abstract
+> "we propose PALM, a novel generate-then-repair approach that first prompts an LLM to generate an initial proof and then leverages targeted symbolic methods to iteratively repair low-level problems" — abstract
+> "PALM significantly outperforms other state-of-the-art approaches, successfully proving 76.6% to 180.4% more theorems" — abstract
 
 ### Rango: Adaptive Retrieval-Augmented Proving for Automated Software Verification
 
@@ -657,17 +1165,33 @@
 
 **Why included:** retrieves both premises and similar proofs from the same project at every proof step, so the context tracks the evolving proof state instead of being fixed once per theorem; retrieving proofs alone adds 47%
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Coq verification needs proofs, and writing them needs expertise and manual effort.
+- Prior work shows relevant premises aid synthesis, but selecting them once per theorem is static.
+- A proof's context needs change as the proof state evolves, and a fixed context cannot track that.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Rango retrieves at every step of the proof, not once per theorem.
+- It retrieves two things: relevant premises, and similar proofs from the same project.
+- Retrieving proofs, not only lemmas, is the part prior premise-selection work omitted.
+- The retrieved context therefore adapts to the project and to the evolving proof state.
+- The retriever feeds a fine-tuned model, so retrieval and generation are trained together.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - CoqStoq: 2,226 open-source Coq projects and 196,929 theorems from GitHub.
+- On the curated benchmark of well-maintained projects, Rango proves 32.0% of theorems.
+- That is 29% more theorems than Tactician, the prior state of the art.
+- Ablation: adding relevant proofs to the context raises theorems proven by 47%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 32.0% leaves two thirds of theorems unproved, so the absolute level remains low.
+- Ours: training and evaluation both come from CoqStoq, so project-level overlap needs care.
+- Ours: per-step retrieval costs a retrieval query per tactic, and no cost figure is given.
+- Authors: verification requires significant expertise and manual effort, which this reduces rather than removes.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report retrieval cost per proof, since the per-step design multiplies queries by proof length.
+- Test on projects absent from CoqStoq to separate adaptation from memorisation.
+- Compare per-step retrieval against handing whole lemmas to an agent, as Aria does.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Rango uses retrieval augmentation at every step of the proof to automatically determine which proofs and premises to include in the context of its fine-tuned LLM. In this way, Rango adapts to the project and to the evolving state of the proof." — abstract
+> "Rango synthesizes proofs for 32.0% of the theorems, which is 29% more theorems than the prior state-of-the-art tool Tactician" — abstract
+> "Rango adding relevant proofs to its context leads to a 47% increase in the number of theorems proven" — abstract
 
 ### A Neurosymbolic Approach to Natural Language Formalization and Verification
 
@@ -677,17 +1201,33 @@
 
 **Why included:** runs several redundant formalizations of a policy at inference time and cross-checks them for semantic equivalence, so disagreement between formalizations is the signal that the translation is untrusted
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Regulated industries cannot deploy an LLM that offers no formal correctness guarantee.
+- Policies are written in natural language; checking a statement against one needs a formalization.
+- A single formalization is a silent failure point: nothing detects that it misreads the policy.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ARc splits the job: formalize the policy once, then check statements against that formalization.
+- Formalization is done several times redundantly, and the results checked for semantic equivalence.
+- Disagreement between redundant formalizations is the signal that the translation is untrusted.
+- Human guidance is optional and applies to the formalization step, not to each verification.
+- Every outcome carries an auditable artifact, so a decision can be re-examined after the fact.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Benchmarks report over 99% soundness and a near-zero false positive rate on logical validity.
+- Deployed as a public cloud service, which the authors call the first such commercial offering.
+- Not measured: how often redundant formalization abstains, or the cost of that abstention.
+- No baseline against a single-formalization pipeline is reported in the abstract.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: adoption is limited by the absence of formal correctness guarantees in the model itself.
+- Ours: soundness is reported against the formalized policy, not against the English one.
+- Ours: semantic equivalence across formalizations detects disagreement, not shared misreading.
+- Ours: the abstract gives no benchmark size, so the 99% figure has no denominator here.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure how many independent formalizations are needed before agreement stops being informative.
+- Apply redundant formalization to code specifications, where an oracle for equivalence exists.
+- Report the abstention rate alongside soundness; a sound checker that abstains often is cheap.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ARc performs multiple redundant formalization steps at inference time, checking the formalizations for semantic equivalence." — abstract
+> "Our benchmarks show that ARc exceeds 99% soundness and achieves a near-zero false positive rate in identifying logical validity." — abstract
+> "their lack of formal correctness guarantees limits their adoption in regulated industries" — abstract
 
 ### nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models
 
@@ -697,17 +1237,33 @@
 
 **Why included:** maps each subformula of the temporal-logic translation back to the natural-language fragment it came from, so ambiguity surfaces as an editable sub-translation instead of a wrong formula the user must redraft
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Verification needs a formal specification, and writing one by hand is slow and error-prone.
+- Natural language requirements are ambiguous, so any single translation silently picks one reading.
+- When a whole formula is wrong, the user's only recourse is to redraft it from scratch.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - nl2spec derives temporal logic formulas from unstructured natural language with an LLM.
+- Its methodology maps each subformula back to the natural language fragment it came from.
+- These sub-translations make ambiguity visible at the point where the reading was chosen.
+- The user adds, deletes, and edits sub-translations rather than rewriting the formalization.
+- The framework is domain-agnostic and extends to other specification languages and models.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - A user study supplies a challenging dataset, which then drives translation-quality experiments.
+- Open-source implementation with a web frontend is provided.
+- Not measured in the abstract: how much the sub-translation interface reduces user effort.
+- The dataset is built by the same study that motivates the tool, so it is not independent.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: this is interactive, not automatic; the user remains in the loop for every ambiguity.
+- Ours: a sub-translation is only as trustworthy as the mapping the model produced for it.
+- Ours: no accuracy figure appears in the abstract, only the existence of experiments.
+- Authors: writing formal specifications remains error-prone and time-consuming, the premise they attack.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Compare sub-translation editing against whole-formula redrafting in a controlled user study.
+- Check sub-translations against each other for consistency, as ARc does for whole formalizations.
+- Apply the mapping idea to code contracts, where the fragment is a statement rather than a phrase.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we utilize LLMs to map subformulas of the formalization back to the corresponding natural language fragments of the input" — abstract
+> "Users iteratively add, delete, and edit these sub-translations to amend erroneous formalizations, which is easier than manually redrafting the entire formalization." — abstract
+> "We perform a user study to obtain a challenging dataset, which we use to run experiments on the quality of translations." — abstract
 
 ### PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
 
@@ -717,17 +1273,34 @@
 
 **Why included:** retrieves human-written Certora properties as in-context references, then closes three separate loops on the output: compilation and static analysis feedback for validity, similarity ranking for relevance, and a dedicated prover for correctness; 12 zero-days
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Formal verification of smart contracts needs properties, and writing them is expert work.
+- Human-written properties exist in audit reports but are tied to the contracts they were written for.
+- A generated property is useless unless it compiles, suits the code, and can be verified.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PropertyGPT embeds existing human-written properties in a vector database and retrieves references.
+- Retrieval-augmented in-context learning transfers an audited property to unknown code.
+- Three separate loops close on the three failure modes rather than one generic retry.
+- Compilation and static analysis feedback act as an external oracle for iterative revision.
+- Similarity along several dimensions ranks candidates, and a weighted algorithm keeps the top-K.
+- A dedicated prover formally verifies the surviving properties.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 80% recall against ground-truth properties.
+- 26 of 37 tested CVEs and attack incidents detected.
+- 12 zero-day vulnerabilities found, earning $8,256 in bug bounties.
+- Bounty-confirmed zero-days are an external oracle few papers in this set report.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: recall is measured against a ground-truth property set, so novel property shapes are invisible.
+- Ours: the approach needs an existing corpus of audited properties, which few domains have.
+- Ours: 26 of 37 CVEs means 11 were missed, and the abstract does not characterise them.
+- Authors: ensuring properties are compilable, appropriate, and verifiable is the stated challenge.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Test transfer to a domain with no audit corpus, which is where the retrieval premise breaks.
+- Ablate the three loops to see which of compilation feedback, ranking, or proving carries the result.
+- Measure the false positive cost of the properties that the prover accepts but no bug violates.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we embed existing properties into a vector database and retrieve a reference property for LLM-based in-context learning to generate a new property for a given code" — abstract
+> "we use the compilation and static analysis feedback as an external oracle to guide LLMs in iteratively revising the generated properties" — abstract
+> "It successfully detected 26 CVEs/attack incidents out of 37 tested and also uncovered 12 zero-day vulnerabilities, leading to $8,256 in bug bounty rewards." — abstract
 
 ## fuzzing
 
@@ -739,17 +1312,33 @@
 
 **Why included:** masks bracket-delimited structures inside programs that historically crashed rustc and has the model infill them, keeping the bug-triggering scaffold that free generation loses to Rust's strict syntax; 27 confirmed compiler bugs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Rust's syntax and borrow rules make most freely generated test programs invalid.
+- An invalid program never reaches the compiler stages a fuzzer wants to exercise.
+- Programs that historically triggered compiler bugs are known to be productive seeds.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - clozeMask extracts test code from historical rustc issue reports rather than generating from nothing.
+- It identifies bracket-delimited code snippets with specific structures and masks them.
+- The model infills the masked regions, so the surrounding bug-triggering scaffold survives intact.
+- Masking at bracket boundaries keeps the infill syntactically self-contained.
+- Generation is constrained by structure, which is why validity does not collapse as in free generation.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 27 confirmed bugs in rustc and mrustc; 10 fixed by developers.
+- Outperforms existing fuzzers on code coverage and effectiveness.
+- Confirmed-and-fixed bug counts are a stronger signal than coverage, and both are reported.
+- Not measured: how many masked programs remain valid, the quantity the design targets.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: seeding from historical issues biases the search toward already-explored compiler regions.
+- Ours: no validity rate is reported, so the mechanism's stated benefit is not directly measured.
+- Ours: the approach needs a public issue tracker with reproducer programs.
+- Authors: directly using LLMs to generate Rust programs yields many invalid test cases.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report the validity rate before and after masking, which isolates what the structure buys.
+- Mask at other structural boundaries, for example trait bounds or lifetimes, and compare yields.
+- Test the method on a compiler with no public reproducer corpus to measure the seed dependency.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The clozeMask strategy involves extracting test code from historical issue reports, identifying and masking code snippets with specific structures, and using an LLM to fill in the masked portions for synthesizing new test programs." — abstract
+> "This approach harnesses the generative capabilities of LLMs while retaining the ability to trigger Rust compiler bugs." — abstract
+> "CLOZEMASTER has identified 27 confirmed bugs for rustc and mrustc, of which 10 have been fixed by developers." — abstract
 
 ### Your Fix Is My Exploit: Enabling Comprehensive DL Library API Fuzzing with Large Language Models
 
@@ -759,17 +1348,33 @@
 
 **Why included:** has the model read API implementations for error-triggering edge cases and transfer that reasoning to untested APIs, which is how it covers a 1,000-API surface no seed corpus reaches; found 37 bugs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Deep learning libraries carry memory-safety bugs and expose over 1,000 APIs each.
+- Traditional fuzzing cannot cover that API surface: inputs are complex and usage varies.
+- Existing model-based fuzzers lack knowledge of API edge cases and generate weak inputs.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - DFUZZ gives the model a white-box view of API implementations rather than signatures alone.
+- First insight: the model can reason about error-triggering edge cases from the API code itself.
+- That reasoning transfers, so edge cases learned from one API are applied to untested APIs.
+- Transfer is what makes a 1,000-API surface tractable without per-API effort.
+- Second insight: the model synthesizes the test programs, so API testing needs no harness authoring.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - TensorFlow and PyTorch; higher API coverage than state-of-the-art fuzzers.
+- 37 bugs uncovered, 8 fixed and 19 under developer investigation.
+- Developer engagement on 27 of 37 is a meaningful external signal.
+- Not reported: how many APIs were covered in absolute terms, or the cost per API.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the white-box view needs source access, so closed-source libraries are out of reach.
+- Ours: transfer of edge cases is claimed but not measured separately from generation quality.
+- Ours: 37 bugs across two libraries is modest against a 1,000-API surface.
+- Authors: existing LLM-based fuzzers lack deep knowledge of API edge cases.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure edge-case transfer directly: hold out APIs and test whether their bugs are still found.
+- Report per-API cost, since a white-box view means reading implementation code for each.
+- Combine with PromptFuzz's coverage-guided prompt mutation, which optimises a different signal.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "DFUZZ leverages two insights: (1) LLMs can reason about error-triggering edge cases from API code and apply this knowledge to untested APIs, and (2) LLMs can accurately synthesize test programs to automate API testing." — abstract
+> "By providing LLMs with a \"white-box view\" of APIs, DFUZZ enhances reasoning and generation for comprehensive fuzzing." — abstract
+> "DFUZZ outperforms state-of-the-art fuzzers in API coverage for TensorFlow and PyTorch, uncovering 37 bugs, with 8 fixed and 19 under developer investigation" — abstract
 
 ### Fuzz4All: Universal Fuzzing with Large Language Models
 
@@ -779,17 +1384,33 @@
 
 **Why included:** makes the fuzzer language-agnostic by using the model as the generation and mutation engine, with autoprompting to build a fuzzing-suited prompt and a loop that rewrites that prompt as it goes; 98 bugs across GCC, Clang, Z3, CVC5, OpenJDK
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Compilers, runtime engines, constraint solvers, and API libraries take formal languages as input.
+- Each existing fuzzer targets one language, and often one version of it.
+- Generated inputs stick to the language features the fuzzer's grammar encodes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Fuzz4All uses the model as the input generation and mutation engine, so no grammar is written.
+- One fuzzer therefore targets many input languages and many features of each.
+- Autoprompting constructs prompts suited to fuzzing rather than reusing a task prompt.
+- The fuzzing loop rewrites its own prompt each round to produce new inputs.
+- The prompt, not a corpus of seeds, is the state that the search carries forward.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Nine systems under test across six languages: C, C++, Go, SMT2, Java, Python.
+- Higher coverage than existing language-specific fuzzers in all six languages.
+- 98 bugs found in GCC, Clang, Z3, CVC5, OpenJDK, and Qiskit; 64 confirmed as previously unknown.
+- Beating specialised fuzzers on their own languages is the strongest form of the universality claim.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: no soundness or completeness notion applies, so coverage is the only guidance signal.
+- Ours: cost per bug is not reported, and every input is a model generation.
+- Ours: generation quality depends on how much of each language appeared in pretraining.
+- Authors: existing fuzzers cannot be applied across languages or even versions, the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report cost per bug against language-specific fuzzers, which generate inputs almost for free.
+- Measure whether coverage advantage holds for a language with little public code.
+- Combine autoprompting with structural masking, as Clozemaster does, to raise input validity.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The key idea behind Fuzz4All is to leverage large language models (LLMs) as an input generation and mutation engine, which enables the approach to produce diverse and realistic inputs for any practically relevant language." — abstract
+> "we present a novel autoprompting technique, which creates LLM prompts that are wellsuited for fuzzing, and a novel LLM-powered fuzzing loop, which iteratively updates the prompt to create new fuzzing inputs" — abstract
+> "Fuzz4All has identified 98 bugs in widely used systems, such as GCC, Clang, Z3, CVC5, OpenJDK, and the Qiskit quantum computing platform, with 64 bugs already confirmed by developers as previously unknown." — abstract
 
 ### Prompt Fuzzing for Fuzz Driver Generation
 
@@ -799,17 +1420,33 @@
 
 **Why included:** makes the prompt itself the thing being fuzzed: coverage feedback mutates the prompt, generated drivers are validated before use, and a constrained scheduler decides which survive; 1.6x the branch coverage of OSS-Fuzz and Hopper
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Writing a fuzz driver needs deep library knowledge and takes time.
+- Drivers derived from consumer code reach deep states but cover few APIs.
+- Interpretative fuzzing reaches most API calls but searches a large space by trial.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PromptFuzz makes the prompt the object being fuzzed, and coverage the feedback that mutates it.
+- Instructive program generation produces drivers that exercise API usage rather than arbitrary calls.
+- Erroneous program validation discards drivers that do not hold up before fuzzing time is spent.
+- Coverage-guided prompt mutation steers the next generation toward undiscovered library code.
+- Constrained fuzzer scheduling decides which surviving drivers get the fuzzing budget.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 14 real-world libraries.
+- Branch coverage 1.61 times OSS-Fuzz and 1.63 times Hopper.
+- 33 genuine new bugs from 49 crashes; 30 confirmed by the respective communities.
+- Reporting crashes alongside genuine bugs makes the deduplication cost visible.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: consumer-derived drivers have limited coverage and interpretative fuzzing needs many attempts.
+- Ours: coverage feedback rewards reaching code, not reaching it with a meaningful API state.
+- Ours: no cost per library is reported, though every mutation round is a generation.
+- Ours: 16 of 49 crashes were not genuine bugs, so triage effort remains.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report generation cost per unit of branch coverage, so the loop can be compared against Hopper.
+- Use API preconditions, where documented, to constrain generation rather than validating afterwards.
+- Test whether prompt mutation still helps when the library has no public consumer code.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We propose PromptFuzz, a coverage-guided fuzzer for prompt fuzzing that iteratively generates fuzz drivers to explore undiscovered library code." — abstract
+> "we propose several key techniques: instructive program generation, erroneous program validation, coverage-guided prompt mutation, and constrained fuzzer scheduling" — abstract
+> "the fuzz drivers generated by PromptFuzz detected 33 genuine, new bugs out of a total of 49 crashes, out of which 30 bugs have been confirmed by their respective communities" — abstract
 
 ### PerfGen: Automated Performance Benchmark Generation for Big Data Analytics
 
@@ -819,17 +1456,34 @@
 
 **Why included:** replaces coverage with user-extensible performance monitors as the greybox guidance signal, finds symptom-causing inputs at an intermediate pipeline stage, then maps them back to program inputs through an LLM-generated pseudo-inverse
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Performance symptoms in big data analytics, such as computational and data skews, are input dependent.
+- No inputs exist that trigger them, so the pipelines cannot be performance-tested.
+- Greybox fuzzing guides on coverage, which is uncorrelated with triggering a skew.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PerfGen replaces coverage with extensible performance monitor templates as the guidance metric.
+- Symptoms surface at intermediate pipeline stages, so fuzzing is phased rather than end-to-end.
+- The phased approach first finds symptom-causing inputs at the intermediate stage.
+- An LLM-generated pseudo-inverse function maps those intermediate inputs back to program inputs.
+- Skew-inspired input mutations bias generation toward the shapes that induce the symptoms.
+- The model's job is the inversion, which is the step no fuzzer could otherwise perform.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Four case studies.
+- At least 11x speedup over traditional fuzzing when generating symptom-triggering inputs.
+- The intermediate-then-invert route needs under 0.004% of the baseline's iterations.
+- Not measured: how often the pseudo-inverse is wrong, and what that costs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: a pseudo-inverse produced by a model has no correctness guarantee, and none is claimed.
+- Ours: four case studies is a small evaluation for an 11x claim.
+- Ours: performance monitor templates are user-extended, so setup effort transfers to the user.
+- Authors: coverage as a guidance signal is unlikely to trigger interesting performance behavior.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate each pseudo-inverse by running the forward pipeline and checking the intermediate matches.
+- Test whether the phased approach transfers to other staged systems, such as compiler pipelines.
+- Report how many candidate inversions are discarded, which is the cost the speedup hides.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "typical greybox fuzzing relies on coverage as a guidance signal and thus is unlikely to trigger interesting performance behavior" — abstract
+> "This approach identifies symptom-causing intermediate inputs at an intermediate stage first and then converts them to the inputs at the beginning of the program with a pseudo-inverse function generated by a large language model." — abstract
+> "PerfGen achieves at least 11x speedup compared to a traditional fuzzing approach when generating inputs to trigger performance symptoms." — abstract
 
 ## program-logic
 
@@ -841,17 +1495,34 @@
 
 **Why included:** argues the fixed human-designed proof strategy is the limit, not the model: a general code agent choosing its own approach inside a harness enforcing soundness, completeness, and termination proves all 4,257 Iris core lemmas
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Interactive theorem proving does not scale: Coq proofs demand enormous expert effort.
+- Existing LLM provers hardwire a human-designed proof strategy and force the model to follow it.
+- Step-wise tactic prediction and divide-and-conquer both prove only a fraction of their targets.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Aria's claim is negative and structural: the imposed strategy is what limits the prior systems.
+- A general code agent receives the whole lemma and chooses its own approach.
+- A verification harness supplies feedback and hard constraints instead of a proof strategy.
+- The harness enforces three properties: soundness, completeness, and termination.
+- Soundness means acceptance only when the prover's kernel closes the proof, so the agent cannot bluff.
+- Completeness means no obligation may be left unproved or silently dropped.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Iris core logic: all 4,257 lemmas of four core modules proved, plus 217 for Rust's standard libraries.
+- reglang: all 318 lemmas proved, where prior provers manage roughly one in eight.
+- iris-lean: 72 not-yet-ported lemmas proved, so the approach is not Coq-specific.
+- No Coq expert intervention is reported for any of the three.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: full coverage on a chosen corpus is not the same as full coverage on arbitrary lemmas.
+- Ours: no cost per lemma is reported, and a frontier model with agent scaffolding is expensive.
+- Ours: Iris lemmas come with an existing proof in the repository, so leakage is not ruled out.
+- Authors: the result is tied to a state-of-the-art model, which they name explicitly.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report token and wall-clock cost per lemma, so the harness can be compared against step-wise provers.
+- Run on lemmas with no published proof, which removes the leakage question the corpora raise.
+- Test which of the three harness constraints is doing the work by relaxing each in turn.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches wire a fixed, human-designed proof strategy into the system and constrain the model to follow it (retrieving premises and predicting tactics one step at a time, or splitting goals by divide-and-conquer), and still prove only a fraction of their target theorems" — abstract
+> "The agent writes the proofs under feedback and hard constraints from the harness that keep each one sound (accepted only when the prover's kernel closes it), complete (no obligation left unproved or silently dropped), and terminating (no divergent tactics)." — abstract
+> "Aria proves all 4,257 lemmas of the four core modules and the 217 lemmas verifying Rust's standard libraries built on it, fully automatically" — abstract
 
 ### Mizzle: A Complete Concurrent Incorrectness Logic for Preventing False Alarms in Agentic Bug Finding
 
@@ -861,17 +1532,34 @@
 
 **Why included:** makes a bug report carry a machine-checked proof of its own reachability: an incorrectness separation logic for concurrent OCaml, mechanised in Rocq over Iris, proved sound so no false alarm passes and complete so no real bug is rejected
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Models find real bugs in real programs and also emit a flood of false alarms.
+- A false alarm costs developer time, so precision matters more than raw detection count.
+- Filtering alarms with another model moves the problem rather than deciding it.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Mizzle requires each bug report to carry a machine-checked proof that the bug is real.
+- Incorrectness logic is the right frame: under-approximate reasoning shows a behaviour is reachable.
+- The logic must model a realistic language, be mechanized, and be complete, or it rejects real bugs.
+- Mizzle is an incorrectness separation logic for concurrent programs in a substantial OCaml subset.
+- It is parametric in the notion of incorrectness, so one logic serves several bug classes.
+- Mechanized in Rocq on top of Iris, with soundness and completeness both proved.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Three instantiations: stuckness, non-linearizability of a data structure, and the presence of a race.
+- Soundness proved: the logic never justifies a false alarm.
+- Completeness proved: every incorrect execution admits a derivation.
+- The model-facing part is a proof of concept only, not a measured bug-finding evaluation.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: the LLM use is illustrated as a proof of concept rather than evaluated.
+- Ours: no measurement of how often a model produces a Mizzle derivation that checks.
+- Ours: the language is a substantial OCaml subset, so C and Java bug reports are out of reach.
+- Ours: completeness guarantees a derivation exists, not that any prover or model will find it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure the rate at which a model produces checkable derivations for real reported bugs.
+- Instantiate the logic for a memory-unsafe language, where LLM bug finding is most used.
+- Compare proof-carrying bug reports against LLM-judge filtering on the same alarm stream.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We propose a method to prevent these false alarms by requiring an LLM to accompany each bug report with a machine-checked proof, in a program logic, that the reported bug is real." — abstract
+> "we prove that it is both sound (that is, it never justifies a false alarm) and complete (that is, every incorrect execution admits a derivation)" — abstract
+> "As a proof of concept, we illustrate how an LLM can use Mizzle in order to certify the existence of a bug." — abstract
 
 ### Specification-Guided Repair of Arithmetic Errors in Dafny Programs using LLMs
 
@@ -881,17 +1569,34 @@
 
 **Why included:** uses the Dafny specification as the oracle instead of a test suite, and applies Hoare logic to compute per-statement state for fault localization before the LLM proposes a fix
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - When a program fails to verify, finding and fixing the fault is slow.
+- Repair tools validate with test suites, which do not capture every scenario.
+- A verification-aware language already carries stronger correctness criteria than any test suite.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The Dafny specification, not a test suite, is the oracle for both localization and repair.
+- Pre-conditions, post-conditions, and invariants are assumed correct; the code is what is wrong.
+- Hoare logic determines the state at each statement, which is how faults are localized.
+- Localization is therefore deductive rather than statistical, unlike spectrum-based ranking.
+- The model synthesizes candidate fixes at the located statement.
+- Scope is narrowed to arithmetic bugs, which keeps the state reasoning tractable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - DafnyBench, a benchmark of real-world Dafny programs.
+- Fault localization coverage 89.6%.
+- Repair success 74.18% with GPT-4o mini, the best of four models tried.
+- Four models compared: GPT-4o mini, Llama 3, Mistral 7B, Llemma 7B.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: correctness of the specifications is assumed, and the scope is arithmetic bugs.
+- Ours: assuming the specification is right inverts the common case, where the specification is also new.
+- Ours: arithmetic bugs are the subset where per-statement state reasoning stays cheap.
+- Ours: a smaller model reaching 74.18% is not reported, so cost-quality trade-offs are unclear.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Relax the assumption: decide from the counterexample whether the code or the specification is wrong.
+- Extend past arithmetic to heap and aliasing bugs, where the state reasoning is harder.
+- Compare Hoare-logic localization against spectrum-based localization on the same programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we present an APR tool for Dafny, a verification-aware programming language that uses formal specifications - including pre-conditions, post-conditions, and invariants - as oracles for fault localization and repair" — abstract
+> "we localize faults through a series of steps, which include using Hoare logic to determine the state of each statement within the program, and applying Large Language Models (LLMs) to synthesize candidate fixes" — abstract
+> "Our tool achieves 89.6% fault localization coverage and GPT-4o mini yields the highest repair success rate of 74.18%." — abstract
 
 ### VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
 
@@ -901,17 +1606,34 @@
 
 **Why included:** seed paper — a planner orchestrates abstractions, type invariants, specifications, and proof code for a whole data-structure module, with a repair stage for Verus annotation errors
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - AI-assisted verification had been demonstrated on single functions, not on modules.
+- A data-structure module needs abstractions and type invariants before any function can be verified.
+- Models misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - VeriStruct raises the unit of verification from the function to the data-structure module.
+- A planner module orchestrates generation in order: abstractions, type invariants, specifications, proofs.
+- Ordering matters because later artefacts depend on the abstractions chosen earlier.
+- Syntax guidance is embedded in prompts to address the Verus-specific misunderstanding directly.
+- A repair stage corrects annotation errors automatically, so syntax failures do not end the run.
+- Verus itself decides success, so the framework never certifies its own output.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Eleven Rust data structure modules; VeriStruct succeeds on ten.
+- 128 of 129 functions verified, 99.2%.
+- Verification is by Verus, so the pass criterion is machine-checked rather than judged.
+- Not measured: specification strength, so a weak invariant that verifies still counts as success.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: eleven modules is a small evaluation for a 99.2% figure.
+- Ours: verifying against generated specifications risks specifications weak enough to be easy.
+- Ours: no comparison against a function-at-a-time baseline on the same modules.
+- Authors: models often misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure specification strength, for example by mutating the data structure and checking that proofs break.
+- Scale past eleven modules and report where the planner's ordering assumption fails.
+- Compare against verifying each function separately, to isolate what module-level planning buys.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "VeriStruct employs a planner module to orchestrate the systematic generation of abstractions, type invariants, specifications, and proof code." — abstract
+> "To address the challenge that LLMs often misunderstand Verus' annotation syntax and verification-specific semantics, VeriStruct embeds syntax guidance within prompts and includes a repair stage to automatically correct annotation errors." — abstract
+> "In an evaluation on eleven Rust data structure modules, VeriStruct succeeds on ten of the eleven, successfully verifying 128 out of 129 functions (99.2%) in total." — abstract
 
 ### ConVer: Using Contracts and Loop Invariant Synthesis for Scalable Formal Software Verification
 
@@ -921,17 +1643,35 @@
 
 **Why included:** synthesises function contracts from the top-level property so bounded model checking can decompose instead of unrolling, and refines them inside a CEGAR-CEGIS loop with ICE learning when a check fails
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Bounded model checking of large C programs hits state-space explosion.
+- The tool must encode the whole state space up to the bound by unrolling every nested construct.
+- Compositional verification avoids this but needs function contracts, which nobody writes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ConVer synthesises the missing contracts with an LLM, taking the top-level assertion as the goal.
+- Verification then decomposes top-down instead of unrolling bottom-up.
+- System-level and function-level checks alternate inside a CEGAR-CEGIS loop.
+- A failed check refines the contracts through SMART ICE learning, so failure is informative.
+- The model proposes; the model checker and the learner decide, so no contract is trusted unchecked.
+- ESBMC-LF converts Lingua Franca models to C, extending the tool's reach to that benchmark family.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Frama-C benchmark, 45 simple C programs: 82-96% success across three LLM backends.
+- 93-95% of converged programs need only one CEGAR-CEGIS iteration.
+- X.509 parser: 33-50% on 6 programs. LF2C-Simple: 82-88% on 17 programs.
+- VerifyThis, 11 recursive and loop-intensive programs: 55-64% with the Pre-Abstraction strategy.
+- LF-Hard, transpiled from the LF Verifier Benchmarks: 67% verified.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: success drops from 82-96% on simple programs to 33-50% on the X.509 parser.
+- Ours: the harder suites hold 6 to 17 programs, so those percentages rest on few cases.
+- Ours: three backends give a range, which shows the result depends on the model chosen.
+- Authors: state-space explosion is the premise, and the top-down split is what avoids it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Characterise which program shapes defeat contract synthesis, since the X.509 gap is the informative one.
+- Compare ICE learning against feeding the counterexample straight back to the model.
+- Report verification time, since the single-iteration convergence claim implies a cost argument.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "it uses a large language model (LLM) to synthesise function contracts from the system property, then alternates system-level and function-level checks in a CEGAR-CEGIS loop, refining contracts whenever a check fails via SMART ICE learning" — abstract
+> "On the Frama-C benchmark of 45 simple C programs, ConVer achieves 82-96% verification success across three LLM backends, with 93-95% of converged programs requiring only a single CEGAR-CEGIS iteration." — abstract
+> "Formal verification of large C programs is impeded by state-space explosion" — abstract
 
 ### Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification
 
@@ -941,17 +1681,34 @@
 
 **Why included:** decomposes the program to focus the model, then validates each candidate specification against the verifier every round so errors cannot accumulate across the interaction; verifies 79% of programs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - A full proof needs specifications, and writing them takes domain expertise and manpower.
+- Existing synthesis is narrow: loop invariants for numerical programs, or one program family.
+- Arrays, pointers, nested loops, and function calls fall outside those approaches.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - AutoSpec is driven by static analysis and program verification, with the model as generator.
+- Programs are decomposed so the model attends to one part at a time.
+- Candidate specifications are validated every round, not once at the end.
+- Per-round validation is what stops errors accumulating across a long interaction.
+- The loop is incremental: each validated specification becomes context for the next.
+- The target is satisfiable and adequate specifications, so both directions of failure are named.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 79% of programs verified through automatic specification synthesis.
+- A 1.592x improvement over existing work.
+- Applied to a real-world X509-parser project, not only to benchmarks.
+- Not reported in the abstract: the benchmark size behind the 79%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: adequacy is checked by whether the proof closes, which a weak specification can also achieve.
+- Ours: no ablation separates decomposition from per-round validation.
+- Ours: the abstract gives no runtime, and per-round validation implies repeated verifier calls.
+- Authors: existing automated approaches are limited in versatility, which is the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Separate the contributions of decomposition and per-round validation with an ablation.
+- Measure specification adequacy independently, for example against mutants of the program.
+- Compare against ConVer's CEGAR-CEGIS refinement on the same C programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "AutoSpec addresses the practical challenges in three ways: (1) driving \\name by static analysis and program verification, LLMs serve as generators to generate candidate specifications, (2) programs are decomposed to direct the attention of LLMs, and (3) candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs." — abstract
+> "it outperforms existing works by successfully verifying 79% of programs through automatic specification synthesis, a significant improvement of 1.592x" — abstract
+> "It can also be successfully applied to verify the programs in a real-world X509-parser project." — abstract
 
 ## program-repair
 
@@ -963,17 +1720,33 @@
 
 **Why included:** drives repair with a finite state machine over a repair-specific tool set, letting the agent interleave bug investigation, ingredient gathering, and validation instead of following a fixed feedback loop
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Repair pipelines fix the control flow in advance: one prompt, or one prompt-validate loop.
+- A fixed loop cannot spend more effort on a bug that needs more investigation.
+- The order in which to gather context, propose a fix, and validate it depends on the bug.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - RepairAgent treats the model as an agent that plans and invokes tools rather than filling a template.
+- A tool set specific to repair covers bug investigation, ingredient gathering, and fix validation.
+- A finite state machine constrains which tools the agent may invoke next, bounding the search.
+- The prompt format is rewritten as the run proceeds, carrying tool results and past attempt feedback.
+- The agent interleaves the three activities freely instead of running them in a fixed order.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Defects4J: 164 bugs repaired autonomously, including 39 not fixed by prior techniques.
+- Cost reported: about 270,000 tokens per bug, roughly 14 US cents at GPT-3.5 pricing.
+- Not measured: how much the finite state machine contributes relative to free tool choice.
+- No ablation of the tool set is reported in the abstract.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: Defects4J predates the model's training cutoff, so leakage is not ruled out here.
+- Ours: 'repaired' on Defects4J means test-suite passing, which admits overfitted patches.
+- Ours: the finite state machine is hand-designed, so the fixed control flow moved rather than left.
+- Authors: cost per bug is reported but not compared against the cost of the fixed-loop baselines.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Ablate the state machine to separate the value of tools from the value of constraining their order.
+- Replace test-suite passing with a specification oracle, as the Dafny repair work does.
+- Learn the state machine from successful trajectories rather than hand-writing it.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Unlike existing deep learning-based approaches, which prompt a model with a fixed prompt or in a fixed feedback loop, our work treats the LLM as an agent capable of autonomously planning and executing actions to fix bugs by invoking suitable tools." — abstract
+> "Key contributions that enable RepairAgent include a set of tools that are useful for program repair, a dynamically updated prompt format that allows the LLM to interact with these tools, and a finite state machine that guides the agent in invoking the tools." — abstract
+> "repairing 164 bugs, including 39 bugs not fixed by prior techniques" — abstract
 
 ### SpecRover: Code Intent Extraction via LLMs
 
@@ -983,17 +1756,34 @@
 
 **Why included:** infers the intended behaviour iteratively alongside code search, then has a reviewer agent vet each patch against that inferred specification and attach a confidence to it, so patches carry an explanation a developer can check
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Repair needs a specification of intended behaviour, and a GitHub issue is not one.
+- An agent that searches code and edits it never states what behaviour it was aiming for.
+- Without a stated intent, a developer cannot tell a good patch from a plausible one.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecRover interleaves specification inference with the code search, rather than running it once.
+- Intent is inferred from both project structure and program behaviour.
+- A separate reviewer agent vets patches against that inferred intent.
+- The reviewer also attaches a confidence measure, so patches arrive ranked by credibility.
+- The explanation produced is the signal the developer reads, not the patch alone.
+- Built on the open-source AutoCodeRover agent, so the delta is the specification machinery.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Full SWE-Bench, 2294 GitHub issues: more than 50% improvement in efficacy over AutoCodeRover.
+- Cost about $0.65 per issue on SWE-Bench lite, modest against comparable open-source agents.
+- Building on a named baseline agent makes the improvement attributable.
+- Not measured: whether the inferred specification is correct, only whether patches improve.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: SWE-Bench issues predate model training cutoffs, so leakage is a standing concern.
+- Ours: resolution on SWE-Bench means the project's tests pass, which is a weak specification oracle.
+- Ours: the reviewer agent shares a model family with the patcher, so its errors may correlate.
+- Authors: the work is positioned as demonstrating that specification inference still matters.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Score inferred specifications directly against maintainer-written descriptions of intended behaviour.
+- Use a reviewer from a different model family to test whether correlated errors inflate confidence.
+- Report calibration of the confidence measure, which is what a developer would act on.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "In this work, we examine efficient and low-cost workflows for iterative specification inference within an LLM agent." — abstract
+> "The intent thus captured is examined by a reviewer agent with the goal of vetting the patches as well as providing a measure of confidence in the vetted patches." — abstract
+> "In an evaluation on the full SWE-Bench consisting of 2294 GitHub issues, it shows more than 50% improvement in efficacy over AutoCodeRover." — abstract
 
 ### Revisiting Unnaturalness for Automated Program Repair in the Era of Large Language Models
 
@@ -1003,17 +1793,33 @@
 
 **Why included:** uses token entropy — an intermediate value the model already computes — as a repair signal, re-ranking suspicious lines and scoring patch naturalness before any test runs, which sidesteps both test-suite overfitting and data leakage
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Fault localization scores lack diversity, so many statements tie in the ranking.
+- Patch generation is inefficient: every test must run before a patch's plausibility is known.
+- Patch ranking overfits the test suite, and using an LLM directly raises data leakage concerns.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Entropy is an intermediate value the model already computes, and it measures token naturalness.
+- Using entropy rather than model output sidesteps the leakage concern the authors raise.
+- Entropy re-ranks suspicious statements and is complementary to existing localization tools.
+- entropy-delta measures patch naturalness, so plausible patches are ranked before any test runs.
+- The same signal therefore serves localization, generation efficiency, and patch classification.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Re-ranking achieves a 50% Top-5 improvement over spectrum-based fault localization.
+- entropy-delta ranks correct patches better than state-of-the-art machine learning tools, 49% Top-1.
+- The claim of complementarity is measured against prior tools rather than replacing them.
+- Not measured: cost of computing entropy over every candidate.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: naturalness correlates with correctness, and the paper does not claim causation.
+- Ours: entropy comes from a model trained on public code, so leakage is reduced, not removed.
+- Ours: improvements are relative percentages, so the absolute Top-1 and Top-5 levels are unclear.
+- Authors: test-suite overfitting and data leakage are the two problems this design minimises.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report absolute Top-1 and Top-5 alongside the relative gains.
+- Test whether entropy from a model that never saw the project still ranks patches well.
+- Apply entropy-delta as an early-exit signal inside an agentic repair loop, before validation.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "One intermediate value an LLM can emit is entropy, which measures the naturalness of a token of code." — abstract
+> "We propose a patch-naturalness measurement, entropy-delta, to improve the efficiency of template-based repair techniques by ranking plausible patches before undergoing testing." — abstract
+> "Our proposed re-ranking method achieves a 50% Top-5 score improvement over SBFL." — abstract
 
 ### Specification-Guided Repair of Arithmetic Errors in Dafny Programs using LLMs
 
@@ -1023,17 +1829,34 @@
 
 **Why included:** uses the Dafny specification as the oracle instead of a test suite, and applies Hoare logic to compute per-statement state for fault localization before the LLM proposes a fix
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - When a program fails to verify, finding and fixing the fault is slow.
+- Repair tools validate with test suites, which do not capture every scenario.
+- A verification-aware language already carries stronger correctness criteria than any test suite.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The Dafny specification, not a test suite, is the oracle for both localization and repair.
+- Pre-conditions, post-conditions, and invariants are assumed correct; the code is what is wrong.
+- Hoare logic determines the state at each statement, which is how faults are localized.
+- Localization is therefore deductive rather than statistical, unlike spectrum-based ranking.
+- The model synthesizes candidate fixes at the located statement.
+- Scope is narrowed to arithmetic bugs, which keeps the state reasoning tractable.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - DafnyBench, a benchmark of real-world Dafny programs.
+- Fault localization coverage 89.6%.
+- Repair success 74.18% with GPT-4o mini, the best of four models tried.
+- Four models compared: GPT-4o mini, Llama 3, Mistral 7B, Llemma 7B.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: correctness of the specifications is assumed, and the scope is arithmetic bugs.
+- Ours: assuming the specification is right inverts the common case, where the specification is also new.
+- Ours: arithmetic bugs are the subset where per-statement state reasoning stays cheap.
+- Ours: a smaller model reaching 74.18% is not reported, so cost-quality trade-offs are unclear.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Relax the assumption: decide from the counterexample whether the code or the specification is wrong.
+- Extend past arithmetic to heap and aliasing bugs, where the state reasoning is harder.
+- Compare Hoare-logic localization against spectrum-based localization on the same programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we present an APR tool for Dafny, a verification-aware programming language that uses formal specifications - including pre-conditions, post-conditions, and invariants - as oracles for fault localization and repair" — abstract
+> "we localize faults through a series of steps, which include using Hoare logic to determine the state of each statement within the program, and applying Large Language Models (LLMs) to synthesize candidate fixes" — abstract
+> "Our tool achieves 89.6% fault localization coverage and GPT-4o mini yields the highest repair success rate of 74.18%." — abstract
 
 ### Copiloting the Copilots: Fusing Large Language Models with Completion Engines for Automated Program Repair
 
@@ -1043,17 +1866,34 @@
 
 **Why included:** constrains autoregressive decoding with a completion engine that prunes infeasible tokens and completes others, so patches are statically valid by construction rather than filtered afterwards
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Patches for real-world systems in general-purpose languages are hard to synthesize correctly.
+- Models treat programs as token sequences and ignore the language's semantic constraints.
+- The result is many statically invalid patches, which makes the technique impractical.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Repilot intervenes during decoding rather than filtering completed patches.
+- The insight is that autoregressive generation resembles typing, so a completion engine can assist it.
+- The completion engine prunes infeasible tokens the model suggests, before they are committed.
+- It also proactively completes tokens when its own suggestion set is determined.
+- Validity is therefore a property of the generation process, not of a post-hoc filter.
+- The approach generalizes past repair to other code generation tasks.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Subsets of Defects4J 1.2 and 2.0: 27% and 47% more bugs fixed than state-of-the-art techniques.
+- More valid and correct patches than the base model at the same budget.
+- Holding the budget fixed is what isolates the completion engine's contribution.
+- Not measured: decoding overhead from consulting the engine at each token.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: static validity is necessary, not sufficient; a compiling patch can still be wrong.
+- Ours: Defects4J correctness is judged by the test suite, which admits overfitted patches.
+- Ours: the completion engine is language-specific, so each new language needs one.
+- Authors: models are ignorant of the target language's semantic constraints, which is the premise.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report per-token decoding overhead, since the engine is consulted throughout generation.
+- Extend the pruning signal past syntax and types to a lightweight semantic check.
+- Compare against constrained decoding with a grammar, which is the cheaper alternative.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "most LLMs treat programs as sequences of tokens, meaning that they are ignorant of the underlying semantics constraints of the target programming language. This results in plenty of statically invalid generated patches" — abstract
+> "Repilot synergistically synthesizes a candidate patch through the interaction between an LLM and a Completion Engine, which 1) prunes away infeasible tokens suggested by the LLM and 2) proactively completes the token based on the suggestions provided by the Completion Engine." — abstract
+> "Repilot outperforms state-of-the-art techniques by fixing 27% and 47% more bugs, respectively" — abstract
 
 ### Automated Repair of Ambiguous Problem Descriptions for LLM-Based Code Generation
 
@@ -1063,17 +1903,33 @@
 
 **Why included:** repairs the natural-language description rather than the program: it treats the distribution of programs a description induces as the object to test and repair, then infers a description edit contrastively from how that distribution moves
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - An ambiguous problem description yields an incorrect program, and the description is never blamed.
+- Prompting a model to clarify its own ambiguity produces irrelevant or inconsistent edits.
+- Repairing text requires knowing how the model's reading shifts when the text changes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecFix repairs the description rather than the program, which inverts the usual repair target.
+- A description is represented by the distribution of programs the model induces from it.
+- That distribution is analysed and repaired with ordinary testing and program repair machinery.
+- Contrastive specification inference then edits the text based on how the distribution moved.
+- Splitting into these two steps avoids asking the model to introspect on its own ambiguity.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Four models: GPT-4o, GPT-4o-mini, DeepSeek-V3, Qwen2.5-Coder-32B-Instruct.
+- Three benchmarks: HumanEval+, MBPP+, LiveCodeBench.
+- 43.58% of descriptions modified; Pass@1 on that subset up 30.9%; 4.09% absolute overall.
+- Repairs transfer: descriptions repaired for one model improve others by 10.48%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: benchmark descriptions are short and self-contained, unlike industrial requirements.
+- Ours: a description edited to raise Pass@1 may have been made more specific than the author intended.
+- Ours: no check that the repaired description still describes the original task.
+- Authors: directly prompting for clarification produces irrelevant or inconsistent edits.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check repaired descriptions against the original intent, not only against downstream Pass@1.
+- Apply the distribution-shift view to formal specifications, where equivalence is decidable.
+- Test on requirements documents, where ambiguity has consequences beyond one function.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we decompose this task into two simpler steps: (1) analyzing and repairing the LLM's interpretation of the description - captured by the distribution of programs it induces - using traditional testing and program repair, and (2) refining the description based on distribution changes via a method we call contrastive specification inference" — abstract
+> "SpecFix modified 43.58% of descriptions, improving Pass@1 on the modified set by 30.9%. This yields a 4.09% absolute improvement across the entire benchmark." — abstract
+> "We find that directly prompting LLMs to clarify ambiguity often produces irrelevant or inconsistent edits." — abstract
 
 ### InferFix: End-to-End Program Repair with LLMs
 
@@ -1083,17 +1939,33 @@
 
 **Why included:** pairs the Infer static analyzer with a retriever over semantically equivalent past fixes and a fine-tuned generator, so bug type and a retrieved fix both condition the patch; deployed in Microsoft's CI
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Model-based repair learns general bug-fixing patterns from uncategorized public repository commits.
+- Security and performance bugs need the bug's type and a matching fix, not a generic pattern.
+- Deployment also needs detection, classification, and localization, which a generator does not supply.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - InferFix pairs the generator with the Infer static analyzer, which supplies detection and bug type.
+- A Retriever, pretrained contrastively, searches for semantically equivalent past bugs and their fixes.
+- The Generator is Codex Cushman fine-tuned on supervised bug-fix data.
+- Prompts carry the bug type annotation and the retrieved fix, so both analyser and memory condition it.
+- The retrieved fixes are external non-parametric memory, so new fix patterns need no retraining.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - InferredBugs: bugs extracted by running Infer over change histories of thousands of Java and C# repos.
+- Top-1 accuracy 65.6% in C# and 76.8% in Java, above strong LLM baselines.
+- Deployed with Infer at Microsoft, integrated into the continuous integration pipeline.
+- The dataset is built by the same analyser used at inference, so bug types are consistent by construction.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: coverage is bounded by what Infer reports; bugs it misses never reach the generator.
+- Ours: top-1 accuracy is measured against the historical fix, which is stricter and weaker than correctness.
+- Ours: the retriever's benefit is not isolated from the fine-tuning in the reported numbers.
+- Authors: prior models learn from uncategorized bugs, which is the gap the bug type annotation fills.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Ablate the retriever and the bug type annotation separately to see which conditions the generator.
+- Validate patches against Infer re-running, not only against the historical fix.
+- Report how the approach transfers to an analyser whose bug taxonomy differs from Infer's.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose InferFix: a transformer-based program repair framework paired with a state-of-the-art static analyzer to fix critical security and performance bugs" — abstract
+> "a Generator -- a large language model (Codex Cushman) finetuned on supervised bug-fix data with prompts augmented via bug type annotations and semantically similar fixes retrieved from an external non-parametric memory" — abstract
+> "InferFix outperforms strong LLM baselines, with a top-1 accuracy of 65.6% for generating fixes in C# and 76.8% in Java" — abstract
 
 ### ChatDBG: Augmenting Debugging with Large Language Models
 
@@ -1103,17 +1975,33 @@
 
 **Why included:** gives the model control of the debugger itself — it sets breakpoints, walks stacks, and inspects state through LLDB, GDB, or Pdb — so root-cause claims rest on observed program state rather than on reading source
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Debugging requires questions about program state that source text alone cannot answer.
+- A model reading source can only guess at runtime values such as why a variable is null.
+- Conventional debuggers expose that state but require the programmer to drive them.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ChatDBG gives the model control of the debugger rather than a transcript of it.
+- The model acts as an agent that queries and controls the debugger to navigate stacks and inspect state.
+- Root-cause claims therefore rest on observed program state, not on reading the source.
+- Control returns to the programmer once the model reports its findings.
+- It integrates with standard debuggers: LLDB and GDB for native code, Pdb for Python.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - C and C++ code with known bugs, plus Python scripts and Jupyter notebooks.
+- Python: a single query yields an actionable fix 67% of the time, 85% with one follow-up.
+- Adoption reported: over 75,000 downloads.
+- Not measured: how often the model's debugger commands are wrong, or the cost of a session.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the reported 67% and 85% are for Python only; the C and C++ result is stated qualitatively.
+- Ours: an actionable fix judged by the authors is not the same as a verified correct fix.
+- Ours: download count measures uptake, not correctness, and appears alongside the accuracy claims.
+- Authors: the approach depends on real-world knowledge embedded in the model for domain reasoning.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report per-language accuracy with an independent oracle, such as the project's test suite.
+- Measure whether debugger autonomy beats simply pasting a stack trace and locals into the prompt.
+- Instrument which debugger commands the agent issues, to find where autonomy pays.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ChatDBG grants the LLM autonomy to \"take the wheel\": it can act as an independent agent capable of querying and controlling the debugger to navigate through stacks and inspect program state" — abstract
+> "For the Python programs, a single query led to an actionable bug fix 67% of the time; one additional follow-up query increased the success rate to 85%." — abstract
+> "Our ChatDBG prototype integrates with standard debuggers including LLDB and GDB for native code and Pdb for Python." — abstract
 
 ### Abstain and Validate: A Dual-LLM Policy for Reducing Noise in Agentic Program Repair
 
@@ -1123,17 +2011,33 @@
 
 **Why included:** puts two gatekeeping policies around an agentic repair system — abstain on bugs it will likely fail, reject patches unlikely to be right — trading recall for reviewer trust; measured on Google's own bug streams
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Agentic repair now produces patches for repository-level bugs, but a human still reviews each one.
+- Patches that will be rejected cost reviewer time and erode trust in the whole system.
+- Raising patch quality is one route; not showing the bad ones is a separate, cheaper route.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Two gatekeeping policies wrap an existing repair system rather than changing how it generates.
+- Bug abstention drops bugs the system is unlikely to fix, before any patch is generated.
+- Patch validation rejects generated patches unlikely to fix the bug they target.
+- Both policies are themselves LLM-based, so the architecture is a model judging model output.
+- The two compose: filtering the input and the output attacks noise at both ends.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Three bug sets from Google's codebase, with patches from an internal agentic repair system.
+- On 174 human-reported bugs: up to 13 and 15 percentage points separately, 39 combined.
+- Patch validation also raises single-sample success on null pointer and sanitizer-reported bugs.
+- Not measured: how many real fixes the policies discard, which is the cost side of the trade.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: success rate rises partly by removing hard bugs, so it is not comparable to an unfiltered rate.
+- Ours: no false-abstention rate is reported, so the recall cost of the policies is unknown.
+- Ours: evaluation is on one company's internal system, so transfer is untested.
+- Authors: the patches still require human review; the policies reduce noise rather than remove review.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report precision and recall of the policies themselves, not only the downstream success rate.
+- Compare an LLM validator against running the test suite, which is a cheaper and sound signal.
+- Test whether abstention transfers across repair systems or is tuned to one generator's failures.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "We introduce two complementary LLM-based policies to reduce such noise: bug abstention and patch validation policies." — abstract
+> "removing bugs and patches rejected by our policies can raise success rates by up to 13 percentage points and 15 percentage points, respectively, and by up to 39 percentage points in combination" — abstract
+> "Showing patches unlikely to be accepted can lead to substantial noise, wasting valuable developer time and eroding trust in automated code changes." — abstract
 
 ## program-synthesis
 
@@ -1145,17 +2049,33 @@
 
 **Why included:** puts the model inside a weighted probabilistic enumerative search over SyGuS grammars: the enumerator reports its progress to the model and the model returns syntactic guidance, beating either component alone
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Formal synthesis from precise logical specifications is still won by enumerative algorithms.
+- Language models dominate synthesis from natural language but not from logical specifications.
+- A model used one-shot has no way to learn what the enumerator has already ruled out.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The model is placed inside a weighted probabilistic enumerative search, not in front of it.
+- Information flows both ways: the enumerator reports progress, the model returns syntactic guidance.
+- The loop iterates, so guidance is conditioned on the search state rather than on the problem alone.
+- One-shot synthesis is tried first; the integrated algorithm is the fallback when it fails.
+- The enumerator retains its completeness argument; the model only reweights the search.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Benchmarks from the Syntax-Guided Synthesis competition.
+- GPT-3.5 alone is easily outperformed by state-of-the-art formal synthesis algorithms.
+- The integration beats the model alone, the enumerator alone, and the winning SyGuS competition tool.
+- Reporting all three baselines is what makes the composition claim checkable.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: a stand-alone model is easily outperformed on formal synthesis benchmarks.
+- Ours: gains are reported qualitatively as significant, with no per-benchmark numbers in the abstract.
+- Ours: a library of prompts is crafted for the domain, so part of the result is prompt engineering.
+- Ours: SyGuS benchmarks are public and predate the model, so leakage is not addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report solve counts and times per SyGuS track, so the composition's cost is visible.
+- Test whether guidance still helps once the enumerator's grammar is unfamiliar to the model.
+- Apply the two-way loop to invariant synthesis, where the checker also reports partial progress.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose a novel enumerative synthesis algorithm, which integrates calls to an LLM into a weighted probabilistic search" — abstract
+> "This allows the synthesizer to provide the LLM with information about the progress of the enumerator, and the LLM to provide the enumerator with syntactic guidance in an iterative loop." — abstract
+> "our approach integrating the LLM into an enumerative synthesis algorithm shows significant performance gains over both the LLM and the enumerative synthesizer alone and the winning SyGuS competition tool" — abstract
 
 ### Copiloting the Copilots: Fusing Large Language Models with Completion Engines for Automated Program Repair
 
@@ -1165,17 +2085,34 @@
 
 **Why included:** constrains autoregressive decoding with a completion engine that prunes infeasible tokens and completes others, so patches are statically valid by construction rather than filtered afterwards
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Patches for real-world systems in general-purpose languages are hard to synthesize correctly.
+- Models treat programs as token sequences and ignore the language's semantic constraints.
+- The result is many statically invalid patches, which makes the technique impractical.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Repilot intervenes during decoding rather than filtering completed patches.
+- The insight is that autoregressive generation resembles typing, so a completion engine can assist it.
+- The completion engine prunes infeasible tokens the model suggests, before they are committed.
+- It also proactively completes tokens when its own suggestion set is determined.
+- Validity is therefore a property of the generation process, not of a post-hoc filter.
+- The approach generalizes past repair to other code generation tasks.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Subsets of Defects4J 1.2 and 2.0: 27% and 47% more bugs fixed than state-of-the-art techniques.
+- More valid and correct patches than the base model at the same budget.
+- Holding the budget fixed is what isolates the completion engine's contribution.
+- Not measured: decoding overhead from consulting the engine at each token.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: static validity is necessary, not sufficient; a compiling patch can still be wrong.
+- Ours: Defects4J correctness is judged by the test suite, which admits overfitted patches.
+- Ours: the completion engine is language-specific, so each new language needs one.
+- Authors: models are ignorant of the target language's semantic constraints, which is the premise.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report per-token decoding overhead, since the engine is consulted throughout generation.
+- Extend the pruning signal past syntax and types to a lightweight semantic check.
+- Compare against constrained decoding with a grammar, which is the cheaper alternative.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "most LLMs treat programs as sequences of tokens, meaning that they are ignorant of the underlying semantics constraints of the target programming language. This results in plenty of statically invalid generated patches" — abstract
+> "Repilot synergistically synthesizes a candidate patch through the interaction between an LLM and a Completion Engine, which 1) prunes away infeasible tokens suggested by the LLM and 2) proactively completes the token based on the suggestions provided by the Completion Engine." — abstract
+> "Repilot outperforms state-of-the-art techniques by fixing 27% and 47% more bugs, respectively" — abstract
 
 ### Automated Repair of Ambiguous Problem Descriptions for LLM-Based Code Generation
 
@@ -1185,17 +2122,33 @@
 
 **Why included:** repairs the natural-language description rather than the program: it treats the distribution of programs a description induces as the object to test and repair, then infers a description edit contrastively from how that distribution moves
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - An ambiguous problem description yields an incorrect program, and the description is never blamed.
+- Prompting a model to clarify its own ambiguity produces irrelevant or inconsistent edits.
+- Repairing text requires knowing how the model's reading shifts when the text changes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecFix repairs the description rather than the program, which inverts the usual repair target.
+- A description is represented by the distribution of programs the model induces from it.
+- That distribution is analysed and repaired with ordinary testing and program repair machinery.
+- Contrastive specification inference then edits the text based on how the distribution moved.
+- Splitting into these two steps avoids asking the model to introspect on its own ambiguity.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Four models: GPT-4o, GPT-4o-mini, DeepSeek-V3, Qwen2.5-Coder-32B-Instruct.
+- Three benchmarks: HumanEval+, MBPP+, LiveCodeBench.
+- 43.58% of descriptions modified; Pass@1 on that subset up 30.9%; 4.09% absolute overall.
+- Repairs transfer: descriptions repaired for one model improve others by 10.48%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: benchmark descriptions are short and self-contained, unlike industrial requirements.
+- Ours: a description edited to raise Pass@1 may have been made more specific than the author intended.
+- Ours: no check that the repaired description still describes the original task.
+- Authors: directly prompting for clarification produces irrelevant or inconsistent edits.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check repaired descriptions against the original intent, not only against downstream Pass@1.
+- Apply the distribution-shift view to formal specifications, where equivalence is decidable.
+- Test on requirements documents, where ambiguity has consequences beyond one function.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we decompose this task into two simpler steps: (1) analyzing and repairing the LLM's interpretation of the description - captured by the distribution of programs it induces - using traditional testing and program repair, and (2) refining the description based on distribution changes via a method we call contrastive specification inference" — abstract
+> "SpecFix modified 43.58% of descriptions, improving Pass@1 on the modified set by 30.9%. This yields a 4.09% absolute improvement across the entire benchmark." — abstract
+> "We find that directly prompting LLMs to clarify ambiguity often produces irrelevant or inconsistent edits." — abstract
 
 ### Nuances are the Key: Unlocking ChatGPT to Find Failure-Inducing Tests with Differential Prompting
 
@@ -1205,17 +2158,33 @@
 
 **Why included:** synthesises a reference implementation from the buggy program's inferred intent and then differentially tests the pair, converting a subtle-difference problem the model fails at into one it can solve
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Finding a failure-inducing test needs both an input that triggers the fault and an oracle.
+- ChatGPT alone finds a correct failure-inducing test only 28.8% of the time.
+- The task turns on subtle differences between the buggy program and its correct version.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The diagnosis is specific: the model is weak at spotting subtle differences between similar syntax.
+- The countervailing observation is that the model infers a buggy program's intended behaviour well.
+- So the intended behaviour is used to synthesize a second program that realises it.
+- The difference between the buggy program and the synthesized one is then explicit, not subtle.
+- Differential testing over the pair supplies the oracle the model could not construct.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Quixbugs, against baselines including direct ChatGPT use and Pynguin.
+- 77.8% of cases yield a correct failure-inducing test, 2.7 times the best baseline.
+- The 28.8% baseline is measured in the same study, so the comparison is internally consistent.
+- Not measured: whether the synthesized reference program is itself correct.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: ChatGPT is weak at recognizing subtle code differences when two versions share syntax.
+- Ours: the oracle is only as good as the synthesized program, which has no independent check.
+- Ours: Quixbugs programs are small and single-function, so scale is untested.
+- Ours: the method needs a buggy program whose intent the model can infer, which excludes novel domains.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate the synthesized reference against a specification, so a wrong reference cannot produce a wrong oracle.
+- Synthesize several references and require agreement, which is the redundancy idea from autoformalization.
+- Test on multi-function bugs where intended behaviour is distributed across the program.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "our study shows that ChatGPT has a low probability (28.8%) of finding correct failure-inducing test cases for buggy programs" — abstract
+> "The intended behavior can be leveraged to synthesize programs, in order to make the subtle code difference between a buggy program and its correct version (i.e., the synthesized program) explicit." — abstract
+> "our approach has a much higher probability (77.8%) of finding correct failure-inducing test cases, 2.7X as the best baseline" — abstract
 
 ### SolSearch: An LLM-Driven Framework for Efficient SAT-Solving Code Generation
 
@@ -1225,17 +2194,33 @@
 
 **Why included:** inverts the usual arrangement — the LLM rewrites the solver's own code under a curriculum, improving Z3's PAR-2 by 11%, so the model is a search heuristic over solver implementations rather than a proposer of answers
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - SAT solving underlies automated testing, configuration management, and program verification.
+- Solver heuristics are hand-designed, and improving them is slow expert work.
+- Model-based work targets the problems given to solvers, not the solvers themselves.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SolSearch inverts the usual arrangement: the model edits the solver, not the query.
+- The model iteratively modifies and generates SAT solver code to improve solving efficiency.
+- A curriculum-based trial-and-error process supplies the training signal.
+- The result is plug-and-play: any SAT solver can be the starting point.
+- The model's output is code that runs without the model, so inference cost stays offline.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Improves state-of-the-art SAT solvers on general SAT benchmarks.
+- Z3 improves by 11% on PAR-2 score.
+- The authors describe the results as preliminary.
+- Not reported: search cost, number of curriculum rounds, or variance across runs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: the experimental results are preliminary and future work is needed to validate them.
+- Ours: PAR-2 on general benchmarks can improve by overfitting to that benchmark distribution.
+- Ours: no check that the modified solver remains sound, which is the risk when editing a solver.
+- Ours: a four-page New Ideas paper, so the evaluation is thin against the claim's reach.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check the modified solver against a proof checker, so an unsound speedup cannot pass.
+- Report held-out benchmark families to separate real gains from distribution fitting.
+- Apply the same loop to SMT theory solvers, where hand-tuned heuristics are also the bottleneck.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Leveraging a curriculum-based, trial-and-error process, SolSearch enables the LLM to iteratively modify and generate SAT solver code, thereby improving solving efficiency and performance." — abstract
+> "Our preliminary experimental results are encouraging by demonstrating that the LLM-powered paradigm improves state-of-the-art SAT solvers on general SAT benchmarks and significantly enhances the performance of the widely used Z3 solver" — abstract
+> "This automated SAT-solving paradigm has the advantage of being plug-and-play, allowing integration with any SAT solver" — abstract
 
 ## proof-automation
 
@@ -1247,17 +2232,34 @@
 
 **Why included:** argues the fixed human-designed proof strategy is the limit, not the model: a general code agent choosing its own approach inside a harness enforcing soundness, completeness, and termination proves all 4,257 Iris core lemmas
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Interactive theorem proving does not scale: Coq proofs demand enormous expert effort.
+- Existing LLM provers hardwire a human-designed proof strategy and force the model to follow it.
+- Step-wise tactic prediction and divide-and-conquer both prove only a fraction of their targets.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Aria's claim is negative and structural: the imposed strategy is what limits the prior systems.
+- A general code agent receives the whole lemma and chooses its own approach.
+- A verification harness supplies feedback and hard constraints instead of a proof strategy.
+- The harness enforces three properties: soundness, completeness, and termination.
+- Soundness means acceptance only when the prover's kernel closes the proof, so the agent cannot bluff.
+- Completeness means no obligation may be left unproved or silently dropped.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Iris core logic: all 4,257 lemmas of four core modules proved, plus 217 for Rust's standard libraries.
+- reglang: all 318 lemmas proved, where prior provers manage roughly one in eight.
+- iris-lean: 72 not-yet-ported lemmas proved, so the approach is not Coq-specific.
+- No Coq expert intervention is reported for any of the three.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: full coverage on a chosen corpus is not the same as full coverage on arbitrary lemmas.
+- Ours: no cost per lemma is reported, and a frontier model with agent scaffolding is expensive.
+- Ours: Iris lemmas come with an existing proof in the repository, so leakage is not ruled out.
+- Authors: the result is tied to a state-of-the-art model, which they name explicitly.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report token and wall-clock cost per lemma, so the harness can be compared against step-wise provers.
+- Run on lemmas with no published proof, which removes the leakage question the corpora raise.
+- Test which of the three harness constraints is doing the work by relaxing each in turn.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "existing approaches wire a fixed, human-designed proof strategy into the system and constrain the model to follow it (retrieving premises and predicting tactics one step at a time, or splitting goals by divide-and-conquer), and still prove only a fraction of their target theorems" — abstract
+> "The agent writes the proofs under feedback and hard constraints from the harness that keep each one sound (accepted only when the prover's kernel closes it), complete (no obligation left unproved or silently dropped), and terminating (no divergent tactics)." — abstract
+> "Aria proves all 4,257 lemmas of the four core modules and the 217 lemmas verifying Rust's standard libraries built on it, fully automatically" — abstract
 
 ### VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
 
@@ -1267,17 +2269,34 @@
 
 **Why included:** seed paper — a planner orchestrates abstractions, type invariants, specifications, and proof code for a whole data-structure module, with a repair stage for Verus annotation errors
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - AI-assisted verification had been demonstrated on single functions, not on modules.
+- A data-structure module needs abstractions and type invariants before any function can be verified.
+- Models misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - VeriStruct raises the unit of verification from the function to the data-structure module.
+- A planner module orchestrates generation in order: abstractions, type invariants, specifications, proofs.
+- Ordering matters because later artefacts depend on the abstractions chosen earlier.
+- Syntax guidance is embedded in prompts to address the Verus-specific misunderstanding directly.
+- A repair stage corrects annotation errors automatically, so syntax failures do not end the run.
+- Verus itself decides success, so the framework never certifies its own output.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Eleven Rust data structure modules; VeriStruct succeeds on ten.
+- 128 of 129 functions verified, 99.2%.
+- Verification is by Verus, so the pass criterion is machine-checked rather than judged.
+- Not measured: specification strength, so a weak invariant that verifies still counts as success.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: eleven modules is a small evaluation for a 99.2% figure.
+- Ours: verifying against generated specifications risks specifications weak enough to be easy.
+- Ours: no comparison against a function-at-a-time baseline on the same modules.
+- Authors: models often misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure specification strength, for example by mutating the data structure and checking that proofs break.
+- Scale past eleven modules and report where the planner's ordering assumption fails.
+- Compare against verifying each function separately, to isolate what module-level planning buys.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "VeriStruct employs a planner module to orchestrate the systematic generation of abstractions, type invariants, specifications, and proof code." — abstract
+> "To address the challenge that LLMs often misunderstand Verus' annotation syntax and verification-specific semantics, VeriStruct embeds syntax guidance within prompts and includes a repair stage to automatically correct annotation errors." — abstract
+> "In an evaluation on eleven Rust data structure modules, VeriStruct succeeds on ten of the eleven, successfully verifying 128 out of 129 functions (99.2%) in total." — abstract
 
 ### A Learning Method for Symbolic Systems Using Large Language Models
 
@@ -1287,17 +2306,33 @@
 
 **Why included:** mines reusable Ltac tactics from a proof corpus and integrates the validated ones into symbolic provers, so the model is paid for once offline and never runs at proving time; CoqHammer proves 23.87% more theorems
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - End-to-end neural provers are expensive to run and opaque about why a proof succeeded.
+- Symbolic provers are cheap and inspectable but cannot improve themselves from a proof corpus.
+- Nothing connects the two: the corpus of formal proofs does not feed back into the symbolic tools.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - LLM2Ltac uses the model as a synthesizer of tactics, not as a prover.
+- It asks the model to identify latent proof strategies in a corpus and formalize them as tactics.
+- Mined tactics are checked for validity and generalizability before they are kept.
+- Surviving tactics are integrated into symbolic provers, so proving costs no model calls.
+- The model is paid for once, offline; the improvement it produces is a permanent symbolic artifact.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Tactics mined from 11,725 theorems in the Rocq 8.20.0 standard library.
+- Evaluated on 6,199 theorems from compcert, Coq-Art, Ext-Lib, and VFA.
+- CoqHammer proves 23.87% more theorems with the mined tactics.
+- Improved CoqHammer combined with Claude Code raises the total proved by a further 9.90%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: mining and evaluation both draw on Rocq, so cross-prover transfer is untested.
+- Ours: no count of mined tactics or of those rejected by the validity check is reported.
+- Ours: gains are relative to CoqHammer, not to an end-to-end neural prover on the same theorems.
+- Authors: end-to-end LLM provers are resource-intensive and opaque, the cost this design avoids.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report how many mined tactics survive validation, which measures the yield of the mining step.
+- Mine tactics from project corpora rather than the standard library, and test domain specialization.
+- Compare against retrieval-based proving on equal compute, since both reuse a corpus.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "LLM2Ltac, the first approach that leverages the reasoning power of LLMs not as end-to-end provers, but as intelligent synthesizers to mine purely symbolic tactics from data" — abstract
+> "These tactics are verified for validity and generalizability, and finally integrated into symbolic provers to enhance their automated proving capabilities without the runtime cost of LLMs." — abstract
+> "Results show that the mined tactics improve CoqHammer to prove 23.87% more theorems" — abstract
 
 ### Proof Automation with Large Language Models
 
@@ -1307,17 +2342,33 @@
 
 **Why included:** a formative study of 520 GPT-3.5 errors shows the high-level proof structure is usually right and the low-level details wrong, so the technique keeps the generated skeleton and repairs details with targeted symbolic methods
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Coq guarantees correctness but demands manual effort and expertise.
+- Models write informal proofs well and formal proofs badly, and the reason was not established.
+- Without knowing which part fails, a system cannot decide what to automate and what to check.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - A formative study of 520 GPT-3.5 proof errors supplies the design premise rather than an intuition.
+- The finding: the high-level proof structure is usually right, the low-level details usually wrong.
+- PALM therefore generates a whole proof first, then repairs it, rather than predicting tactic by tactic.
+- Repair uses targeted symbolic methods, so the corrections come from the prover, not the model.
+- Repair iterates, so each symbolic fix exposes the next low-level defect.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - More than 10K theorems.
+- 76.6% to 180.4% more theorems proved than state-of-the-art approaches.
+- 1270 theorems proved that existing approaches cannot reach.
+- Generalizability shown across different LLMs, which separates the method from one model.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the formative study used GPT-3.5, so the structure-right details-wrong premise may not hold later.
+- Ours: the repair methods are targeted, so unfamiliar low-level failures fall outside their reach.
+- Ours: percentage ranges without absolute counts make the baselines hard to place.
+- Authors: models are less effective at formal proofs than at informal ones, the gap being attacked.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Repeat the error study on a current model to test whether the structure-details split survives.
+- Compare generate-then-repair against agent-driven proving on the same corpus and compute budget.
+- Report which symbolic repair rules fire most, which shows where models still fail systematically.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "By analyzing 520 proof generation errors made by GPT-3.5, we found that GPT-3.5 often identified the correct high-level structure of a proof, but struggled to get the lower-level details correct." — abstract
+> "we propose PALM, a novel generate-then-repair approach that first prompts an LLM to generate an initial proof and then leverages targeted symbolic methods to iteratively repair low-level problems" — abstract
+> "PALM significantly outperforms other state-of-the-art approaches, successfully proving 76.6% to 180.4% more theorems" — abstract
 
 ### Rango: Adaptive Retrieval-Augmented Proving for Automated Software Verification
 
@@ -1327,17 +2378,33 @@
 
 **Why included:** retrieves both premises and similar proofs from the same project at every proof step, so the context tracks the evolving proof state instead of being fixed once per theorem; retrieving proofs alone adds 47%
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Coq verification needs proofs, and writing them needs expertise and manual effort.
+- Prior work shows relevant premises aid synthesis, but selecting them once per theorem is static.
+- A proof's context needs change as the proof state evolves, and a fixed context cannot track that.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Rango retrieves at every step of the proof, not once per theorem.
+- It retrieves two things: relevant premises, and similar proofs from the same project.
+- Retrieving proofs, not only lemmas, is the part prior premise-selection work omitted.
+- The retrieved context therefore adapts to the project and to the evolving proof state.
+- The retriever feeds a fine-tuned model, so retrieval and generation are trained together.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - CoqStoq: 2,226 open-source Coq projects and 196,929 theorems from GitHub.
+- On the curated benchmark of well-maintained projects, Rango proves 32.0% of theorems.
+- That is 29% more theorems than Tactician, the prior state of the art.
+- Ablation: adding relevant proofs to the context raises theorems proven by 47%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 32.0% leaves two thirds of theorems unproved, so the absolute level remains low.
+- Ours: training and evaluation both come from CoqStoq, so project-level overlap needs care.
+- Ours: per-step retrieval costs a retrieval query per tactic, and no cost figure is given.
+- Authors: verification requires significant expertise and manual effort, which this reduces rather than removes.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Report retrieval cost per proof, since the per-step design multiplies queries by proof length.
+- Test on projects absent from CoqStoq to separate adaptation from memorisation.
+- Compare per-step retrieval against handing whole lemmas to an agent, as Aria does.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Rango uses retrieval augmentation at every step of the proof to automatically determine which proofs and premises to include in the context of its fine-tuned LLM. In this way, Rango adapts to the project and to the evolving state of the proof." — abstract
+> "Rango synthesizes proofs for 32.0% of the theorems, which is 29% more theorems than the prior state-of-the-art tool Tactician" — abstract
+> "Rango adding relevant proofs to its context leads to a 47% increase in the number of theorems proven" — abstract
 
 ### A Neurosymbolic Approach to Natural Language Formalization and Verification
 
@@ -1347,17 +2414,33 @@
 
 **Why included:** runs several redundant formalizations of a policy at inference time and cross-checks them for semantic equivalence, so disagreement between formalizations is the signal that the translation is untrusted
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Regulated industries cannot deploy an LLM that offers no formal correctness guarantee.
+- Policies are written in natural language; checking a statement against one needs a formalization.
+- A single formalization is a silent failure point: nothing detects that it misreads the policy.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ARc splits the job: formalize the policy once, then check statements against that formalization.
+- Formalization is done several times redundantly, and the results checked for semantic equivalence.
+- Disagreement between redundant formalizations is the signal that the translation is untrusted.
+- Human guidance is optional and applies to the formalization step, not to each verification.
+- Every outcome carries an auditable artifact, so a decision can be re-examined after the fact.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Benchmarks report over 99% soundness and a near-zero false positive rate on logical validity.
+- Deployed as a public cloud service, which the authors call the first such commercial offering.
+- Not measured: how often redundant formalization abstains, or the cost of that abstention.
+- No baseline against a single-formalization pipeline is reported in the abstract.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: adoption is limited by the absence of formal correctness guarantees in the model itself.
+- Ours: soundness is reported against the formalized policy, not against the English one.
+- Ours: semantic equivalence across formalizations detects disagreement, not shared misreading.
+- Ours: the abstract gives no benchmark size, so the 99% figure has no denominator here.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure how many independent formalizations are needed before agreement stops being informative.
+- Apply redundant formalization to code specifications, where an oracle for equivalence exists.
+- Report the abstention rate alongside soundness; a sound checker that abstains often is cheap.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ARc performs multiple redundant formalization steps at inference time, checking the formalizations for semantic equivalence." — abstract
+> "Our benchmarks show that ARc exceeds 99% soundness and achieves a near-zero false positive rate in identifying logical validity." — abstract
+> "their lack of formal correctness guarantees limits their adoption in regulated industries" — abstract
 
 ## specification
 
@@ -1369,17 +2452,34 @@
 
 **Why included:** infers the intended behaviour iteratively alongside code search, then has a reviewer agent vet each patch against that inferred specification and attach a confidence to it, so patches carry an explanation a developer can check
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Repair needs a specification of intended behaviour, and a GitHub issue is not one.
+- An agent that searches code and edits it never states what behaviour it was aiming for.
+- Without a stated intent, a developer cannot tell a good patch from a plausible one.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecRover interleaves specification inference with the code search, rather than running it once.
+- Intent is inferred from both project structure and program behaviour.
+- A separate reviewer agent vets patches against that inferred intent.
+- The reviewer also attaches a confidence measure, so patches arrive ranked by credibility.
+- The explanation produced is the signal the developer reads, not the patch alone.
+- Built on the open-source AutoCodeRover agent, so the delta is the specification machinery.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Full SWE-Bench, 2294 GitHub issues: more than 50% improvement in efficacy over AutoCodeRover.
+- Cost about $0.65 per issue on SWE-Bench lite, modest against comparable open-source agents.
+- Building on a named baseline agent makes the improvement attributable.
+- Not measured: whether the inferred specification is correct, only whether patches improve.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: SWE-Bench issues predate model training cutoffs, so leakage is a standing concern.
+- Ours: resolution on SWE-Bench means the project's tests pass, which is a weak specification oracle.
+- Ours: the reviewer agent shares a model family with the patcher, so its errors may correlate.
+- Authors: the work is positioned as demonstrating that specification inference still matters.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Score inferred specifications directly against maintainer-written descriptions of intended behaviour.
+- Use a reviewer from a different model family to test whether correlated errors inflate confidence.
+- Report calibration of the confidence measure, which is what a developer would act on.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "In this work, we examine efficient and low-cost workflows for iterative specification inference within an LLM agent." — abstract
+> "The intent thus captured is examined by a reviewer agent with the goal of vetting the patches as well as providing a measure of confidence in the vetted patches." — abstract
+> "In an evaluation on the full SWE-Bench consisting of 2294 GitHub issues, it shows more than 50% improvement in efficacy over AutoCodeRover." — abstract
 
 ### VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
 
@@ -1389,17 +2489,34 @@
 
 **Why included:** seed paper — a planner orchestrates abstractions, type invariants, specifications, and proof code for a whole data-structure module, with a repair stage for Verus annotation errors
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - AI-assisted verification had been demonstrated on single functions, not on modules.
+- A data-structure module needs abstractions and type invariants before any function can be verified.
+- Models misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - VeriStruct raises the unit of verification from the function to the data-structure module.
+- A planner module orchestrates generation in order: abstractions, type invariants, specifications, proofs.
+- Ordering matters because later artefacts depend on the abstractions chosen earlier.
+- Syntax guidance is embedded in prompts to address the Verus-specific misunderstanding directly.
+- A repair stage corrects annotation errors automatically, so syntax failures do not end the run.
+- Verus itself decides success, so the framework never certifies its own output.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Eleven Rust data structure modules; VeriStruct succeeds on ten.
+- 128 of 129 functions verified, 99.2%.
+- Verification is by Verus, so the pass criterion is machine-checked rather than judged.
+- Not measured: specification strength, so a weak invariant that verifies still counts as success.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: eleven modules is a small evaluation for a 99.2% figure.
+- Ours: verifying against generated specifications risks specifications weak enough to be easy.
+- Ours: no comparison against a function-at-a-time baseline on the same modules.
+- Authors: models often misunderstand Verus annotation syntax and verification-specific semantics.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure specification strength, for example by mutating the data structure and checking that proofs break.
+- Scale past eleven modules and report where the planner's ordering assumption fails.
+- Compare against verifying each function separately, to isolate what module-level planning buys.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "VeriStruct employs a planner module to orchestrate the systematic generation of abstractions, type invariants, specifications, and proof code." — abstract
+> "To address the challenge that LLMs often misunderstand Verus' annotation syntax and verification-specific semantics, VeriStruct embeds syntax guidance within prompts and includes a repair stage to automatically correct annotation errors." — abstract
+> "In an evaluation on eleven Rust data structure modules, VeriStruct succeeds on ten of the eleven, successfully verifying 128 out of 129 functions (99.2%) in total." — abstract
 
 ### ConVer: Using Contracts and Loop Invariant Synthesis for Scalable Formal Software Verification
 
@@ -1409,17 +2526,35 @@
 
 **Why included:** synthesises function contracts from the top-level property so bounded model checking can decompose instead of unrolling, and refines them inside a CEGAR-CEGIS loop with ICE learning when a check fails
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Bounded model checking of large C programs hits state-space explosion.
+- The tool must encode the whole state space up to the bound by unrolling every nested construct.
+- Compositional verification avoids this but needs function contracts, which nobody writes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ConVer synthesises the missing contracts with an LLM, taking the top-level assertion as the goal.
+- Verification then decomposes top-down instead of unrolling bottom-up.
+- System-level and function-level checks alternate inside a CEGAR-CEGIS loop.
+- A failed check refines the contracts through SMART ICE learning, so failure is informative.
+- The model proposes; the model checker and the learner decide, so no contract is trusted unchecked.
+- ESBMC-LF converts Lingua Franca models to C, extending the tool's reach to that benchmark family.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Frama-C benchmark, 45 simple C programs: 82-96% success across three LLM backends.
+- 93-95% of converged programs need only one CEGAR-CEGIS iteration.
+- X.509 parser: 33-50% on 6 programs. LF2C-Simple: 82-88% on 17 programs.
+- VerifyThis, 11 recursive and loop-intensive programs: 55-64% with the Pre-Abstraction strategy.
+- LF-Hard, transpiled from the LF Verifier Benchmarks: 67% verified.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: success drops from 82-96% on simple programs to 33-50% on the X.509 parser.
+- Ours: the harder suites hold 6 to 17 programs, so those percentages rest on few cases.
+- Ours: three backends give a range, which shows the result depends on the model chosen.
+- Authors: state-space explosion is the premise, and the top-down split is what avoids it.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Characterise which program shapes defeat contract synthesis, since the X.509 gap is the informative one.
+- Compare ICE learning against feeding the counterexample straight back to the model.
+- Report verification time, since the single-iteration convergence claim implies a cost argument.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "it uses a large language model (LLM) to synthesise function contracts from the system property, then alternates system-level and function-level checks in a CEGAR-CEGIS loop, refining contracts whenever a check fails via SMART ICE learning" — abstract
+> "On the Frama-C benchmark of 45 simple C programs, ConVer achieves 82-96% verification success across three LLM backends, with 93-95% of converged programs requiring only a single CEGAR-CEGIS iteration." — abstract
+> "Formal verification of large C programs is impeded by state-space explosion" — abstract
 
 ### Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification
 
@@ -1429,17 +2564,34 @@
 
 **Why included:** decomposes the program to focus the model, then validates each candidate specification against the verifier every round so errors cannot accumulate across the interaction; verifies 79% of programs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - A full proof needs specifications, and writing them takes domain expertise and manpower.
+- Existing synthesis is narrow: loop invariants for numerical programs, or one program family.
+- Arrays, pointers, nested loops, and function calls fall outside those approaches.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - AutoSpec is driven by static analysis and program verification, with the model as generator.
+- Programs are decomposed so the model attends to one part at a time.
+- Candidate specifications are validated every round, not once at the end.
+- Per-round validation is what stops errors accumulating across a long interaction.
+- The loop is incremental: each validated specification becomes context for the next.
+- The target is satisfiable and adequate specifications, so both directions of failure are named.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 79% of programs verified through automatic specification synthesis.
+- A 1.592x improvement over existing work.
+- Applied to a real-world X509-parser project, not only to benchmarks.
+- Not reported in the abstract: the benchmark size behind the 79%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: adequacy is checked by whether the proof closes, which a weak specification can also achieve.
+- Ours: no ablation separates decomposition from per-round validation.
+- Ours: the abstract gives no runtime, and per-round validation implies repeated verifier calls.
+- Authors: existing automated approaches are limited in versatility, which is the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Separate the contributions of decomposition and per-round validation with an ablation.
+- Measure specification adequacy independently, for example against mutants of the program.
+- Compare against ConVer's CEGAR-CEGIS refinement on the same C programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "AutoSpec addresses the practical challenges in three ways: (1) driving \\name by static analysis and program verification, LLMs serve as generators to generate candidate specifications, (2) programs are decomposed to direct the attention of LLMs, and (3) candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs." — abstract
+> "it outperforms existing works by successfully verifying 79% of programs through automatic specification synthesis, a significant improvement of 1.592x" — abstract
+> "It can also be successfully applied to verify the programs in a real-world X509-parser project." — abstract
 
 ### A Neurosymbolic Approach to Natural Language Formalization and Verification
 
@@ -1449,17 +2601,33 @@
 
 **Why included:** runs several redundant formalizations of a policy at inference time and cross-checks them for semantic equivalence, so disagreement between formalizations is the signal that the translation is untrusted
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Regulated industries cannot deploy an LLM that offers no formal correctness guarantee.
+- Policies are written in natural language; checking a statement against one needs a formalization.
+- A single formalization is a silent failure point: nothing detects that it misreads the policy.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - ARc splits the job: formalize the policy once, then check statements against that formalization.
+- Formalization is done several times redundantly, and the results checked for semantic equivalence.
+- Disagreement between redundant formalizations is the signal that the translation is untrusted.
+- Human guidance is optional and applies to the formalization step, not to each verification.
+- Every outcome carries an auditable artifact, so a decision can be re-examined after the fact.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Benchmarks report over 99% soundness and a near-zero false positive rate on logical validity.
+- Deployed as a public cloud service, which the authors call the first such commercial offering.
+- Not measured: how often redundant formalization abstains, or the cost of that abstention.
+- No baseline against a single-formalization pipeline is reported in the abstract.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: adoption is limited by the absence of formal correctness guarantees in the model itself.
+- Ours: soundness is reported against the formalized policy, not against the English one.
+- Ours: semantic equivalence across formalizations detects disagreement, not shared misreading.
+- Ours: the abstract gives no benchmark size, so the 99% figure has no denominator here.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Measure how many independent formalizations are needed before agreement stops being informative.
+- Apply redundant formalization to code specifications, where an oracle for equivalence exists.
+- Report the abstention rate alongside soundness; a sound checker that abstains often is cheap.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "ARc performs multiple redundant formalization steps at inference time, checking the formalizations for semantic equivalence." — abstract
+> "Our benchmarks show that ARc exceeds 99% soundness and achieves a near-zero false positive rate in identifying logical validity." — abstract
+> "their lack of formal correctness guarantees limits their adoption in regulated industries" — abstract
 
 ### nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models
 
@@ -1469,17 +2637,33 @@
 
 **Why included:** maps each subformula of the temporal-logic translation back to the natural-language fragment it came from, so ambiguity surfaces as an editable sub-translation instead of a wrong formula the user must redraft
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Verification needs a formal specification, and writing one by hand is slow and error-prone.
+- Natural language requirements are ambiguous, so any single translation silently picks one reading.
+- When a whole formula is wrong, the user's only recourse is to redraft it from scratch.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - nl2spec derives temporal logic formulas from unstructured natural language with an LLM.
+- Its methodology maps each subformula back to the natural language fragment it came from.
+- These sub-translations make ambiguity visible at the point where the reading was chosen.
+- The user adds, deletes, and edits sub-translations rather than rewriting the formalization.
+- The framework is domain-agnostic and extends to other specification languages and models.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - A user study supplies a challenging dataset, which then drives translation-quality experiments.
+- Open-source implementation with a web frontend is provided.
+- Not measured in the abstract: how much the sub-translation interface reduces user effort.
+- The dataset is built by the same study that motivates the tool, so it is not independent.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: this is interactive, not automatic; the user remains in the loop for every ambiguity.
+- Ours: a sub-translation is only as trustworthy as the mapping the model produced for it.
+- Ours: no accuracy figure appears in the abstract, only the existence of experiments.
+- Authors: writing formal specifications remains error-prone and time-consuming, the premise they attack.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Compare sub-translation editing against whole-formula redrafting in a controlled user study.
+- Check sub-translations against each other for consistency, as ARc does for whole formalizations.
+- Apply the mapping idea to code contracts, where the fragment is a statement rather than a phrase.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we utilize LLMs to map subformulas of the formalization back to the corresponding natural language fragments of the input" — abstract
+> "Users iteratively add, delete, and edit these sub-translations to amend erroneous formalizations, which is easier than manually redrafting the entire formalization." — abstract
+> "We perform a user study to obtain a challenging dataset, which we use to run experiments on the quality of translations." — abstract
 
 ### PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
 
@@ -1489,17 +2673,34 @@
 
 **Why included:** retrieves human-written Certora properties as in-context references, then closes three separate loops on the output: compilation and static analysis feedback for validity, similarity ranking for relevance, and a dedicated prover for correctness; 12 zero-days
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Formal verification of smart contracts needs properties, and writing them is expert work.
+- Human-written properties exist in audit reports but are tied to the contracts they were written for.
+- A generated property is useless unless it compiles, suits the code, and can be verified.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PropertyGPT embeds existing human-written properties in a vector database and retrieves references.
+- Retrieval-augmented in-context learning transfers an audited property to unknown code.
+- Three separate loops close on the three failure modes rather than one generic retry.
+- Compilation and static analysis feedback act as an external oracle for iterative revision.
+- Similarity along several dimensions ranks candidates, and a weighted algorithm keeps the top-K.
+- A dedicated prover formally verifies the surviving properties.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 80% recall against ground-truth properties.
+- 26 of 37 tested CVEs and attack incidents detected.
+- 12 zero-day vulnerabilities found, earning $8,256 in bug bounties.
+- Bounty-confirmed zero-days are an external oracle few papers in this set report.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: recall is measured against a ground-truth property set, so novel property shapes are invisible.
+- Ours: the approach needs an existing corpus of audited properties, which few domains have.
+- Ours: 26 of 37 CVEs means 11 were missed, and the abstract does not characterise them.
+- Authors: ensuring properties are compilable, appropriate, and verifiable is the stated challenge.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Test transfer to a domain with no audit corpus, which is where the retrieval premise breaks.
+- Ablate the three loops to see which of compilation feedback, ranking, or proving carries the result.
+- Measure the false positive cost of the properties that the prover accepts but no bug violates.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we embed existing properties into a vector database and retrieve a reference property for LLM-based in-context learning to generate a new property for a given code" — abstract
+> "we use the compilation and static analysis feedback as an external oracle to guide LLMs in iteratively revising the generated properties" — abstract
+> "It successfully detected 26 CVEs/attack incidents out of 37 tested and also uncovered 12 zero-day vulnerabilities, leading to $8,256 in bug bounty rewards." — abstract
 
 ### Automated Repair of Ambiguous Problem Descriptions for LLM-Based Code Generation
 
@@ -1509,17 +2710,33 @@
 
 **Why included:** repairs the natural-language description rather than the program: it treats the distribution of programs a description induces as the object to test and repair, then infers a description edit contrastively from how that distribution moves
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - An ambiguous problem description yields an incorrect program, and the description is never blamed.
+- Prompting a model to clarify its own ambiguity produces irrelevant or inconsistent edits.
+- Repairing text requires knowing how the model's reading shifts when the text changes.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecFix repairs the description rather than the program, which inverts the usual repair target.
+- A description is represented by the distribution of programs the model induces from it.
+- That distribution is analysed and repaired with ordinary testing and program repair machinery.
+- Contrastive specification inference then edits the text based on how the distribution moved.
+- Splitting into these two steps avoids asking the model to introspect on its own ambiguity.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Four models: GPT-4o, GPT-4o-mini, DeepSeek-V3, Qwen2.5-Coder-32B-Instruct.
+- Three benchmarks: HumanEval+, MBPP+, LiveCodeBench.
+- 43.58% of descriptions modified; Pass@1 on that subset up 30.9%; 4.09% absolute overall.
+- Repairs transfer: descriptions repaired for one model improve others by 10.48%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: benchmark descriptions are short and self-contained, unlike industrial requirements.
+- Ours: a description edited to raise Pass@1 may have been made more specific than the author intended.
+- Ours: no check that the repaired description still describes the original task.
+- Authors: directly prompting for clarification produces irrelevant or inconsistent edits.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check repaired descriptions against the original intent, not only against downstream Pass@1.
+- Apply the distribution-shift view to formal specifications, where equivalence is decidable.
+- Test on requirements documents, where ambiguity has consequences beyond one function.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we decompose this task into two simpler steps: (1) analyzing and repairing the LLM's interpretation of the description - captured by the distribution of programs it induces - using traditional testing and program repair, and (2) refining the description based on distribution changes via a method we call contrastive specification inference" — abstract
+> "SpecFix modified 43.58% of descriptions, improving Pass@1 on the modified set by 30.9%. This yields a 4.09% absolute improvement across the entire benchmark." — abstract
+> "We find that directly prompting LLMs to clarify ambiguity often produces irrelevant or inconsistent edits." — abstract
 
 ### SpecPylot: Python Specification Generation using Large Language Models
 
@@ -1529,17 +2746,32 @@
 
 **Why included:** LLM proposes icontract contracts, crosshair symbolic execution validates them, and counterexamples drive repair of the contract while the program is held fixed
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Automated verification tools go unused because developers do not write contracts by hand.
+- Model-generated specifications fail verification on syntax, over-strict constraints, or wrong behaviour.
+- A generated specification with no checker is unfalsifiable: nothing says which of the three it is.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecPylot emits icontract annotations, which are executable, so a symbolic engine can check them.
+- crosshair symbolically explores the program against each candidate contract.
+- A concrete counterexample from crosshair drives repair of the contract, never of the program.
+- Holding the program fixed makes the loop a specification search, not a joint code-and-spec search.
+- Coverage-driven pytest stubs and execution artifacts fall out of the same run.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Reports crosshair-compatible contracts for most programs in the evaluation set.
+- Not measured: contract strength. Compatibility with the checker is weaker than capturing intent.
+- No baseline against hand-written contracts or against unchecked generation is given.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: bounded symbolic exploration limits what crosshair can refute.
+- Authors: results vary with LLM behaviour across runs.
+- Ours: a vacuous contract passes crosshair, and nothing reported rules that out.
+- Ours: the abstract gives no program count, so 'most programs' has no denominator.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Score contract strength, for example by mutating the program and counting contracts that catch it.
+- Let the loop propose a program change when the counterexample shows the code, not the spec, is wrong.
+- Compare bounded symbolic execution against property-based testing as the refutation oracle.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The tool relies on LLMs to propose candidate contracts and uses crosshair to validate them." — abstract
+> "When crosshair finds a concrete counterexample, SpecPylot updates only the generated contracts and leaves the program itself untouched." — abstract
+> "it also highlights the practical limits introduced by bounded symbolic exploration and differences in LLM behavior" — abstract
 
 ## static-analysis
 
@@ -1551,17 +2783,33 @@
 
 **Why included:** recovers Objective-C method signatures from stripped binaries with a fine-tuned type-inference model whose candidates the agent checks against runtime metadata and constraints until the headers compile; 15% to 86% recovery
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Private macOS frameworks underpin critical services but ship as stripped, undocumented binaries.
+- Without method signatures there is no interface to audit, so security analysis stalls.
+- Static tooling alone recovers a small fraction of Objective-C signatures.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - MOTIF is an agent that drives tools while a fine-tuned model specializes in Objective-C type inference.
+- The agent handles runtime metadata extraction, binary inspection, and constraint checking.
+- The model proposes candidate method signatures; the agent validates and refines them.
+- Compilability is the acceptance test: a signature is kept when the header compiles.
+- Specializing the model and delegating tool use separates guessing from checking.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - MOTIF-Bench, built from public frameworks that have ground-truth headers.
+- Signature recovery rises from 15% to 86% against baseline static analysis tooling.
+- Reported gains in tool-use correctness and inference stability alongside recovery.
+- Case studies on private frameworks: reconstructed headers compile and link.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the benchmark uses public frameworks, while the target is private ones with no ground truth.
+- Ours: compiling and linking do not establish that a recovered signature is the original one.
+- Ours: the fine-tuned model is Objective-C specific, so transfer to other ABIs is untested.
+- Authors: private frameworks remain undocumented, so case-study results cannot be scored.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Cross-check recovered signatures against runtime call traces, which is an independent oracle.
+- Measure how recovery degrades with optimization level and stripping aggressiveness.
+- Test whether the agent plus specialized model split transfers to C++ name recovery.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The agent manages runtime metadata extraction, binary inspection, and constraint checking, while the model generates candidate method signatures that are validated and refined into compilable headers." — abstract
+> "MOTIF improves signature recovery from 15% to 86% compared to baseline static analysis tooling, with consistent gains in tool-use correctness and inference stability" — abstract
+> "Private macOS frameworks underpin critical services and daemons but remain undocumented and distributed only as stripped binaries, complicating security analysis." — abstract
 
 ### GPTScan: Detecting Logic Vulnerabilities in Smart Contracts by Combining GPT with Program Analysis
 
@@ -1571,17 +2819,35 @@
 
 **Why included:** decomposes each logic-vulnerability type into scenarios and properties for GPT matching, then validates the key variables and statements GPT names with static confirmation; the confirmation stage is the contribution and cuts two-thirds of false positives
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Smart contract tools target fixed control-flow or data-flow patterns such as re-entrancy.
+- About 80% of Web3 security bugs escape those tools for want of domain-specific properties.
+- Asking a model directly gives high false positives and is bounded by its pretrained knowledge.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - GPTScan uses the model as a code understanding tool, not as the vulnerability oracle.
+- Each logic vulnerability type is decomposed into scenarios and properties the model can match.
+- Matching produces candidates, which is a recall step, deliberately permissive.
+- The model is then asked to name the key variables and statements behind each candidate.
+- Static confirmation validates those named variables and statements, which is the precision step.
+- Separating recall from precision is what makes the composition work.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - About 400 contract projects and 3K Solidity files.
+- Precision over 90% on token contracts, 57.14% on large projects such as Web3Bugs.
+- Recall over 70% on ground-truth logic vulnerabilities, including 9 missed by human auditors.
+- Cost: 14.39 seconds and 0.01 USD per thousand lines of Solidity.
+- Static confirmation removes two-thirds of false positives.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: 57.14% precision on large projects means nearly half of reports there are still false.
+- Ours: scenarios and properties are hand-written per vulnerability type, so new types need manual work.
+- Ours: recall is measured against ground truth, so vulnerability types outside the taxonomy are invisible.
+- Authors: relying solely on GPT gives high false positives and is limited by pretrained knowledge.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Generate the scenario and property decomposition itself, which is the remaining manual step.
+- Explain the precision gap between token contracts and large projects, and target it.
+- Compare static confirmation against symbolic confirmation on the same candidate set.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Instead of relying solely on GPT to identify vulnerabilities, which can lead to high false positives and is limited by GPT's pre-trained knowledge, we utilize GPT as a versatile code understanding tool." — abstract
+> "GPTScan further instructs GPT to intelligently recognize key variables and statements, which are then validated by static confirmation" — abstract
+> "Moreover, static confirmation helps GPTScan reduce two-thirds of false positives." — abstract
 
 ### The Hitchhiker's Guide to Program Analysis, Part III: Mostly Harmless LLMs
 
@@ -1591,17 +2857,33 @@
 
 **Why included:** seed paper — separates the two jobs explicitly: the model may only build a warning-specific analysis harness, which is validated, and the backend analysis alone decides whether the error state is unreachable under it
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Models are used to judge whether a reported bug can trigger, with promising empirical results.
+- Empirical effectiveness does not make a plausible rationale sufficient to discharge a warning.
+- Dismissing a warning requires showing the error state is unreachable, not explaining why it may not occur.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - Evident separates model assistance from program-behavior reasoning, and delegates the latter.
+- The model's only job is to construct a warning-specific analysis harness.
+- Evident validates the harness before the backend is invoked, so a bad harness is caught first.
+- The backend answers one question: is the error state unreachable under this harness and its assumptions.
+- The claim is relative to the harness, which makes the assumptions explicit rather than implicit.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 200 real Android kernel driver warnings from two existing static detectors.
+- 151 of 200 classified correctly (76%), including 111 false alarms discharged.
+- No confirmed bug in the dataset was discharged, which is the safety property that matters here.
+- Remaining cases are unresolved or conservatively retained as potential bugs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: soundness holds relative to the harness, so a harness with wrong assumptions still discharges wrongly.
+- Ours: 76% correct classification means a quarter of warnings still need human triage.
+- Ours: one warning domain, Android kernel drivers, from two detectors.
+- Authors: the remaining cases are unresolved rather than decided, which is the conservative choice.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check generated harnesses against a second, independent harness for the same warning.
+- Measure how harness quality degrades outside kernel drivers, where aliasing patterns differ.
+- Report the cost of the validation step, since it gates every backend invocation.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "empirical effectiveness does not make a plausible model-generated rationale sufficient for discharging warnings" — abstract
+> "Evident uses an LLM only to construct a warning-specific analysis harness. Evident then validates the harness before invoking the backend." — abstract
+> "Evident correctly classifies 151 cases (76%), including discharging 111 false alarms, without discharging any confirmed bug in the dataset" — abstract
 
 ### Boosting Static Resource Leak Detection via LLM-based Resource-Oriented Intention Inference
 
@@ -1611,17 +2893,33 @@
 
 **Why included:** has the model infer resource acquisition, release, and reachability-validation intentions, then feeds those as facts into a two-stage control-flow analysis; the ablation shows neither half detects leaks alone
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Resource leak detectors match predefined acquisition and release APIs mechanically.
+- An incomplete API list produces false negatives: unlisted resources are never tracked.
+- Incomplete reachability-validation identification produces false positives on validated paths.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - InferROI asks the model for intentions, not for verdicts: acquisition, release, and reachability validation.
+- Intentions are facts about the code that the analyser lacked, expressed in the analyser's vocabulary.
+- A two-stage static analysis then checks control-flow paths using those inferred intentions.
+- The division is clean: the model supplies the API semantics, the analysis does the path reasoning.
+- This attacks both error sources at once, since both stem from incomplete predefined knowledge.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - DroidLeaks and JLeaks: detection rates 59.3% and 62.5%, false alarm rates 18.6% and 19.5%.
+- Against three industrial static detectors: 14-45 more bugs on DroidLeaks, 149-485 more on JLeaks.
+- 29 previously unknown leaks found in open-source projects, 7 confirmed by developers.
+- An ablation study shows the combination matters, not either half alone.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: a false alarm rate near 19% is high for a detector meant to reduce triage effort.
+- Ours: inferred intentions are unchecked, so a wrong intention silently corrupts the path analysis.
+- Ours: 29 confirmed-by-authors bugs with 7 developer confirmations is a modest external signal.
+- Authors: existing detectors suffer both false negatives and false positives from incompleteness.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate inferred intentions against observed runtime behaviour before the analysis consumes them.
+- Apply intention inference to other analyses whose API models are hand-maintained, such as taint sources.
+- Report how the false alarm rate moves as intention confidence thresholds change.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose InferROI, a novel approach that leverages the exceptional code comprehension capability of large language models (LLMs) to directly infer resource-oriented intentions (acquisition, release, and reachability validation) in code" — abstract
+> "InferROI first prompts the LLM to infer involved intentions for a given code snippet, and then incorporates a two-stage static analysis approach to check control-flow paths for resource leak detection based on the inferred intentions." — abstract
+> "the results of an ablation study underscores the importance of combining LLM-based inference with static analysis" — abstract
 
 ### Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification
 
@@ -1631,17 +2929,34 @@
 
 **Why included:** decomposes the program to focus the model, then validates each candidate specification against the verifier every round so errors cannot accumulate across the interaction; verifies 79% of programs
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - A full proof needs specifications, and writing them takes domain expertise and manpower.
+- Existing synthesis is narrow: loop invariants for numerical programs, or one program family.
+- Arrays, pointers, nested loops, and function calls fall outside those approaches.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - AutoSpec is driven by static analysis and program verification, with the model as generator.
+- Programs are decomposed so the model attends to one part at a time.
+- Candidate specifications are validated every round, not once at the end.
+- Per-round validation is what stops errors accumulating across a long interaction.
+- The loop is incremental: each validated specification becomes context for the next.
+- The target is satisfiable and adequate specifications, so both directions of failure are named.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 79% of programs verified through automatic specification synthesis.
+- A 1.592x improvement over existing work.
+- Applied to a real-world X509-parser project, not only to benchmarks.
+- Not reported in the abstract: the benchmark size behind the 79%.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: adequacy is checked by whether the proof closes, which a weak specification can also achieve.
+- Ours: no ablation separates decomposition from per-round validation.
+- Ours: the abstract gives no runtime, and per-round validation implies repeated verifier calls.
+- Authors: existing automated approaches are limited in versatility, which is the gap addressed.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Separate the contributions of decomposition and per-round validation with an ablation.
+- Measure specification adequacy independently, for example against mutants of the program.
+- Compare against ConVer's CEGAR-CEGIS refinement on the same C programs.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "AutoSpec addresses the practical challenges in three ways: (1) driving \\name by static analysis and program verification, LLMs serve as generators to generate candidate specifications, (2) programs are decomposed to direct the attention of LLMs, and (3) candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs." — abstract
+> "it outperforms existing works by successfully verifying 79% of programs through automatic specification synthesis, a significant improvement of 1.592x" — abstract
+> "It can also be successfully applied to verify the programs in a real-world X509-parser project." — abstract
 
 ### PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
 
@@ -1651,17 +2966,34 @@
 
 **Why included:** retrieves human-written Certora properties as in-context references, then closes three separate loops on the output: compilation and static analysis feedback for validity, similarity ranking for relevance, and a dedicated prover for correctness; 12 zero-days
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Formal verification of smart contracts needs properties, and writing them is expert work.
+- Human-written properties exist in audit reports but are tied to the contracts they were written for.
+- A generated property is useless unless it compiles, suits the code, and can be verified.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PropertyGPT embeds existing human-written properties in a vector database and retrieves references.
+- Retrieval-augmented in-context learning transfers an audited property to unknown code.
+- Three separate loops close on the three failure modes rather than one generic retry.
+- Compilation and static analysis feedback act as an external oracle for iterative revision.
+- Similarity along several dimensions ranks candidates, and a weighted algorithm keeps the top-K.
+- A dedicated prover formally verifies the surviving properties.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 80% recall against ground-truth properties.
+- 26 of 37 tested CVEs and attack incidents detected.
+- 12 zero-day vulnerabilities found, earning $8,256 in bug bounties.
+- Bounty-confirmed zero-days are an external oracle few papers in this set report.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: recall is measured against a ground-truth property set, so novel property shapes are invisible.
+- Ours: the approach needs an existing corpus of audited properties, which few domains have.
+- Ours: 26 of 37 CVEs means 11 were missed, and the abstract does not characterise them.
+- Authors: ensuring properties are compilable, appropriate, and verifiable is the stated challenge.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Test transfer to a domain with no audit corpus, which is where the retrieval premise breaks.
+- Ablate the three loops to see which of compilation feedback, ranking, or proving carries the result.
+- Measure the false positive cost of the properties that the prover accepts but no bug violates.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we embed existing properties into a vector database and retrieve a reference property for LLM-based in-context learning to generate a new property for a given code" — abstract
+> "we use the compilation and static analysis feedback as an external oracle to guide LLMs in iteratively revising the generated properties" — abstract
+> "It successfully detected 26 CVEs/attack incidents out of 37 tested and also uncovered 12 zero-day vulnerabilities, leading to $8,256 in bug bounty rewards." — abstract
 
 ### InferFix: End-to-End Program Repair with LLMs
 
@@ -1671,17 +3003,33 @@
 
 **Why included:** pairs the Infer static analyzer with a retriever over semantically equivalent past fixes and a fine-tuned generator, so bug type and a retrieved fix both condition the patch; deployed in Microsoft's CI
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Model-based repair learns general bug-fixing patterns from uncategorized public repository commits.
+- Security and performance bugs need the bug's type and a matching fix, not a generic pattern.
+- Deployment also needs detection, classification, and localization, which a generator does not supply.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - InferFix pairs the generator with the Infer static analyzer, which supplies detection and bug type.
+- A Retriever, pretrained contrastively, searches for semantically equivalent past bugs and their fixes.
+- The Generator is Codex Cushman fine-tuned on supervised bug-fix data.
+- Prompts carry the bug type annotation and the retrieved fix, so both analyser and memory condition it.
+- The retrieved fixes are external non-parametric memory, so new fix patterns need no retraining.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - InferredBugs: bugs extracted by running Infer over change histories of thousands of Java and C# repos.
+- Top-1 accuracy 65.6% in C# and 76.8% in Java, above strong LLM baselines.
+- Deployed with Infer at Microsoft, integrated into the continuous integration pipeline.
+- The dataset is built by the same analyser used at inference, so bug types are consistent by construction.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: coverage is bounded by what Infer reports; bugs it misses never reach the generator.
+- Ours: top-1 accuracy is measured against the historical fix, which is stricter and weaker than correctness.
+- Ours: the retriever's benefit is not isolated from the fine-tuning in the reported numbers.
+- Authors: prior models learn from uncategorized bugs, which is the gap the bug type annotation fills.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Ablate the retriever and the bug type annotation separately to see which conditions the generator.
+- Validate patches against Infer re-running, not only against the historical fix.
+- Report how the approach transfers to an analyser whose bug taxonomy differs from Infer's.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "we propose InferFix: a transformer-based program repair framework paired with a state-of-the-art static analyzer to fix critical security and performance bugs" — abstract
+> "a Generator -- a large language model (Codex Cushman) finetuned on supervised bug-fix data with prompts augmented via bug type annotations and semantically similar fixes retrieved from an external non-parametric memory" — abstract
+> "InferFix outperforms strong LLM baselines, with a top-1 accuracy of 65.6% for generating fixes in C# and 76.8% in Java" — abstract
 
 ### Semantic-Enhanced Indirect Call Analysis with Large Language Models
 
@@ -1691,17 +3039,32 @@
 
 **Why included:** uses LLM summaries of call sites and candidate targets as a semantic filter over an indirect-call analysis, sharpening the call graph a static analyser builds
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Indirect calls make a precise control flow graph hard to build, which degrades downstream analyses.
+- Existing indirect call analyzers reason over types and signatures, not over program meaning.
+- The result is an over-large target set: every downstream client inherits the imprecision.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SEA rests on an observation: an indirect call is usually semantically similar to what it invokes.
+- The model writes natural language summaries of the call site and of each candidate target.
+- Summaries are produced from several perspectives, not one, so the comparison has more to match on.
+- Comparing summaries decides whether a pair is a plausible caller-callee pair.
+- The model filters an existing analyser's output; it never adds a target the analyser did not propose.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Reports more precise target sets for indirect calls than the static analysis methods it enhances.
+- Not measured in the abstract: recall loss, which is the risk when filtering an over-approximation.
+- No absolute precision or recall numbers appear in the abstract, only a direction of change.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: filtering an over-approximate target set can drop real edges, breaking soundness downstream.
+- Ours: the semantic-similarity premise fails for dispatch tables and callbacks named generically.
+- Ours: cost per call site is not reported, and there is one model query per candidate pair.
+- Authors: the approach depends on the model's code summarization ability, trained on code corpora.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Quantify the soundness cost: how many true edges the filter removes at each precision level.
+- Cache summaries per function so cost grows with functions rather than with candidate pairs.
+- Test whether the same filter helps points-to analysis, where over-approximation is also the problem.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Our fundamental insight is that for common programming practices, indirect calls often exhibit semantic similarity with their invoked targets." — abstract
+> "SEA leverages LLMs to generate natural language summaries of both indirect calls and target functions from multiple perspectives." — abstract
+> "This semantic alignment serves as a supportive mechanism for static analysis techniques in filtering out false targets." — abstract
 
 ### Generative Type Inference for Python
 
@@ -1711,17 +3074,34 @@
 
 **Why included:** turns the static analyser's own derivation into the prompt: type dependency graphs become chain-of-thought steps, so the model imitates how the analysis infers a type rather than guessing the answer
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Rule-based type inference for Python is accurate but covers few variables.
+- Supervised inference needs large annotated datasets and cannot leave its predefined type set.
+- Cloze-style zero-shot reformulations avoid annotation but perform poorly.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - TypeGen makes the static analysis derivation itself the prompt, not just its conclusion.
+- Type dependency graphs give the inference steps; those steps become chain-of-thought prompt text.
+- The model therefore imitates how the analysis reaches a type rather than guessing the type.
+- Code slices and type hints accompany the chain of thought in each example prompt.
+- Five annotated examples suffice, because the examples teach a procedure rather than a type set.
+- An input-explanation-output format leaves an explanation with each prediction.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Beats Type4Py by 10.0% on argument types and 22.5% on return types, top-1 exact match, with five examples.
+- 27% to 84% above zero-shot performance of models from 1.3B to 175B parameters.
+- Spanning 1.3B to 175B separates the method's contribution from model scale.
+- Not measured: whether the generated explanations are faithful to the actual inference.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: the chain of thought imitates an analysis but inherits no soundness from it.
+- Ours: an explanation that reads well is not evidence the model followed those steps.
+- Ours: type dependency graphs must be built first, so the analysis cost remains.
+- Authors: rule-based approaches have low coverage and supervised ones are limited to predefined types.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Check predicted types against a type checker, converting the output into a verifiable claim.
+- Test whether the derivation-as-prompt idea transfers to points-to or nullability analysis.
+- Measure explanation faithfulness by perturbing the graph and seeing whether the chain changes.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "TypeGen creates chain-of-thought (COT) prompts by translating the type inference steps of static analysis into prompts based on the type dependency graphs (TDGs), enabling language models to learn from how static analysis infers types." — abstract
+> "TypeGen outperforms the best baseline Type4Py by 10.0% for argument type prediction and 22.5% in return value type prediction in terms of top-1 Exact Match by using only five examples" — abstract
+> "TypeGen achieves substantial improvements of 27% to 84% compared to the zero-shot performance of large language models" — abstract
 
 ## symbolic-execution
 
@@ -1733,17 +3113,31 @@
 
 **Why included:** checks LLM transpilation with differential symbolic execution across the C and Rust versions, comparing symbolic return values; catches semantic divergence that unit and fuzz testing miss
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - C codebases must be transpiled to Rust before Rust's memory-safety guarantees apply.
+- Model-transpiled code carries subtle semantic bugs that compile and pass existing tests.
+- Unit and fuzz testing miss these because they sample inputs rather than reason over them.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - RustAssure pairs generation with a check: transpile with an LLM, then test the pair differentially.
+- Differential symbolic testing compares symbolic return values of the C and Rust functions.
+- Symbolic comparison covers input classes, so equivalence is argued over ranges rather than samples.
+- The check is per function, which keeps each symbolic query small enough to discharge.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Five real-world applications and libraries.
+- 89.8% of C functions yield compilable Rust; 69.9% of those match on symbolic return values.
+- Not measured: whether the 30% mismatch is a transpilation bug or a limit of the symbolic check.
+- Return values only. Side effects, memory state, and panics are outside the compared relation.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: symbolic equivalence on return values is weaker than semantic equivalence.
+- Ours: the 69.9% is conditioned on compiling, so the end-to-end rate is about 63% of all functions.
+- Ours: prompt engineering does the transpiling, so that half fails the swap-the-model test.
+- Authors: the abstract states no scalability bound for the symbolic engine.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Extend the compared relation to heap state and observable side effects, not just return values.
+- Feed each mismatch back as a repair signal rather than reporting it as a failure.
+- Measure how far symbolic equivalence scales past function granularity.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "because LLMs often generate code with subtle bugs that can be missed under traditional unit or fuzz testing, RustAssure performs differential symbolic testing to establish the semantic similarity between the original C and LLM-transpiled Rust code" — abstract
+> "our system is able to generate compilable Rust functions for 89.8% of all C functions, of which 69.9% produced equivalent symbolic return values for both the C and Rust functions" — abstract
 
 ### SpecPylot: Python Specification Generation using Large Language Models
 
@@ -1753,17 +3147,32 @@
 
 **Why included:** LLM proposes icontract contracts, crosshair symbolic execution validates them, and counterexamples drive repair of the contract while the program is held fixed
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Automated verification tools go unused because developers do not write contracts by hand.
+- Model-generated specifications fail verification on syntax, over-strict constraints, or wrong behaviour.
+- A generated specification with no checker is unfalsifiable: nothing says which of the three it is.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - SpecPylot emits icontract annotations, which are executable, so a symbolic engine can check them.
+- crosshair symbolically explores the program against each candidate contract.
+- A concrete counterexample from crosshair drives repair of the contract, never of the program.
+- Holding the program fixed makes the loop a specification search, not a joint code-and-spec search.
+- Coverage-driven pytest stubs and execution artifacts fall out of the same run.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Reports crosshair-compatible contracts for most programs in the evaluation set.
+- Not measured: contract strength. Compatibility with the checker is weaker than capturing intent.
+- No baseline against hand-written contracts or against unchecked generation is given.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: bounded symbolic exploration limits what crosshair can refute.
+- Authors: results vary with LLM behaviour across runs.
+- Ours: a vacuous contract passes crosshair, and nothing reported rules that out.
+- Ours: the abstract gives no program count, so 'most programs' has no denominator.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Score contract strength, for example by mutating the program and counting contracts that catch it.
+- Let the loop propose a program change when the counterexample shows the code, not the spec, is wrong.
+- Compare bounded symbolic execution against property-based testing as the refutation oracle.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "The tool relies on LLMs to propose candidate contracts and uses crosshair to validate them." — abstract
+> "When crosshair finds a concrete counterexample, SpecPylot updates only the generated contracts and leaves the program itself untouched." — abstract
+> "it also highlights the practical limits introduced by bounded symbolic exploration and differences in LLM behavior" — abstract
 
 ### PALM: Synergizing Program Analysis and LLMs to Enhance Rust Unit Test Coverage
 
@@ -1773,17 +3182,33 @@
 
 **Why included:** derives path constraints from the branching conditions program analysis finds, then conditions test generation on those constraints instead of a fixed prompt; 80 of 91 generated Rust tests were accepted upstream
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Search-based and concolic test generation stall on complex branching and external dependencies.
+- LLM test generation with a fixed prompt gives low compilation success and low coverage.
+- A fixed prompt cannot tell the model which branch is still uncovered.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PALM runs program analysis first to identify the branching conditions inside a function.
+- Those conditions are combined into path constraints, one per path through the unit.
+- The constraints, not a generic instruction, are what the generated prompt asks the model to satisfy.
+- Contextual information about dependencies accompanies each constraint.
+- The analysis supplies the target; the model supplies the concrete inputs that reach it.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 15 open-source Rust crates, within two to three hours of runtime per project.
+- Average coverage 72.30%, against 70.94% for human-written tests; some projects gain over 50%.
+- 91 generated tests submitted upstream: 80 accepted, 5 rejected, 6 pending.
+- Upstream acceptance is a stronger signal than coverage, and few papers here report it.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: classic methods struggle with external dependencies, and the abstract claims no fix for that.
+- Ours: coverage parity with humans says nothing about oracle strength; these tests assert little.
+- Ours: no mutation score is reported, so the tests' fault-detection power is unmeasured.
+- Ours: path constraints are extracted, then rendered into a prompt, so no solver discharges them.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Solve the path constraints with an SMT solver and pass concrete models, not the constraints, to the model.
+- Report mutation score alongside coverage; coverage parity with humans is the weaker claim.
+- Measure how the approach degrades as the number of feasible paths grows.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "PALM performs program analysis to identify branching conditions within functions, which are then combined into path constraints." — abstract
+> "its generated tests achieving an average coverage of 72.30%, comparable to human effort (70.94%)" — abstract
+> "We submitted 91 PALM-generated unit tests targeting new code. Of these submissions, 80 were accepted, 5 were rejected, and 6 remain pending review." — abstract
 
 ## test-generation
 
@@ -1795,17 +3220,34 @@
 
 **Why included:** replaces coverage with user-extensible performance monitors as the greybox guidance signal, finds symptom-causing inputs at an intermediate pipeline stage, then maps them back to program inputs through an LLM-generated pseudo-inverse
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Performance symptoms in big data analytics, such as computational and data skews, are input dependent.
+- No inputs exist that trigger them, so the pipelines cannot be performance-tested.
+- Greybox fuzzing guides on coverage, which is uncorrelated with triggering a skew.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PerfGen replaces coverage with extensible performance monitor templates as the guidance metric.
+- Symptoms surface at intermediate pipeline stages, so fuzzing is phased rather than end-to-end.
+- The phased approach first finds symptom-causing inputs at the intermediate stage.
+- An LLM-generated pseudo-inverse function maps those intermediate inputs back to program inputs.
+- Skew-inspired input mutations bias generation toward the shapes that induce the symptoms.
+- The model's job is the inversion, which is the step no fuzzer could otherwise perform.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Four case studies.
+- At least 11x speedup over traditional fuzzing when generating symptom-triggering inputs.
+- The intermediate-then-invert route needs under 0.004% of the baseline's iterations.
+- Not measured: how often the pseudo-inverse is wrong, and what that costs.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: a pseudo-inverse produced by a model has no correctness guarantee, and none is claimed.
+- Ours: four case studies is a small evaluation for an 11x claim.
+- Ours: performance monitor templates are user-extended, so setup effort transfers to the user.
+- Authors: coverage as a guidance signal is unlikely to trigger interesting performance behavior.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate each pseudo-inverse by running the forward pipeline and checking the intermediate matches.
+- Test whether the phased approach transfers to other staged systems, such as compiler pipelines.
+- Report how many candidate inversions are discarded, which is the cost the speedup hides.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "typical greybox fuzzing relies on coverage as a guidance signal and thus is unlikely to trigger interesting performance behavior" — abstract
+> "This approach identifies symptom-causing intermediate inputs at an intermediate stage first and then converts them to the inputs at the beginning of the program with a pseudo-inverse function generated by a large language model." — abstract
+> "PerfGen achieves at least 11x speedup compared to a traditional fuzzing approach when generating inputs to trigger performance symptoms." — abstract
 
 ### Nuances are the Key: Unlocking ChatGPT to Find Failure-Inducing Tests with Differential Prompting
 
@@ -1815,17 +3257,33 @@
 
 **Why included:** synthesises a reference implementation from the buggy program's inferred intent and then differentially tests the pair, converting a subtle-difference problem the model fails at into one it can solve
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Finding a failure-inducing test needs both an input that triggers the fault and an oracle.
+- ChatGPT alone finds a correct failure-inducing test only 28.8% of the time.
+- The task turns on subtle differences between the buggy program and its correct version.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - The diagnosis is specific: the model is weak at spotting subtle differences between similar syntax.
+- The countervailing observation is that the model infers a buggy program's intended behaviour well.
+- So the intended behaviour is used to synthesize a second program that realises it.
+- The difference between the buggy program and the synthesized one is then explicit, not subtle.
+- Differential testing over the pair supplies the oracle the model could not construct.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Quixbugs, against baselines including direct ChatGPT use and Pynguin.
+- 77.8% of cases yield a correct failure-inducing test, 2.7 times the best baseline.
+- The 28.8% baseline is measured in the same study, so the comparison is internally consistent.
+- Not measured: whether the synthesized reference program is itself correct.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: ChatGPT is weak at recognizing subtle code differences when two versions share syntax.
+- Ours: the oracle is only as good as the synthesized program, which has no independent check.
+- Ours: Quixbugs programs are small and single-function, so scale is untested.
+- Ours: the method needs a buggy program whose intent the model can infer, which excludes novel domains.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Validate the synthesized reference against a specification, so a wrong reference cannot produce a wrong oracle.
+- Synthesize several references and require agreement, which is the redundancy idea from autoformalization.
+- Test on multi-function bugs where intended behaviour is distributed across the program.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "our study shows that ChatGPT has a low probability (28.8%) of finding correct failure-inducing test cases for buggy programs" — abstract
+> "The intended behavior can be leveraged to synthesize programs, in order to make the subtle code difference between a buggy program and its correct version (i.e., the synthesized program) explicit." — abstract
+> "our approach has a much higher probability (77.8%) of finding correct failure-inducing test cases, 2.7X as the best baseline" — abstract
 
 ### RustAssure: Differential Symbolic Testing for LLM-Transpiled C-to-Rust Code
 
@@ -1835,17 +3293,31 @@
 
 **Why included:** checks LLM transpilation with differential symbolic execution across the C and Rust versions, comparing symbolic return values; catches semantic divergence that unit and fuzz testing miss
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - C codebases must be transpiled to Rust before Rust's memory-safety guarantees apply.
+- Model-transpiled code carries subtle semantic bugs that compile and pass existing tests.
+- Unit and fuzz testing miss these because they sample inputs rather than reason over them.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - RustAssure pairs generation with a check: transpile with an LLM, then test the pair differentially.
+- Differential symbolic testing compares symbolic return values of the C and Rust functions.
+- Symbolic comparison covers input classes, so equivalence is argued over ranges rather than samples.
+- The check is per function, which keeps each symbolic query small enough to discharge.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Five real-world applications and libraries.
+- 89.8% of C functions yield compilable Rust; 69.9% of those match on symbolic return values.
+- Not measured: whether the 30% mismatch is a transpilation bug or a limit of the symbolic check.
+- Return values only. Side effects, memory state, and panics are outside the compared relation.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Ours: symbolic equivalence on return values is weaker than semantic equivalence.
+- Ours: the 69.9% is conditioned on compiling, so the end-to-end rate is about 63% of all functions.
+- Ours: prompt engineering does the transpiling, so that half fails the swap-the-model test.
+- Authors: the abstract states no scalability bound for the symbolic engine.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Extend the compared relation to heap state and observable side effects, not just return values.
+- Feed each mismatch back as a repair signal rather than reporting it as a failure.
+- Measure how far symbolic equivalence scales past function granularity.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "because LLMs often generate code with subtle bugs that can be missed under traditional unit or fuzz testing, RustAssure performs differential symbolic testing to establish the semantic similarity between the original C and LLM-transpiled Rust code" — abstract
+> "our system is able to generate compilable Rust functions for 89.8% of all C functions, of which 69.9% produced equivalent symbolic return values for both the C and Rust functions" — abstract
 
 ### Large Language Models are Few-shot Testers: Exploring LLM-based General Bug Reproduction
 
@@ -1855,17 +3327,33 @@
 
 **Why included:** turns a bug report into a failure-reproducing test by ranking candidates on validity, so the model's inability to execute code is handled in post-processing; re-evaluated on 31 reports filed after the training cutoff
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Test generation targets coverage or exploratory inputs, not semantic goals like reproducing a report.
+- Turning the expected semantics in a bug report into an oracle is the hard part.
+- Existing failure reproduction handles crashes only, a small share of all bug reports.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - LIBRO takes the bug report as the input and asks the model for a reproducing test.
+- The model cannot execute the buggy code, so the design puts the judgement in post-processing.
+- Post-processing discerns when the model is effective rather than trusting each generation.
+- Generated tests are ranked by validity, so the developer sees the most credible candidate first.
+- Ranking is what converts an unreliable generator into a usable suggestion list.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - Defects4J: reproducing tests for 33% of cases, 251 of 750; a correct test ranked first for 149 bugs.
+- Contamination check: 31 reports filed after the training data cutoff, 32% reproduced.
+- The post-cutoff rate matching the benchmark rate is the strongest evidence in the paper.
+- An empirical study establishes that issue-driven tests are about 28% of project suite size.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: models cannot execute the target buggy code, which is why post-processing carries the design.
+- Ours: 33% reproduction leaves the majority of reports unaddressed.
+- Ours: 31 post-cutoff reports is a small sample for a contamination claim.
+- Ours: validity ranking measures whether a test runs and fails, not whether it captures the report.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Grow the post-cutoff evaluation set, since it is the only leakage-free measurement here.
+- Combine report-driven generation with differential testing to strengthen the oracle.
+- Measure whether reproducing tests improve downstream repair, the use the paper motivates.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "Since LLMs themselves cannot execute the target buggy code, we focus on post-processing steps that help us discern when LLMs are effective, and rank the produced tests according to their validity." — abstract
+> "LIBRO can generate failure reproducing test cases for 33% of all studied cases (251 out of 750), while suggesting a bug reproducing test in first place for 149 bugs" — abstract
+> "To mitigate data contamination, we also evaluate LIBRO against 31 bug reports submitted after the collection of the LLM training data terminated: LIBRO produces bug reproducing tests for 32% of the studied bug reports." — abstract
 
 ### PALM: Synergizing Program Analysis and LLMs to Enhance Rust Unit Test Coverage
 
@@ -1875,14 +3363,30 @@
 
 **Why included:** derives path constraints from the branching conditions program analysis finds, then conditions test generation on those constraints instead of a fixed prompt; 80 of 91 generated Rust tests were accepted upstream
 
-**Problem.** TODO — bullets, one claim each, ~100 characters
+**Problem.** - Search-based and concolic test generation stall on complex branching and external dependencies.
+- LLM test generation with a fixed prompt gives low compilation success and low coverage.
+- A fixed prompt cannot tell the model which branch is still uncovered.
 
-**Main ideas.** TODO — bullets, one claim each, ~100 characters
+**Main ideas.** - PALM runs program analysis first to identify the branching conditions inside a function.
+- Those conditions are combined into path constraints, one per path through the unit.
+- The constraints, not a generic instruction, are what the generated prompt asks the model to satisfy.
+- Contextual information about dependencies accompanies each constraint.
+- The analysis supplies the target; the model supplies the concrete inputs that reach it.
 
-**Evaluation.** TODO — bullets, one claim each, ~100 characters
+**Evaluation.** - 15 open-source Rust crates, within two to three hours of runtime per project.
+- Average coverage 72.30%, against 70.94% for human-written tests; some projects gain over 50%.
+- 91 generated tests submitted upstream: 80 accepted, 5 rejected, 6 pending.
+- Upstream acceptance is a stronger signal than coverage, and few papers here report it.
 
-**Limitations.** TODO — bullets, one claim each, ~100 characters
+**Limitations.** - Authors: classic methods struggle with external dependencies, and the abstract claims no fix for that.
+- Ours: coverage parity with humans says nothing about oracle strength; these tests assert little.
+- Ours: no mutation score is reported, so the tests' fault-detection power is unmeasured.
+- Ours: path constraints are extracted, then rendered into a prompt, so no solver discharges them.
 
-**Follow-ups.** TODO — bullets, one claim each, ~100 characters
+**Follow-ups.** - Solve the path constraints with an SMT solver and pass concrete models, not the constraints, to the model.
+- Report mutation score alongside coverage; coverage parity with humans is the weaker claim.
+- Measure how the approach degrades as the number of feasible paths grows.
 
-**Evidence.** > TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+**Evidence.** > "PALM performs program analysis to identify branching conditions within functions, which are then combined into path constraints." — abstract
+> "its generated tests achieving an average coverage of 72.30%, comparable to human effort (70.94%)" — abstract
+> "We submitted 91 PALM-generated unit tests targeting new code. Of these submissions, 80 were accepted, 5 were rejected, and 6 remain pending review." — abstract

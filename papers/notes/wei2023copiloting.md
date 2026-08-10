@@ -9,24 +9,41 @@
 
 ## Problem
 
-TODO — bullets, one claim each, ~100 characters
+- Patches for real-world systems in general-purpose languages are hard to synthesize correctly.
+- Models treat programs as token sequences and ignore the language's semantic constraints.
+- The result is many statically invalid patches, which makes the technique impractical.
 
 ## Main ideas
 
-TODO — bullets, one claim each, ~100 characters
+- Repilot intervenes during decoding rather than filtering completed patches.
+- The insight is that autoregressive generation resembles typing, so a completion engine can assist it.
+- The completion engine prunes infeasible tokens the model suggests, before they are committed.
+- It also proactively completes tokens when its own suggestion set is determined.
+- Validity is therefore a property of the generation process, not of a post-hoc filter.
+- The approach generalizes past repair to other code generation tasks.
 
 ## Evaluation
 
-TODO — bullets, one claim each, ~100 characters
+- Subsets of Defects4J 1.2 and 2.0: 27% and 47% more bugs fixed than state-of-the-art techniques.
+- More valid and correct patches than the base model at the same budget.
+- Holding the budget fixed is what isolates the completion engine's contribution.
+- Not measured: decoding overhead from consulting the engine at each token.
 
 ## Limitations
 
-TODO — bullets, one claim each, ~100 characters
+- Ours: static validity is necessary, not sufficient; a compiling patch can still be wrong.
+- Ours: Defects4J correctness is judged by the test suite, which admits overfitted patches.
+- Ours: the completion engine is language-specific, so each new language needs one.
+- Authors: models are ignorant of the target language's semantic constraints, which is the premise.
 
 ## Follow-ups
 
-TODO — bullets, one claim each, ~100 characters
+- Report per-token decoding overhead, since the engine is consulted throughout generation.
+- Extend the pruning signal past syntax and types to a lightweight semantic check.
+- Compare against constrained decoding with a grammar, which is the cheaper alternative.
 
 ## Evidence
 
-> TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+> "most LLMs treat programs as sequences of tokens, meaning that they are ignorant of the underlying semantics constraints of the target programming language. This results in plenty of statically invalid generated patches" — abstract
+> "Repilot synergistically synthesizes a candidate patch through the interaction between an LLM and a Completion Engine, which 1) prunes away infeasible tokens suggested by the LLM and 2) proactively completes the token based on the suggestions provided by the Completion Engine." — abstract
+> "Repilot outperforms state-of-the-art techniques by fixing 27% and 47% more bugs, respectively" — abstract

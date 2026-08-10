@@ -9,24 +9,41 @@
 
 ## Problem
 
-TODO — bullets, one claim each, ~100 characters
+- A full proof needs specifications, and writing them takes domain expertise and manpower.
+- Existing synthesis is narrow: loop invariants for numerical programs, or one program family.
+- Arrays, pointers, nested loops, and function calls fall outside those approaches.
 
 ## Main ideas
 
-TODO — bullets, one claim each, ~100 characters
+- AutoSpec is driven by static analysis and program verification, with the model as generator.
+- Programs are decomposed so the model attends to one part at a time.
+- Candidate specifications are validated every round, not once at the end.
+- Per-round validation is what stops errors accumulating across a long interaction.
+- The loop is incremental: each validated specification becomes context for the next.
+- The target is satisfiable and adequate specifications, so both directions of failure are named.
 
 ## Evaluation
 
-TODO — bullets, one claim each, ~100 characters
+- 79% of programs verified through automatic specification synthesis.
+- A 1.592x improvement over existing work.
+- Applied to a real-world X509-parser project, not only to benchmarks.
+- Not reported in the abstract: the benchmark size behind the 79%.
 
 ## Limitations
 
-TODO — bullets, one claim each, ~100 characters
+- Ours: adequacy is checked by whether the proof closes, which a weak specification can also achieve.
+- Ours: no ablation separates decomposition from per-round validation.
+- Ours: the abstract gives no runtime, and per-round validation implies repeated verifier calls.
+- Authors: existing automated approaches are limited in versatility, which is the gap addressed.
 
 ## Follow-ups
 
-TODO — bullets, one claim each, ~100 characters
+- Separate the contributions of decomposition and per-round validation with an ablation.
+- Measure specification adequacy independently, for example against mutants of the program.
+- Compare against ConVer's CEGAR-CEGIS refinement on the same C programs.
 
 ## Evidence
 
-> TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+> "AutoSpec addresses the practical challenges in three ways: (1) driving \\name by static analysis and program verification, LLMs serve as generators to generate candidate specifications, (2) programs are decomposed to direct the attention of LLMs, and (3) candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs." — abstract
+> "it outperforms existing works by successfully verifying 79% of programs through automatic specification synthesis, a significant improvement of 1.592x" — abstract
+> "It can also be successfully applied to verify the programs in a real-world X509-parser project." — abstract
