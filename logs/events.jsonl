@@ -95,3 +95,9 @@
 {"ts": "2026-08-10T04:28:52", "kind": "screen_apply", "applied": 25, "failed": 0}
 {"ts": "2026-08-10T04:30:16", "kind": "screen_apply", "applied": 25, "failed": 0}
 {"ts": "2026-08-10T04:32:37", "kind": "screen_apply", "applied": 25, "failed": 0}
+{"ts": "2026-08-10T04:32:46", "kind": "snowball_failed", "direction": "backward", "seed": "ahmed2026specops", "error": "HTTP 404 for https://api.crossref.org/works/10.1145/3744916.3787778?mailto=vietanh101003%40gmail.com"}
+{"ts": "2026-08-10T04:33:33", "kind": "snowball_leg", "direction": "backward", "wanted": 1223, "resolved": 1183, "new": 45, "skipped": 1138, "unstructured_refs": 1538}
+{"ts": "2026-08-10T04:35:39", "kind": "snowball_leg", "direction": "forward", "new": 179, "skipped": 580}
+{"ts": "2026-08-10T04:35:39", "kind": "snowball", "direction": "both", "seeds": 67, "seeds_without_doi": 4, "added": 224}
+{"ts": "2026-08-10T04:42:12", "kind": "enrich", "crossref": 0, "published": 13, "arxiv": 29, "revised": 0, "no_abstract": 72, "no_doi": 1055}
+{"ts": "2026-08-10T04:42:41", "kind": "screen_apply", "applied": 72, "failed": 0}
