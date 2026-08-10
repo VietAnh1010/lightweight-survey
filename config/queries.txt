@@ -53,9 +53,13 @@ large language model AND invariant generation
 large language model AND separation logic
 large language model AND Hoare logic
 large language model AND specification inference
-large language model AND program contract generation
+large language model AND contract generation
 large language model AND assertion generation
-large language model AND temporal logic specification
+large language model AND temporal logic
+large language model AND weakest precondition
+large language model AND verification condition
+large language model AND specification mining
+large language model AND refinement type
 
 # --- solving ---------------------------------------------------------------
 large language model AND SMT solver
@@ -78,3 +82,48 @@ large language model AND reverse engineering
 LLM agent AND software engineering
 LLM agent AND program verification
 repository-level AND large language model AND code
+
+# --- widening pass, added after reading yield-per-query in logs/events.jsonl
+# The grid above missed these concepts entirely. Recall beats precision.
+
+# generic phrasings the task-specific queries above do not match
+large language model AND program analysis
+large language model AND program verification
+large language model AND code verification
+large language model AND verified code generation
+
+# proof engineering, beyond "theorem proving"
+large language model AND proof repair
+large language model AND tactic prediction
+large language model AND neural theorem proving
+LLM AND Verus AND Rust verification
+LLM AND proof state
+
+# fuzzing subareas
+large language model AND fuzz driver generation
+large language model AND protocol fuzzing
+large language model AND kernel fuzzing
+large language model AND compiler testing
+large language model AND crash reproduction
+large language model AND bug reproduction
+
+# testing beyond unit tests
+large language model AND GUI testing
+large language model AND metamorphic testing
+large language model AND test flakiness
+large language model AND regression testing
+
+# analysis and solving
+large language model AND equivalence checking
+large language model AND translation validation
+large language model AND counterexample
+large language model AND runtime verification
+large language model AND type error
+large language model AND code review AND static analyzer
+
+# security-facing analysis
+large language model AND smart contract vulnerability
+large language model AND exploit generation
+large language model AND patch correctness
+large language model AND root cause analysis
+large language model AND hardware assertion generation

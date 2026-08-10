@@ -1,0 +1,91 @@
+{"ts": "2026-08-10T03:46:09", "kind": "query", "source": "arxiv", "query": "large language model AND loop invariant", "hits": 5, "kept": 5, "new": 5, "skipped": 0}
+{"ts": "2026-08-10T03:46:21", "kind": "query", "source": "arxiv", "query": "large language model AND static analysis", "hits": 100, "kept": 97, "new": 96, "skipped": 3}
+{"ts": "2026-08-10T03:46:23", "kind": "query", "source": "arxiv", "query": "large language model AND abstract interpretation", "hits": 4, "kept": 4, "new": 4, "skipped": 0}
+{"ts": "2026-08-10T03:46:26", "kind": "query", "source": "arxiv", "query": "large language model AND dataflow analysis", "hits": 2, "kept": 2, "new": 2, "skipped": 0}
+{"ts": "2026-08-10T03:46:30", "kind": "query", "source": "arxiv", "query": "large language model AND taint analysis", "hits": 13, "kept": 12, "new": 9, "skipped": 1}
+{"ts": "2026-08-10T03:46:32", "kind": "query", "source": "arxiv", "query": "large language model AND points-to analysis", "hits": 7, "kept": 4, "new": 4, "skipped": 3}
+{"ts": "2026-08-10T03:46:35", "kind": "query", "source": "arxiv", "query": "large language model AND type inference", "hits": 17, "kept": 15, "new": 12, "skipped": 2}
+{"ts": "2026-08-10T03:46:39", "kind": "query", "source": "arxiv", "query": "large language model AND fuzzing", "hits": 100, "kept": 96, "new": 96, "skipped": 4}
+{"ts": "2026-08-10T03:46:41", "kind": "query", "source": "arxiv", "query": "large language model AND fuzz testing", "hits": 30, "kept": 29, "new": 6, "skipped": 1}
+{"ts": "2026-08-10T03:46:44", "kind": "query", "source": "arxiv", "query": "large language model AND unit test generation", "hits": 69, "kept": 64, "new": 63, "skipped": 5}
+{"ts": "2026-08-10T03:46:47", "kind": "query", "source": "arxiv", "query": "large language model AND test oracle", "hits": 35, "kept": 30, "new": 29, "skipped": 5}
+{"ts": "2026-08-10T03:46:50", "kind": "query", "source": "arxiv", "query": "large language model AND property-based testing", "hits": 12, "kept": 10, "new": 9, "skipped": 2}
+{"ts": "2026-08-10T03:46:53", "kind": "query", "source": "arxiv", "query": "large language model AND mutation testing", "hits": 19, "kept": 18, "new": 15, "skipped": 1}
+{"ts": "2026-08-10T03:46:56", "kind": "query", "source": "arxiv", "query": "large language model AND differential testing", "hits": 20, "kept": 18, "new": 15, "skipped": 2}
+{"ts": "2026-08-10T03:46:59", "kind": "query", "source": "arxiv", "query": "LLM AND seed generation AND fuzzer", "hits": 4, "kept": 4, "new": 2, "skipped": 0}
+{"ts": "2026-08-10T03:47:02", "kind": "query", "source": "arxiv", "query": "large language model AND symbolic execution", "hits": 48, "kept": 46, "new": 36, "skipped": 2}
+{"ts": "2026-08-10T03:47:05", "kind": "query", "source": "arxiv", "query": "large language model AND concolic testing", "hits": 2, "kept": 2, "new": 2, "skipped": 0}
+{"ts": "2026-08-10T03:47:08", "kind": "query", "source": "arxiv", "query": "large language model AND path constraint", "hits": 7, "kept": 7, "new": 4, "skipped": 0}
+{"ts": "2026-08-10T03:47:11", "kind": "query", "source": "arxiv", "query": "large language model AND formal verification", "hits": 100, "kept": 94, "new": 83, "skipped": 6}
+{"ts": "2026-08-10T03:47:15", "kind": "query", "source": "arxiv", "query": "large language model AND theorem proving", "hits": 100, "kept": 94, "new": 84, "skipped": 6}
+{"ts": "2026-08-10T03:47:17", "kind": "query", "source": "arxiv", "query": "large language model AND proof assistant", "hits": 36, "kept": 34, "new": 20, "skipped": 2}
+{"ts": "2026-08-10T03:47:21", "kind": "query", "source": "arxiv", "query": "large language model AND model checking", "hits": 33, "kept": 31, "new": 21, "skipped": 2}
+{"ts": "2026-08-10T03:47:23", "kind": "query", "source": "arxiv", "query": "large language model AND deductive verification", "hits": 7, "kept": 7, "new": 7, "skipped": 0}
+{"ts": "2026-08-10T03:47:26", "kind": "query", "source": "arxiv", "query": "large language model AND autoformalization", "hits": 57, "kept": 51, "new": 31, "skipped": 6}
+{"ts": "2026-08-10T03:47:29", "kind": "query", "source": "arxiv", "query": "large language model AND premise selection", "hits": 5, "kept": 4, "new": 2, "skipped": 1}
+{"ts": "2026-08-10T03:47:32", "kind": "query", "source": "arxiv", "query": "large language model AND proof synthesis", "hits": 15, "kept": 13, "new": 4, "skipped": 2}
+{"ts": "2026-08-10T03:47:35", "kind": "query", "source": "arxiv", "query": "LLM AND Coq AND proof", "hits": 15, "kept": 15, "new": 10, "skipped": 0}
+{"ts": "2026-08-10T03:47:38", "kind": "query", "source": "arxiv", "query": "LLM AND Lean AND theorem prover", "hits": 29, "kept": 29, "new": 15, "skipped": 0}
+{"ts": "2026-08-10T03:47:41", "kind": "query", "source": "arxiv", "query": "LLM AND Isabelle AND proof", "hits": 20, "kept": 20, "new": 8, "skipped": 0}
+{"ts": "2026-08-10T03:47:44", "kind": "query", "source": "arxiv", "query": "LLM AND Dafny AND verification", "hits": 30, "kept": 30, "new": 22, "skipped": 0}
+{"ts": "2026-08-10T03:47:47", "kind": "query", "source": "arxiv", "query": "large language model AND loop invariant", "hits": 19, "kept": 19, "new": 8, "skipped": 0}
+{"ts": "2026-08-10T03:47:50", "kind": "query", "source": "arxiv", "query": "large language model AND invariant generation", "hits": 8, "kept": 8, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:47:53", "kind": "query", "source": "arxiv", "query": "large language model AND separation logic", "hits": 6, "kept": 6, "new": 3, "skipped": 0}
+{"ts": "2026-08-10T03:47:56", "kind": "query", "source": "arxiv", "query": "large language model AND Hoare logic", "hits": 2, "kept": 2, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:47:59", "kind": "query", "source": "arxiv", "query": "large language model AND specification inference", "hits": 22, "kept": 15, "new": 15, "skipped": 7}
+{"ts": "2026-08-10T03:48:02", "kind": "query", "source": "arxiv", "query": "large language model AND program contract generation", "hits": 0, "kept": 0, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:48:05", "kind": "query", "source": "arxiv", "query": "large language model AND assertion generation", "hits": 21, "kept": 20, "new": 13, "skipped": 1}
+{"ts": "2026-08-10T03:48:08", "kind": "query", "source": "arxiv", "query": "large language model AND temporal logic specification", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T03:48:11", "kind": "query", "source": "arxiv", "query": "large language model AND SMT solver", "hits": 29, "kept": 29, "new": 14, "skipped": 0}
+{"ts": "2026-08-10T03:48:14", "kind": "query", "source": "arxiv", "query": "large language model AND constraint solving", "hits": 15, "kept": 14, "new": 9, "skipped": 1}
+{"ts": "2026-08-10T03:48:18", "kind": "query", "source": "arxiv", "query": "large language model AND automated program repair", "hits": 100, "kept": 95, "new": 91, "skipped": 5}
+{"ts": "2026-08-10T03:48:20", "kind": "query", "source": "arxiv", "query": "large language model AND patch generation", "hits": 61, "kept": 56, "new": 37, "skipped": 5}
+{"ts": "2026-08-10T03:48:23", "kind": "query", "source": "arxiv", "query": "large language model AND fault localization", "hits": 77, "kept": 73, "new": 46, "skipped": 4}
+{"ts": "2026-08-10T03:48:27", "kind": "query", "source": "arxiv", "query": "large language model AND vulnerability detection", "hits": 100, "kept": 99, "new": 85, "skipped": 1}
+{"ts": "2026-08-10T03:48:29", "kind": "query", "source": "arxiv", "query": "large language model AND bug detection", "hits": 72, "kept": 70, "new": 44, "skipped": 2}
+{"ts": "2026-08-10T03:48:33", "kind": "query", "source": "arxiv", "query": "large language model AND program synthesis", "hits": 100, "kept": 99, "new": 91, "skipped": 1}
+{"ts": "2026-08-10T03:48:35", "kind": "query", "source": "arxiv", "query": "large language model AND decompilation", "hits": 43, "kept": 41, "new": 34, "skipped": 2}
+{"ts": "2026-08-10T03:48:38", "kind": "query", "source": "arxiv", "query": "large language model AND binary analysis", "hits": 16, "kept": 16, "new": 7, "skipped": 0}
+{"ts": "2026-08-10T03:48:41", "kind": "query", "source": "arxiv", "query": "large language model AND reverse engineering", "hits": 100, "kept": 81, "new": 51, "skipped": 19}
+{"ts": "2026-08-10T03:48:44", "kind": "query", "source": "arxiv", "query": "LLM agent AND software engineering", "hits": 100, "kept": 100, "new": 95, "skipped": 0}
+{"ts": "2026-08-10T03:48:47", "kind": "query", "source": "arxiv", "query": "LLM agent AND program verification", "hits": 4, "kept": 4, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T03:48:51", "kind": "query", "source": "arxiv", "query": "repository-level AND large language model AND code", "hits": 100, "kept": 95, "new": 88, "skipped": 5}
+{"ts": "2026-08-10T03:57:58", "kind": "query", "source": "arxiv", "query": "large language model AND contract generation", "hits": 16, "kept": 14, "new": 12, "skipped": 2}
+{"ts": "2026-08-10T03:58:01", "kind": "query", "source": "arxiv", "query": "large language model AND temporal logic", "hits": 49, "kept": 44, "new": 37, "skipped": 5}
+{"ts": "2026-08-10T03:58:03", "kind": "query", "source": "arxiv", "query": "large language model AND weakest precondition", "hits": 2, "kept": 2, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:06", "kind": "query", "source": "arxiv", "query": "large language model AND verification condition", "hits": 3, "kept": 3, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T03:58:09", "kind": "query", "source": "arxiv", "query": "large language model AND specification mining", "hits": 2, "kept": 1, "new": 1, "skipped": 1}
+{"ts": "2026-08-10T03:58:12", "kind": "query", "source": "arxiv", "query": "large language model AND refinement type", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T03:58:18", "kind": "query", "source": "arxiv", "query": "large language model AND program analysis", "hits": 100, "kept": 76, "new": 27, "skipped": 24}
+{"ts": "2026-08-10T03:58:19", "kind": "query", "source": "arxiv", "query": "large language model AND program verification", "hits": 24, "kept": 23, "new": 6, "skipped": 1}
+{"ts": "2026-08-10T03:58:22", "kind": "query", "source": "arxiv", "query": "large language model AND code verification", "hits": 13, "kept": 7, "new": 5, "skipped": 6}
+{"ts": "2026-08-10T03:58:25", "kind": "query", "source": "arxiv", "query": "large language model AND verified code generation", "hits": 8, "kept": 6, "new": 3, "skipped": 2}
+{"ts": "2026-08-10T03:58:28", "kind": "query", "source": "arxiv", "query": "large language model AND proof repair", "hits": 6, "kept": 5, "new": 3, "skipped": 1}
+{"ts": "2026-08-10T03:58:31", "kind": "query", "source": "arxiv", "query": "large language model AND tactic prediction", "hits": 2, "kept": 2, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:34", "kind": "query", "source": "arxiv", "query": "large language model AND neural theorem proving", "hits": 9, "kept": 9, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:37", "kind": "query", "source": "arxiv", "query": "LLM AND Verus AND Rust verification", "hits": 1, "kept": 1, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:40", "kind": "query", "source": "arxiv", "query": "LLM AND proof state", "hits": 20, "kept": 20, "new": 7, "skipped": 0}
+{"ts": "2026-08-10T03:58:43", "kind": "query", "source": "arxiv", "query": "large language model AND fuzz driver generation", "hits": 4, "kept": 4, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:46", "kind": "query", "source": "arxiv", "query": "large language model AND protocol fuzzing", "hits": 4, "kept": 3, "new": 1, "skipped": 1}
+{"ts": "2026-08-10T03:58:49", "kind": "query", "source": "arxiv", "query": "large language model AND kernel fuzzing", "hits": 2, "kept": 2, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T03:58:52", "kind": "query", "source": "arxiv", "query": "large language model AND compiler testing", "hits": 8, "kept": 7, "new": 2, "skipped": 1}
+{"ts": "2026-08-10T03:58:55", "kind": "query", "source": "arxiv", "query": "large language model AND crash reproduction", "hits": 2, "kept": 1, "new": 0, "skipped": 1}
+{"ts": "2026-08-10T03:58:58", "kind": "query", "source": "arxiv", "query": "large language model AND bug reproduction", "hits": 18, "kept": 14, "new": 7, "skipped": 4}
+{"ts": "2026-08-10T03:59:01", "kind": "query", "source": "arxiv", "query": "large language model AND GUI testing", "hits": 24, "kept": 15, "new": 11, "skipped": 9}
+{"ts": "2026-08-10T03:59:04", "kind": "query", "source": "arxiv", "query": "large language model AND metamorphic testing", "hits": 35, "kept": 13, "new": 8, "skipped": 22}
+{"ts": "2026-08-10T03:59:07", "kind": "query", "source": "arxiv", "query": "large language model AND test flakiness", "hits": 2, "kept": 1, "new": 1, "skipped": 1}
+{"ts": "2026-08-10T03:59:10", "kind": "query", "source": "arxiv", "query": "large language model AND regression testing", "hits": 28, "kept": 28, "new": 23, "skipped": 0}
+{"ts": "2026-08-10T03:59:13", "kind": "query", "source": "arxiv", "query": "large language model AND equivalence checking", "hits": 17, "kept": 9, "new": 2, "skipped": 8}
+{"ts": "2026-08-10T03:59:16", "kind": "query", "source": "arxiv", "query": "large language model AND translation validation", "hits": 9, "kept": 7, "new": 4, "skipped": 2}
+{"ts": "2026-08-10T03:59:19", "kind": "query", "source": "arxiv", "query": "large language model AND counterexample", "hits": 58, "kept": 42, "new": 11, "skipped": 16}
+{"ts": "2026-08-10T03:59:22", "kind": "query", "source": "arxiv", "query": "large language model AND runtime verification", "hits": 8, "kept": 5, "new": 4, "skipped": 3}
+{"ts": "2026-08-10T03:59:25", "kind": "query", "source": "arxiv", "query": "large language model AND type error", "hits": 12, "kept": 7, "new": 4, "skipped": 5}
+{"ts": "2026-08-10T03:59:28", "kind": "query", "source": "arxiv", "query": "large language model AND code review AND static analyzer", "hits": 3, "kept": 2, "new": 1, "skipped": 1}
+{"ts": "2026-08-10T03:59:31", "kind": "query", "source": "arxiv", "query": "large language model AND smart contract vulnerability", "hits": 31, "kept": 28, "new": 10, "skipped": 3}
+{"ts": "2026-08-10T03:59:34", "kind": "query", "source": "arxiv", "query": "large language model AND exploit generation", "hits": 16, "kept": 10, "new": 6, "skipped": 6}
+{"ts": "2026-08-10T03:59:37", "kind": "query", "source": "arxiv", "query": "large language model AND patch correctness", "hits": 12, "kept": 11, "new": 3, "skipped": 1}
+{"ts": "2026-08-10T03:59:40", "kind": "query", "source": "arxiv", "query": "large language model AND root cause analysis", "hits": 93, "kept": 53, "new": 40, "skipped": 40}
+{"ts": "2026-08-10T03:59:43", "kind": "query", "source": "arxiv", "query": "large language model AND hardware assertion generation", "hits": 2, "kept": 2, "new": 0, "skipped": 0}
+{"ts": "2026-08-10T04:05:57", "kind": "query", "source": "arxiv", "query": "The Hitchhiker's Guide to Program Analysis Part III Mostly Harmless LLMs", "hits": 1, "kept": 0, "new": 0, "skipped": 1}
+{"ts": "2026-08-10T04:06:09", "kind": "query", "source": "arxiv", "query": "VeriStruct AI-assisted Automated Verification of Data-Structure Modules in Verus", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
+{"ts": "2026-08-10T04:06:23", "kind": "query", "source": "arxiv", "query": "The Hitchhiker's Guide to Program Analysis Part III Mostly Harmless LLMs", "hits": 1, "kept": 1, "new": 1, "skipped": 0}
