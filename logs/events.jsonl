@@ -92,3 +92,4 @@
 {"ts": "2026-08-10T04:24:00", "kind": "enrich", "crossref": 82, "published": 514, "arxiv": 0, "revised": 0, "no_abstract": 0, "no_doi": 1022}
 {"ts": "2026-08-10T04:25:59", "kind": "screen_apply", "applied": 25, "failed": 0}
 {"ts": "2026-08-10T04:27:35", "kind": "screen_apply", "applied": 25, "failed": 0}
+{"ts": "2026-08-10T04:28:52", "kind": "screen_apply", "applied": 25, "failed": 0}
