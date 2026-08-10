@@ -27,17 +27,14 @@ LOG_DIR = ROOT / "logs"
 
 CONTACT = os.environ.get("SURVEY_CONTACT_EMAIL", "vietanh101003@gmail.com")
 USER_AGENT = f"lightweight-survey/0.1 (mailto:{CONTACT})"
-S2_API_KEY = os.environ.get("S2_API_KEY", "")
 
-# Minimum seconds between requests to the same host. arXiv asks for one
-# request per three seconds; Semantic Scholar's keyless tier is ~1/sec.
+# Minimum seconds between requests to the same host. arXiv asks for one per
+# three seconds; the rest publish no hard cap, so these are self-imposed and
+# gentle — every source is free, and staying welcome is the point.
 RATE_LIMITS = {
-    "api.openalex.org": 0.15,
     "export.arxiv.org": 3.0,
-    # S2's keyless tier is aggressive: search often 429s outright, though
-    # /paper/batch usually survives. Set S2_API_KEY to make search viable.
-    "api.semanticscholar.org": 3.0 if not S2_API_KEY else 1.0,
     "api.crossref.org": 0.5,
+    "api.opencitations.net": 1.0,
     "dblp.org": 1.0,
 }
 DEFAULT_RATE = 1.0
@@ -148,58 +145,6 @@ def get_json(url: str, params: dict | None = None, **kwargs) -> dict:
     return json.loads(http_get(url, params, **kwargs))
 
 
-def post_json(
-    url: str,
-    payload: dict,
-    params: dict | None = None,
-    *,
-    headers: dict | None = None,
-    retries: int = 5,
-    timeout: int = 90,
-):
-    """POST JSON and decode the reply. Uncached — used for batch lookups.
-
-    Only Semantic Scholar's /paper/batch needs this, and it is what makes
-    enrichment take minutes instead of hours on the keyless tier.
-    """
-    if params:
-        url = f"{url}?{urllib.parse.urlencode(params, safe=':,>|<*')}"
-    host = urllib.parse.urlparse(url).netloc
-    req_headers = {
-        "User-Agent": USER_AGENT,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-    if headers:
-        req_headers.update(headers)
-    data = json.dumps(payload).encode("utf-8")
-
-    backoff = 2.0
-    last_error = ""
-    for attempt in range(1, retries + 1):
-        _throttle(host)
-        req = urllib.request.Request(url, data=data, headers=req_headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return json.loads(resp.read().decode("utf-8", errors="replace"))
-        except urllib.error.HTTPError as exc:
-            last_error = f"HTTP {exc.code}"
-            if exc.code == 429 or exc.code >= 500:
-                wait = float(exc.headers.get("Retry-After") or backoff)
-                log(f"{last_error} from {host}, retry {attempt}/{retries} in {wait:.0f}s")
-                time.sleep(wait)
-                backoff = min(backoff * 2, 120)
-                continue
-            raise FetchError(f"{last_error} for {url}") from exc
-        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
-            last_error = str(exc)
-            time.sleep(backoff)
-            backoff = min(backoff * 2, 120)
-
-    log_event("post_failed", url=url, error=last_error)
-    raise FetchError(f"giving up on POST {url}: {last_error}")
-
-
 def chunked(items: list, size: int):
     for start in range(0, len(items), size):
         yield items[start : start + size]
@@ -227,6 +172,18 @@ def norm_title(title: str | None) -> str:
     return _WS.sub(" ", text).strip()
 
 
+def title_similarity(a: str | None, b: str | None) -> float:
+    """Token overlap on normalized titles, 0.0 to 1.0.
+
+    Robust to the subtitle and punctuation differences between what an API
+    returns and what we stored.
+    """
+    left, right = set(norm_title(a).split()), set(norm_title(b).split())
+    if not left or not right:
+        return 0.0
+    return len(left & right) / max(len(left), len(right))
+
+
 def norm_doi(doi: str | None) -> str:
     if not doi:
         return ""
@@ -246,13 +203,6 @@ def norm_arxiv(value: str | None) -> str:
     return match.group(1) if match else ""
 
 
-def norm_openalex(value: str | None) -> str:
-    if not value:
-        return ""
-    match = re.search(r"(W\d+)", value)
-    return match.group(1) if match else ""
-
-
 def aliases(rec: dict) -> list[str]:
     """Every identifier this record can be recognized by, strongest first."""
     out = []
@@ -260,10 +210,6 @@ def aliases(rec: dict) -> list[str]:
         out.append(f"doi:{rec['doi']}")
     if rec.get("arxiv_id"):
         out.append(f"arxiv:{rec['arxiv_id']}")
-    if rec.get("openalex_id"):
-        out.append(f"openalex:{rec['openalex_id']}")
-    if rec.get("s2_id"):
-        out.append(f"s2:{rec['s2_id']}")
     title = norm_title(rec.get("title"))
     if title:
         out.append(f"title:{title}")
@@ -271,7 +217,7 @@ def aliases(rec: dict) -> list[str]:
 
 
 def record_id(rec: dict) -> str:
-    """Stable primary key. DOI wins, then arXiv, then OpenAlex, then title."""
+    """Stable primary key. DOI wins, then arXiv, then title."""
     for alias in aliases(rec):
         if not alias.startswith("title:"):
             return alias
@@ -281,15 +227,22 @@ def record_id(rec: dict) -> str:
     return "title:" + hashlib.sha1(title.encode()).hexdigest()[:12]
 
 
-def inverted_to_abstract(index: dict | None) -> str:
-    """Rebuild OpenAlex's inverted abstract index into plain text."""
-    if not index:
+_JATS_TAG = re.compile(r"<[^>]+>")
+_JATS_HEADING = re.compile(r"^\s*abstract[:\s]*", re.IGNORECASE)
+
+
+def strip_jats(markup: str | None) -> str:
+    """Flatten a Crossref JATS-XML abstract into plain text.
+
+    Tags are dropped, not rendered: verify_citations.py checks Evidence quotes
+    against this text, so it must stay verbatim.
+    """
+    if not markup:
         return ""
-    positions: list[tuple[int, str]] = []
-    for word, spots in index.items():
-        positions.extend((spot, word) for spot in spots)
-    positions.sort()
-    return clean_text(" ".join(word for _, word in positions))
+    text = _JATS_TAG.sub(" ", markup)
+    text = (text.replace("&amp;", "&").replace("&lt;", "<")
+                .replace("&gt;", ">").replace("&quot;", '"').replace("&apos;", "'"))
+    return _JATS_HEADING.sub("", clean_text(text))
 
 
 # --------------------------------------------------------------------------
@@ -335,6 +288,18 @@ def match_venue(venue: str | None) -> str:
         if re.search(pattern, text):
             return name
     return ""
+
+
+# "arXiv" is where a preprint sits, not the committee that accepted it. SCOPE.md
+# screens on the committee, so enrichment must read these as empty — otherwise
+# the placeholder blocks its own replacement.
+PLACEHOLDER_VENUES = {"arxiv", "corr", "arxiv preprint", "preprint"}
+
+
+def has_real_venue(rec: dict) -> bool:
+    """True once we know where the paper was actually published."""
+    venue = clean_text(rec.get("venue")).lower()
+    return bool(venue) and venue not in PLACEHOLDER_VENUES
 
 
 def venue_tier(rec: dict) -> str:
@@ -399,6 +364,14 @@ class Store:
         for alias in aliases(rec):
             self._alias_index.setdefault(alias, rec["id"])
 
+    def reindex(self, rec: dict) -> None:
+        """Re-register a record's aliases after an identifier was filled in.
+
+        enrich.py assigns DOIs in place; without this a later record in the
+        same run could be stored as a duplicate.
+        """
+        self._index(rec)
+
     def find(self, rec: dict) -> str | None:
         """Return the id of an existing record matching any alias of `rec`."""
         for alias in aliases(rec):
@@ -429,9 +402,14 @@ class Store:
         for key, value in rec.items():
             if key in CURATED_FIELDS or key == "id":
                 continue
-            if key in ("sources", "discovered_via", "referenced_works"):
+            if key in ("sources", "discovered_via", "arxiv_categories"):
                 merged = list(dict.fromkeys(current.get(key, []) + list(value)))
                 current[key] = merged
+            elif key == "venue" and not has_real_venue(current):
+                # A real venue always beats the "arXiv" placeholder, whichever
+                # record got here first.
+                current["venue"] = value
+                current["venue_short"] = match_venue(value)
             elif not current.get(key):
                 current[key] = value
         current["last_updated"] = now

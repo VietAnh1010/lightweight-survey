@@ -21,10 +21,8 @@ procedure is `prompts/literature-review.md`.
 No dependencies. Python 3.9+, standard library only.
 
 ```bash
-python3 scripts/search_openalex.py --queries-file config/queries.txt --max 200
-python3 scripts/search_arxiv.py    --queries-file config/queries.txt --max 100
-python3 scripts/search_s2.py       --queries-file config/queries.txt --max 100  # optional, see below
-python3 scripts/enrich.py                       # backfill abstracts and venues
+python3 scripts/search_arxiv.py --queries-file config/queries.txt --max 100
+python3 scripts/enrich.py                       # DOIs, venues, missing abstracts
 python3 scripts/screen.py next --limit 25       # candidates out, as JSON
 python3 scripts/screen.py apply decisions.json  # decisions in, in bulk
 python3 scripts/snowball.py --seed-status included
@@ -33,16 +31,43 @@ python3 scripts/style_check.py                  # style gate
 python3 scripts/verify_citations.py --all       # citation gate
 ```
 
+**No API keys.** Every source is free, keyless, and unmetered:
+
+| Source | Job |
+|---|---|
+| arXiv | search, and the abstract for anything Crossref left blank |
+| Crossref | DOIs, published venues, and reference lists (backward snowball) |
+| OpenCitations | citing papers (forward snowball) |
+
 Optional environment:
 
-- `SURVEY_CONTACT_EMAIL` — the polite pool for OpenAlex and Crossref.
+- `SURVEY_CONTACT_EMAIL` — the polite pool for Crossref.
   - Faster and more reliable. Defaults to the repo owner's address.
-- `S2_API_KEY` — **effectively required for `search_s2.py`.** Free from
-  semanticscholar.org.
-  - Semantic Scholar's keyless search endpoints return nothing but 429s.
-  - The script gives up after three rather than spending the night on backoff.
-  - Enrichment is unaffected: `enrich.py` uses `/paper/batch`, which works keylessly.
-  - Without a key, OpenAlex and arXiv do the harvesting. S2 search is a recall bonus.
+
+Add no keyed source to this pipeline. A metered or key-gated API fails partway
+through an unattended run, which is worse than not having it.
+
+## Running this in a cloud session
+
+**The Default cloud environment will break this run.** Its **Trusted** network
+access covers package registries and cloud SDKs, none of the hosts this
+pipeline needs. The repo clones, Claude reads files, and then every search,
+enrichment, and snowball request is refused.
+
+Set the environment to **Network access: Custom** at
+[claude.ai/settings/claude-code](https://claude.ai/settings/claude-code), with
+**"Also include default list of common package managers"** checked:
+
+```
+export.arxiv.org
+api.crossref.org
+api.opencitations.net
+arxiv.org
+```
+
+Add the publisher domains from `.claude/settings.json` too if notes will quote
+beyond the abstract — `dl.acm.org`, `openreview.net`, `link.springer.com`,
+`ieeexplore.ieee.org`, `www.usenix.org`, `proceedings.mlr.press`.
 
 ## Layout
 
@@ -51,7 +76,7 @@ SCOPE.md                  the scope contract — screening decisions cite this
 CLAUDE.md                 operating rules, loaded into every agent session
 .claude/skills/           the style contract (my-concise), enforced on the prose
 STATUS.md                 live run state; the handoff if the session dies
-config/queries.txt        the query grid, shared by all three search backends
+config/queries.txt        the query grid for the arXiv harvest
 papers/library.jsonl      every paper seen, deduped, one JSON record per line
 papers/notes/*.md         one note per included paper, fixed headings
 review/                   the deliverables
@@ -62,17 +87,27 @@ scripts/                  the pipeline
 
 ## Design notes
 
-**Structured APIs, not crawling.** OpenAlex is primary and supplies the
-citation graph; arXiv covers preprints, which lead the published literature
-here by months; Semantic Scholar adds a different relevance ranking, so
-different recall. S2's batch endpoint backfills abstracts and Crossref
-backfills venues. Web fetching reads specific papers; it is not for discovery.
+**Structured APIs, not crawling.** arXiv leads the published literature here by
+months and carries a full abstract on every entry, which is what screening runs
+on. Crossref supplies what arXiv cannot: the published DOI and the committee
+that accepted the paper. Web fetching reads specific papers, never discovers them.
+
+**Enrichment is load-bearing.** arXiv returns almost no DOIs — 1 of 15 on a
+typical query — and both citation sources are keyed on DOI, so the Crossref
+title match in `enrich.py` is what makes snowballing possible. Yield is low
+because recent preprints have no published version yet; `enrich.py` reports how
+many records still lack a DOI.
 
 **Snowballing is what makes it a survey.** Keyword search finds papers that
 phrase things the way you do. Chasing references and citations of the accepted
 set finds the ones that do not — including the foundational work nobody
 phrases your way. `snowball.py` runs both directions, gated on the topic
 vocabulary and the year floor so it converges.
+
+- backward: Crossref reference lists. Only DOI-bearing entries resolve, and the
+  run reports how many were deposited as unstructured text and so were lost.
+- forward: OpenCitations. Open citation data only, so a thin result means thin
+  data, not an uncited paper — say which in `STATUS.md`.
 
 **Everything is resumable.** Responses are cached on disk by URL, the library
 is append-friendly JSONL written atomically, and every script is idempotent. A

@@ -1,11 +1,14 @@
 """Search the arXiv API and merge results into the library.
 
-arXiv matters here because much of the LLM-for-PL/SE work appears as a
-preprint months before it lands at a committee, and OpenAlex indexes preprint
-abstracts unevenly.
+The harvest backend: much of the LLM-for-PL/SE work appears here as a preprint
+months before it lands at a committee, and every entry carries a full abstract,
+which is what screening runs on.
 
     python3 scripts/search_arxiv.py --query '"large language model" AND fuzzing'
     python3 scripts/search_arxiv.py --queries-file config/queries.txt --max 100
+
+The lookup helpers at the bottom serve snowball.py (`fetch_by_ids`) and
+enrich.py (`find_by_title`).
 """
 
 from __future__ import annotations
@@ -16,6 +19,7 @@ import xml.etree.ElementTree as ET
 
 from common import (
     Store,
+    chunked,
     clean_text,
     http_get,
     log,
@@ -23,6 +27,7 @@ from common import (
     match_venue,
     norm_arxiv,
     norm_doi,
+    title_similarity,
 )
 from topic import in_topic
 
@@ -82,8 +87,8 @@ def parse_entry(entry: ET.Element, discovered_via: str) -> dict | None:
 
 def search(query: str, categories: list[str], max_results: int) -> list[ET.Element]:
     """Page through arXiv results. The API caps a single page at 2000."""
-    # Shared query files are written as plain phrases for OpenAlex; arXiv needs
-    # an explicit field prefix, so add one when the query has no `field:` term.
+    # Query files are written as plain phrases joined by AND; arXiv needs an
+    # explicit field prefix, so add one when the query has no `field:` term.
     if not re.search(r"\b(all|ti|abs|au|cat|co|jr|rn|id):", query):
         query = " AND ".join(f'all:"{part.strip()}"'
                              for part in query.split(" AND ") if part.strip())
@@ -114,6 +119,86 @@ def search(query: str, categories: list[str], max_results: int) -> list[ET.Eleme
         start += page_size
     return entries[:max_results]
 
+
+# --------------------------------------------------------------------------
+# lookup (used by snowball.py and enrich.py, not by the search CLI)
+# --------------------------------------------------------------------------
+
+TITLE_MATCH_THRESHOLD = 0.8
+
+
+def fetch_by_ids(arxiv_ids: list[str], discovered_via: str) -> list[dict]:
+    """Resolve arXiv ids to records. `id_list` batches, so this is cheap."""
+    out: list[dict] = []
+    for batch in chunked(list(dict.fromkeys(i for i in arxiv_ids if i)), 100):
+        try:
+            body = http_get(
+                API,
+                {"id_list": ",".join(batch), "max_results": len(batch)},
+                headers={"Accept": "application/atom+xml"},
+            )
+            entries = ET.fromstring(body).findall("atom:entry", NS)
+        except Exception as exc:  # noqa: BLE001 - one bad batch must not stop a run
+            log(f"arxiv id lookup failed for {len(batch)} ids: {exc}")
+            log_event("lookup_failed", source="arxiv", count=len(batch), error=str(exc))
+            continue
+        for entry in entries:
+            rec = parse_entry(entry, discovered_via)
+            if rec:
+                out.append(rec)
+    return out
+
+
+def find_by_title(title: str) -> dict | None:
+    """The arXiv preprint of a paper, matched on title. None if not confident.
+
+    Recovers the abstract for records Crossref left blank. The threshold is
+    high because a wrong match attaches the wrong abstract to a real paper —
+    the exact failure verify_citations.py exists to catch.
+    """
+    best, best_score = None, 0.0
+    for probe in _title_probes(title):
+        for rec in _title_search(probe):
+            score = title_similarity(rec["title"], title)
+            if score > best_score:
+                best, best_score = rec, score
+        if best_score >= TITLE_MATCH_THRESHOLD:
+            break  # confident already; don't spend a second request
+    return best if best_score >= TITLE_MATCH_THRESHOLD else None
+
+
+def _title_probes(title: str) -> list[str]:
+    """Query strings to try, most specific first.
+
+    `ti:"..."` is a literal phrase match, so stripping punctuation without
+    collapsing the spaces it leaves makes every query miss. The second probe
+    drops the subtitle, catching preprints whose subtitle later changed.
+    """
+    def clean(text: str) -> str:
+        return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", " ", text)).strip()
+
+    probes = [clean(title)]
+    head = clean(title.split(":")[0])
+    if head != probes[0] and len(head.split()) >= 3:
+        probes.append(head)
+    return [p for p in probes if len(p.split()) >= 3]
+
+
+def _title_search(probe: str) -> list[dict]:
+    try:
+        body = http_get(
+            API,
+            {"search_query": f'ti:"{probe}"', "max_results": 5},
+            headers={"Accept": "application/atom+xml"},
+        )
+        entries = ET.fromstring(body).findall("atom:entry", NS)
+    except Exception as exc:  # noqa: BLE001
+        log(f"arxiv title lookup failed for {probe[:50]!r}: {exc}")
+        return []
+    return [rec for rec in (parse_entry(e, "arxiv:title-match") for e in entries) if rec]
+
+
+# --------------------------------------------------------------------------
 
 def run(queries: list[str], categories: list[str], max_results: int,
         from_year: int, topic_gate: bool) -> None:

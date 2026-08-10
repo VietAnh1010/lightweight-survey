@@ -54,7 +54,13 @@ def candidate_view(rec: dict) -> dict:
 
 def rank_key(rec: dict):
     """Screen the most promising first, so an interrupted run still has the
-    good papers: target venues, then citations, then recency."""
+    good papers: target venues, then citations, then recency.
+
+    This only sorts anything once `enrich.py` has run. A fresh arXiv harvest
+    gives every record the venue "arXiv" and no citation count, so all three
+    keys tie and the order collapses to recency. Enrichment is what assigns the
+    published venue that makes a record rank as `target`.
+    """
     tier_rank = {"target": 0, "other": 1, "unknown": 2}[venue_tier(rec)]
     return (tier_rank, -(rec.get("cited_by_count") or 0), -(rec.get("year") or 0))
 

@@ -8,8 +8,10 @@ dies, this file plus the git log is the entire handoff.
 ## Current
 
 - **Phase:** not started — repo scaffolded, pipeline smoke-tested, awaiting the run
-- **Last updated:** 2026-08-06
+- **Last updated:** 2026-08-10
 - **Next action:** Phase 1 harvest, per `prompts/literature-review.md`
+- **Before a cloud run:** check the environment's network allowlist covers the
+  four API hosts — see "Running this in a cloud session" in `README.md`.
 
 ## Counts
 
@@ -31,12 +33,16 @@ thin there._
 
 ## Snowball rounds
 
-| Round | Direction | Seeds | New candidates |
-|---|---|---|---|
-| — | — | — | — |
+| Round | Direction | Seeds | Seeds w/o DOI | New candidates |
+|---|---|---|---|---|
+| — | — | — | — | — |
 
 Stopping criterion (`SCOPE.md`): two consecutive rounds each yielding fewer
 than 5 new in-scope candidates.
+
+Also record what each round could not reach, from what `snowball.py` prints —
+references deposited without a DOI, and how many citing works OpenCitations
+knew about. A thin round is only a finding if the sources were not the limit.
 
 ## Open questions
 
@@ -59,6 +65,9 @@ include/exclude calls, category assignments, papers cut for balance.
 Append one line per batch: what ran, what it yielded.
 
 - `2026-08-06` — repo scaffolded; pipeline verified end to end against live APIs.
-  - OpenAlex and arXiv search, S2 batch enrichment, screening, report generation.
   - Citation gate catches a planted fake DOI and a planted invented quote.
   - Library reset to empty for the real run.
+- `2026-08-09` — sources are arXiv + Crossref + OpenCitations; all free and keyless.
+  - Snowballing: Crossref reference lists backward, OpenCitations citations forward.
+  - `enrich.py` now finds published DOIs by title, which is what snowballing needs.
+  - Verified end to end on 15 arXiv hits: 6 DOIs resolved, 8 papers snowballed.

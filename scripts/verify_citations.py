@@ -36,6 +36,7 @@ from common import (
     http_get,
     log_event,
     norm_title,
+    title_similarity,
 )
 from notes import missing_sections, note_path, parse_note
 
@@ -51,15 +52,6 @@ problems: list[tuple[str, str]] = []
 
 def report(level: str, message: str) -> None:
     problems.append((level, message))
-
-
-def title_similarity(a: str, b: str) -> float:
-    """Token overlap on normalized titles. Robust to subtitle and punctuation
-    differences between what an API returns and what we stored."""
-    left, right = set(norm_title(a).split()), set(norm_title(b).split())
-    if not left or not right:
-        return 0.0
-    return len(left & right) / max(len(left), len(right))
 
 
 # --------------------------------------------------------------------------

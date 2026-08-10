@@ -16,21 +16,32 @@ batch and not the night.
 Work continuously. Do not stop to ask questions — record the question in
 `STATUS.md` under "Open questions" and proceed with your best judgement.
 
+**If the first search fails against every host, stop.** That is the cloud
+environment's network allowlist, not the APIs — see "Running this in a cloud
+session" in `README.md`. Retrying cannot fix it. Record it in `STATUS.md` and
+end the session rather than burning the night on backoff.
+
 ## Phase 1 — Harvest (target ~1 hour)
 
 ```bash
-python3 scripts/search_openalex.py --queries-file config/queries.txt --max 200
-python3 scripts/search_arxiv.py    --queries-file config/queries.txt --max 100
-python3 scripts/search_s2.py       --queries-file config/queries.txt --max 100
+python3 scripts/search_arxiv.py --queries-file config/queries.txt --max 100
 python3 scripts/enrich.py
 python3 scripts/screen.py stats
 ```
 
-`search_s2.py` will bail out early with a rate-limit message unless
-`S2_API_KEY` is set. That is expected and not a failure — OpenAlex and arXiv
-carry the harvest. Note it in `STATUS.md` and move on.
+The grid in `config/queries.txt` carries the whole harvest — widen it before
+screening rather than after. It also caps the harvest: 80 queries at `--max
+100` is 8000 hits before dedup and the topic gate.
 
-Expect a few thousand candidates. Then:
+`enrich.py` is the second half of the harvest, not a tidy-up: it finds the
+published DOI and venue for records that arrive as bare preprints. Two numbers
+it prints belong in `STATUS.md`:
+
+- **no abstract** — unscreenable. Mark those `unavailable`, never guess.
+- **no DOI** — cannot be snowballed from. If most included papers land here,
+  Phase 3 will be thin, and that is a coverage claim you have to make honestly.
+
+Judge the harvest by yield per query, not by the total:
 
 - Read `logs/events.jsonl`. A query with **0 in-topic hits** is probably malformed.
 - One returning far more than the rest is probably too broad.
@@ -68,8 +79,10 @@ python3 scripts/screen.py apply /tmp/decisions.json
 `priority` is 1–3 and drives ordering later: **3** = clearly central, **2** =
 solid and in scope, **1** = borderline, included with doubt noted.
 
-Batches are ordered target-venue-first, so the most valuable papers are
-screened first — if the run is cut short, what got screened is what mattered.
+Batches are ordered target-venue-first, so if the run is cut short, what got
+screened is what mattered. **Never screen a pool you have not enriched** —
+straight from arXiv every record reads as venue "arXiv" with no citation count,
+the sort keys all tie, and that guarantee does not hold.
 
 After every batch: update `STATUS.md` with counts and where you are, then
 commit.
@@ -83,8 +96,14 @@ python3 scripts/snowball.py --seed-status included --direction both
 python3 scripts/enrich.py
 ```
 
-This adds new candidates from the references and citations of what you
-accepted. Screen the new pool as in Phase 2, then snowball again.
+This adds candidates from the references (Crossref) and citations
+(OpenCitations) of what you accepted. Snowballed records arrive as bare DOIs,
+so `enrich.py` is what makes them screenable. Screen the new pool as in Phase
+2, then snowball again.
+
+Snowballing only reaches seeds with a DOI. Put the reach numbers `snowball.py`
+prints into `STATUS.md`: they separate "the literature is thin here" from "our
+sources are thin here", and only the first is a finding.
 
 Stop when the criterion in `SCOPE.md` is met — two consecutive rounds each
 yielding fewer than 5 new in-scope candidates — or the time budget runs out.
@@ -93,7 +112,7 @@ about coverage.
 
 Also: read the surveys you excluded. Their reference lists are the highest
 yield seeds available. Feed titles you find there back through
-`search_openalex.py --query "<title>"` — never straight into the library.
+`search_arxiv.py --query "<title>"` — never straight into the library.
 
 ## Phase 4 — Select the 40
 

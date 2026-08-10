@@ -36,10 +36,8 @@ declaring anything finished.
 ## Pipeline
 
 ```bash
-python3 scripts/search_openalex.py --queries-file config/queries.txt --max 200
-python3 scripts/search_arxiv.py    --queries-file config/queries.txt --max 100
-python3 scripts/search_s2.py       --queries-file config/queries.txt --max 100  # needs S2_API_KEY
-python3 scripts/enrich.py                      # backfill abstracts and venues
+python3 scripts/search_arxiv.py --queries-file config/queries.txt --max 100
+python3 scripts/enrich.py                      # DOIs, venues, missing abstracts
 python3 scripts/screen.py next --limit 25      # candidates -> stdout as JSON
 python3 scripts/screen.py apply decisions.json # decisions -> library, in bulk
 python3 scripts/snowball.py --seed-status included
@@ -50,6 +48,14 @@ python3 scripts/verify_citations.py --all      # gate: citations; non-zero on er
 
 Every script is idempotent and resumable — safe to re-run after any crash.
 Nothing needs installing; it is all stdlib.
+
+**Every source here is free, keyless, and unmetered.** arXiv searches, Crossref
+resolves DOIs and gives reference lists, OpenCitations gives citing papers.
+Never add a keyed or metered source: it fails partway through an unattended run.
+
+`enrich.py` is not optional. arXiv supplies almost no DOIs, and **both citation
+sources are keyed on DOI**, so its Crossref title match is what makes Phase 3
+possible. Run it after every harvest and every snowball round.
 
 ## Working rules
 

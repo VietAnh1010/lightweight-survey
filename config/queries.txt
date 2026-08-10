@@ -1,14 +1,14 @@
 # Query grid for the harvest phase.
 #
-# One query per line, `#` starts a comment. Concepts are separated by ` AND `
-# so the same file works across all three search backends:
-#   OpenAlex  passes it to title_and_abstract.search verbatim
-#   arXiv     rewrites each side as all:"..."
-#   S2        drops the AND and treats it as a relevance query
+# One query per line, `#` starts a comment. Concepts are separated by ` AND `,
+# which search_arxiv.py rewrites as all:"..." AND all:"...".
 #
 # Roughly (LLM vocabulary) x (analysis/verification/testing task). Recall
 # beats precision here: the topic gate in topic.py and the screening pass in
 # prompts/literature-review.md both narrow afterwards.
+#
+# This grid carries the whole harvest, so a concept missing here is a concept
+# missing from the review. Widen it in Phase 1, not in Phase 4.
 
 # --- static analysis -------------------------------------------------------
 large language model AND static analysis
