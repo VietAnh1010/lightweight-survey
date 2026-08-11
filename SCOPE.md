@@ -95,7 +95,7 @@ Recorded per paper in `papers/notes/<citekey>.md`, and the columns of
 
 ## Target
 
-**40 included papers**, selected for coverage across categories rather than
+**80 included papers**, selected for coverage across categories rather than
 citation count alone. Aim for every category above to have at least one
 representative, and no single category to hold more than about a quarter of
 the total.
