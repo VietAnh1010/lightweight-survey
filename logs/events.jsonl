@@ -138,3 +138,5 @@
 {"ts": "2026-08-11T20:29:36", "kind": "snowball_leg", "direction": "backward", "wanted": 1348, "resolved": 1300, "new": 2, "skipped": 1298, "unstructured_refs": 1801}
 {"ts": "2026-08-11T20:29:42", "kind": "snowball_leg", "direction": "forward", "new": 0, "skipped": 701}
 {"ts": "2026-08-11T20:29:42", "kind": "snowball", "direction": "both", "seeds": 89, "seeds_without_doi": 16, "added": 2}
+{"ts": "2026-08-11T20:31:43", "kind": "screen_apply", "applied": 16, "failed": 0}
+{"ts": "2026-08-11T20:32:33", "kind": "screen_apply", "applied": 17, "failed": 0}
