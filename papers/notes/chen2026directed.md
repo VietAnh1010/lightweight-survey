@@ -9,24 +9,40 @@
 
 ## Problem
 
-TODO — bullets, one claim each, ~100 characters
+- Symbolic execution finds security violations but suffers path explosion.
+- KLEE's path prioritisation optimises coverage, which is not the same as reaching vulnerable code.
+- Cyclic control-flow regions absorb the exploration budget before deeper code is reached.
 
 ## Main ideas
 
-TODO — bullets, one claim each, ~100 characters
+- KLEECopilot makes the search directed: the model marks code it judges potentially vulnerable.
+- Those marks reorder KLEE's path prioritisation toward security-relevant targets.
+- Loop-exit prioritisation is a separate mechanism for escaping cycles.
+- The model supplies security semantics that a coverage heuristic has no way to express.
+- KLEE still performs every constraint solve, so precision is unchanged.
 
 ## Evaluation
 
-TODO — bullets, one claim each, ~100 characters
+- Against baselines including Empc: basic block coverage up 42.24%, line coverage up 125.82%.
+- 1,335 total violations and 87 unique violations found.
+- 32.2% more total violations than the second-best baseline; 24.3% more unique than Empc.
+- Ablations over searchers, marking sources, and prompts yield only 54-61 unique violations.
 
 ## Limitations
 
-TODO — bullets, one claim each, ~100 characters
+- Authors: results are sensitive to model family, though only marginally to model scale.
+- Ours: marks are unverified judgements, so a wrong mark wastes budget silently.
+- Ours: violation counts depend on KLEE's checkers, so they measure reachability not exploitability.
+- Ours: no cost per campaign is reported, and marking requires model calls.
 
 ## Follow-ups
 
-TODO — bullets, one claim each, ~100 characters
+- Report budget spent on paths whose marks proved wrong, which measures the guidance's cost.
+- Test whether marks transfer across programs, which would amortise the model calls.
+- Combine directed prioritisation with ghost code for solver-hostile fragments.
 
 ## Evidence
 
-> TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+> "KLEECopilot uses LLMs to mark potentially vulnerable code and guide path prioritization. It also integrates loop-exit prioritization to escape potentially non-vulnerable cycles and progress toward deeper vulnerabilities." — abstract
+> "KLEECopilot improves basic block coverage by 42.24% and line coverage by 125.82%. It discovers 1,335 total violations and 87 unique violations" — abstract
+> "Although KLEECopilot is sensitive to model family, it exhibits only marginal sensitivity to model scale" — abstract
