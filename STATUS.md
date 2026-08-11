@@ -7,58 +7,57 @@ dies, this file plus the git log is the entire handoff.
 
 ## Current
 
-- **Phase:** complete. All seven phases done, both gates clean
+- **Phase:** complete, second pass. Target raised 40 to 80; all phases re-run
 - **Last updated:** 2026-08-10
 - **Next action:** none required. See "Closing summary" for what another session would do
 
 Both gates pass:
 
-- `style_check.py`: 41 files, 0 errors, 0 warnings.
-- `verify_citations.py --all`: 40 papers, every DOI and arXiv id re-resolved live.
-  - 0 errors, 2 warnings, both explained under "Closing summary".
+- `style_check.py`: 81 files, 0 errors, 0 warnings.
+- `verify_citations.py --all`: 80 papers, every DOI and arXiv id re-resolved live.
+  - 0 errors; the year warnings are explained under "Closing summary".
 
 ## Counts
 
 | | |
 |---|---|
-| candidates seen | 1943 |
-| screened | 255 |
-| included | 40 |
-| excluded | 133 |
+| candidates seen | 1945 |
+| screened | 288 |
+| included | 80 |
+| excluded | 111 |
 | unavailable | 82 |
-| never reached | 1688 |
+| never reached | 1672 |
 
 _Refresh with `python3 scripts/screen.py stats`._
 
-The 133 excluded include 47 demoted in Phase 4 for balance, not on merit.
-The 1688 never reached are the tail of the harvest: uncited 2026 preprints
+The 111 excluded include 17 demoted for balance, not on merit.
+The 1672 never reached are the tail of the harvest: uncited 2026 preprints
 ordered alphabetically once the venue and citation keys tie.
 
 ## Coverage by category
 
-40 included papers. Every category in `SCOPE.md` has a representative.
+80 included papers. Every category in `SCOPE.md` has a representative.
 
 | Category | Papers |
 |---|---|
-| formal-verification | 12 |
-| program-repair | 10 |
-| bug-detection | 10 |
-| agents | 8 |
-| specification | 8 |
-| static-analysis | 8 |
-| proof-automation | 6 |
-| program-logic | 5 |
-| program-synthesis | 5 |
-| fuzzing | 5 |
-| test-generation | 5 |
-| decompilation | 3 |
-| symbolic-execution | 3 |
-| constraint-solving | 3 |
+| formal-verification | 20 |
+| bug-detection | 20 |
+| static-analysis | 18 |
+| test-generation | 15 |
+| agents | 14 |
+| program-repair | 14 |
+| specification | 14 |
+| fuzzing | 12 |
+| proof-automation | 11 |
+| program-logic | 10 |
+| symbolic-execution | 10 |
+| constraint-solving | 8 |
+| program-synthesis | 7 |
+| decompilation | 6 |
 
-Papers carry several categories, so the column sums past 40. `formal-verification`
-holds 12 of 40, above the one-quarter guideline in `SCOPE.md`. Two verification
-papers were cut for this and it did not fall further: the tag attaches to any
-paper composing a model with a sound checker, which is the survey's subject.
+Papers carry several categories, so the column sums past 80. The largest two sit
+at exactly one quarter, which `SCOPE.md` allows. The thinnest category holds 6,
+against 3 in the 40-paper pass.
 
 ## Snowball rounds
 
@@ -68,6 +67,8 @@ paper composing a model with a sound checker, which is the survey's subject.
 | 1 | forward | 67 | 4 | 179 |
 | 2 | backward | 76 | 4 | 2 |
 | 2 | forward | 76 | 4 | 25 |
+| 3 | backward | 89 | 16 | 2 |
+| 3 | forward | 89 | 16 | 0 |
 
 What the rounds could not reach:
 
@@ -86,6 +87,15 @@ is an artefact of the seed set, not evidence about the literature:
 - The 67 round-1 seeds contributed nothing, their queries being already cached.
 - Yield per seed: 3.3 in round 1, 3.0 per new seed in round 2. Flat, not falling.
 - Round 2 therefore argues against saturation rather than towards it.
+
+Round 3 ran from 89 seeds and yielded 2. Reading it:
+
+- The 49 papers restored to reach 80 had all been expanded in round 1.
+- So only 2 of the 89 seeds were genuinely new, which caps what round 3 could find.
+- Backward resolved 1300 references for 2 new records; forward yielded 0.
+- The citation graph around this seed set is exhausted, seed novelty aside.
+- New papers must now come from the unscreened harvest, not from snowballing.
+- That is where the 8 papers added in the second pass were found.
 
 ## Open questions
 
@@ -119,7 +129,8 @@ include/exclude calls, category assignments, papers cut for balance.
 | Plan verification, ATL strategy synthesis, a Lean maths proof | excluded | Criterion 3 read strictly: the verified artefact must be a program. All three compose an LLM with a sound checker, so they fit the architecture but not the scope |
 | `arxiv:2604.11767` (typed calculus for agents) | included, then cut | Included because it analyses agent programs; cut in Phase 4 because the analysed artefact is a configuration, not a program under test |
 | HFuzzer, ABLE | included at priority 1, then cut | Both test or analyse a model rather than a program. Recorded rather than resolved |
-| 47 papers | demoted in Phase 4 | Cut for balance, not on merit. Every one carries a `reason` naming what it duplicates |
+| 47 papers | demoted in the 40-paper pass | Cut for balance, not on merit. 49 were restored when the target rose to 80 |
+| 17 papers | demoted in the 80-paper pass | Priority-1 doubt cases first, then near-duplicates in categories at their cap |
 
 ## Run log
 
@@ -192,12 +203,24 @@ through, so the seed set barely grew.
   - The tag attaches to any paper composing a model with a sound checker.
 - No category is empty, so no claim that the literature is empty anywhere is needed.
 
-**The two citation-gate warnings.** Both are the arXiv-date against
+**The four citation-gate warnings.** All are the arXiv-date against
 published-year gap, which `SCOPE.md` resolves in favour of the first arXiv date.
 
-- `wang2024perfgen`: stored 2024, Crossref says 2026 (FSE Companion).
-- `wang2023boosting`: stored 2023, Crossref says 2025 (ICSE).
-- Neither affects inclusion; both papers are post-2020 on either reading.
+- `wang2024perfgen`, `zhang2024fixing`: stored 2024, Crossref says 2026.
+- `wang2023boosting`: stored 2023, Crossref says 2025.
+- `steenhoek2022dataflow`: stored 2022, Crossref says 2024.
+- None affects inclusion; all are post-2020 on either reading.
+
+**Two errors the live gate caught, and what was done.**
+
+- `xia2023revisiting`: the published title differs from the preprint title.
+  - Crossref: 'The Plastic Surgery Hypothesis in the Era of Large Language Models'.
+  - Title overlap was 0.70, below the 0.8 threshold, so the gate failed it.
+  - Fixed by storing the published title, which `SCOPE.md` prefers.
+- `ahmed2026specops`: its DOI returns HTTP 404 at Crossref and never resolved.
+  - The paper is real and its arXiv id verifies; the ICSE 2026 DOI is not deposited.
+  - The unresolvable DOI was removed, so the record asserts only what verifies.
+  - `doi_unresolvable` records the dropped value and the reason.
 
 **What I was unsure about, and the calls I made.**
 

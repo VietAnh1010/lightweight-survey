@@ -2,7 +2,7 @@
 
 LLMs in program analysis, verification, and software testing, 2022-2026.
 
-40 included papers from 1943 candidates seen and 255 screened. Counts here come
+80 included papers from 1945 candidates seen and 288 screened. Counts here come
 from `scripts/screen.py stats`; every claim about a paper traces to its note in
 `papers/notes/`.
 
@@ -13,7 +13,7 @@ The run ended on its time budget, not on saturation. See `STATUS.md`.
 ## 1. What the field is doing
 
 The organizing question is where the model sits relative to a sound component.
-Six positions recur, and they are architectures, not prompts.
+Seven positions recur, and they are architectures, not prompts.
 
 **In front of it — proposer checked by a verifier.** The most common shape.
 
@@ -43,6 +43,15 @@ Six positions recur, and they are architectures, not prompts.
 - `zhang2026feedback` replaces one-pass analysis with a reasoning-action-observation loop over binaries.
 - `kan2026harnessing` hands a whole lemma to a general code agent inside a soundness-enforcing harness.
 
+**Inside the solver's reasoning — reshaping the query, not answering it.**
+
+- `bouras2026defusing` has the model write ghost code that helps SMT on solver-hostile fragments.
+- The solver keeps its global reasoning, so precision is unchanged; token cost drops 90-96%.
+- `liang2026neurosca` has the model pick a goal-relevant core of a polluted path condition.
+- Concrete execution then reintroduces any dropped constraint, which is how soundness is preserved.
+- `chen2026directed` marks vulnerable code to reorder KLEE's path search, leaving every solve to KLEE.
+- This position is newer than the others and the papers state their soundness argument explicitly.
+
 **Compiled into it — the model runs offline and leaves a symbolic artifact.**
 
 - `fang2026learning` mines reusable Ltac tactics from a proof corpus and installs them in symbolic provers.
@@ -60,6 +69,9 @@ Six positions recur, and they are architectures, not prompts.
 
 - `cosler2023nl2spec` maps each subformula back to its natural-language fragment, so ambiguity is editable.
 - `an2025neurosymbolic` formalizes redundantly and checks the results for semantic equivalence.
+- `hall2026neurosymbolic` uses the same disagreement as an ambiguity detector for requirements.
+- `ma2025bridging` routes through an intermediate representation so rules, not the model, emit the LTL.
+- `ma2026automated` normalizes jargon into atomic propositions before any translation happens.
 - `jia2025automated` inverts the target and repairs the description rather than the program.
 - `ruan2024specrover` infers intent from project structure and behaviour, then vets patches against it.
 
@@ -90,13 +102,17 @@ Reading down the comparison table, the same problem attracts incompatible design
 - `pirzada2026conver` refines contracts through CEGAR-CEGIS with ICE learning when a check fails.
 - `wen2024enchanting` validates each round to stop errors accumulating across the interaction.
 - `sun2025veristruct` repairs annotation errors, so syntax failure does not end the run.
+- `zhang2026neuro` inverts the direction and proves the specification's negation to refute it.
+- `banerjee2026dafnypro` guards instead: a diff-checker forbids edits to the program itself.
 
 **Bug reporting splits on how much proof a model owes.**
 
 - `li2026hitchhiker` requires a validated harness and a backend reachability check before discharging.
 - `moine2026mizzle` requires a machine-checked derivation in a sound and complete incorrectness logic.
+- `dobrita2026chaintrix` requires discharge against a deterministic structural model of the contract.
+- `chen2024linebreaker` requires only a cheap model's agreement, trading proof for scale.
 - `cambronero2026abstain` requires neither and uses a second model to reject unpromising patches.
-- The three answers span mechanical proof, mechanical check, and model judgement.
+- The answers span mechanical proof, structural check, cheap filter, and model judgement.
 
 **Repair splits on what serves as the oracle.**
 
@@ -201,8 +217,11 @@ Concrete gaps, each with a reason it is feasible now.
 **Apply redundant generation where a single artifact is currently trusted.**
 
 - `an2025neurosymbolic` cross-checks redundant formalizations for semantic equivalence.
+- `hall2026neurosymbolic` goes further and reads the disagreement itself as an ambiguity signal.
+- Neither applies the idea to code artifacts, where an executable oracle also exists.
 - `li2023nuances` trusts one synthesized reference program as its differential oracle.
 - `li2026hitchhiker` trusts one generated harness. Both could require agreement across several.
+- `tan2026autoverifix` trusts one generated Python reference model for a whole hardware pipeline.
 
 **Extend offline compilation past tactics and SAT heuristics.**
 

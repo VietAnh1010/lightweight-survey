@@ -151,3 +151,13 @@
 {"ts": "2026-08-11T20:40:46", "kind": "style_check", "files": 81, "errors": 0, "warnings": 1}
 {"ts": "2026-08-11T20:40:47", "kind": "verify", "papers": 80, "errors": 0, "warnings": 0}
 {"ts": "2026-08-11T20:40:54", "kind": "style_check", "files": 81, "errors": 0, "warnings": 0}
+{"ts": "2026-08-11T20:41:58", "kind": "style_check", "files": 81, "errors": 0, "warnings": 0}
+{"ts": "2026-08-11T20:41:58", "kind": "verify", "papers": 80, "errors": 0, "warnings": 0}
+{"ts": "2026-08-11T20:42:28", "kind": "style_check", "files": 1, "errors": 0, "warnings": 1}
+{"ts": "2026-08-11T20:42:44", "kind": "style_check", "files": 81, "errors": 0, "warnings": 0}
+{"ts": "2026-08-11T20:45:37", "kind": "fetch_failed", "url": "http://export.arxiv.org/api/query?id_list=2604.11767&max_results=1", "error": "HTTP 503"}
+{"ts": "2026-08-11T20:48:55", "kind": "fetch_failed", "url": "http://export.arxiv.org/api/query?id_list=2606.01861&max_results=1", "error": "HTTP 503"}
+{"ts": "2026-08-11T20:50:41", "kind": "verify", "papers": 80, "errors": 4, "warnings": 4}
+{"ts": "2026-08-11T20:51:37", "kind": "verify", "papers": 80, "errors": 0, "warnings": 4}
+{"ts": "2026-08-11T20:51:58", "kind": "style_check", "files": 81, "errors": 0, "warnings": 0}
+{"ts": "2026-08-11T20:51:58", "kind": "style_check", "files": 1, "errors": 0, "warnings": 0}

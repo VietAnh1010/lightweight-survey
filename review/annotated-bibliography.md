@@ -500,7 +500,7 @@
 
 `ahmed2026specops` · Syed Yusuf Ahmed, Shiwei Feng, Chanwoo Bae, Calix Barrus Xiangyu Zhang · ICSE 2026
 
-[doi](https://doi.org/10.1145/3744916.3787778) · [arXiv](https://arxiv.org/abs/2603.10268) · [pdf](https://arxiv.org/pdf/2603.10268v1)
+[arXiv](https://arxiv.org/abs/2603.10268) · [pdf](https://arxiv.org/pdf/2603.10268v1)
 
 **Why included:** splits agent testing into four specialist stages — test generation, environment setup, execution, validation — so the validation stage judges outcomes separately from the agent that produced them
 
@@ -3793,7 +3793,7 @@
 > "to speed up the patch generation, we propose an inference acceleration approach that is specifically tailored for the program repair task" — abstract
 > "FastFixer obtains an overall improvement of 20.46% in assignment fixing when compared to the state-of-the-art baseline. Considering the repair efficiency, FastFixer achieves a remarkable inference speedup of 16.67 times" — abstract
 
-### Revisiting the Plastic Surgery Hypothesis via Large Language Models
+### The Plastic Surgery Hypothesis in the Era of Large Language Models
 
 `xia2023revisiting` · Chunqiu Steven Xia, Yifeng Ding, Lingming Zhang · ASE 2023
 
@@ -5971,7 +5971,7 @@
 - External calls are mocked, which is what makes symbolic execution tractable on enterprise code.
 - Those COBOL tests are transformed into JUnit tests that run against the translated Java.
 - The pair then forms a differential oracle for semantic equivalence.
-- Detected discrepancies feed back as signal to improve the translation model.
+- Detected discrepancies are reported back, and the authors use them to improve the model.
 
 **Evaluation.** - Industrial context: IBM Watsonx Code Assistant for Z.
 - The framework automates equivalence testing that was previously manual.
@@ -6176,7 +6176,7 @@
 
 `ahmed2026specops` · Syed Yusuf Ahmed, Shiwei Feng, Chanwoo Bae, Calix Barrus Xiangyu Zhang · ICSE 2026
 
-[doi](https://doi.org/10.1145/3744916.3787778) · [arXiv](https://arxiv.org/abs/2603.10268) · [pdf](https://arxiv.org/pdf/2603.10268v1)
+[arXiv](https://arxiv.org/abs/2603.10268) · [pdf](https://arxiv.org/pdf/2603.10268v1)
 
 **Why included:** splits agent testing into four specialist stages — test generation, environment setup, execution, validation — so the validation stage judges outcomes separately from the agent that produced them
 
@@ -6441,7 +6441,7 @@
 - External calls are mocked, which is what makes symbolic execution tractable on enterprise code.
 - Those COBOL tests are transformed into JUnit tests that run against the translated Java.
 - The pair then forms a differential oracle for semantic equivalence.
-- Detected discrepancies feed back as signal to improve the translation model.
+- Detected discrepancies are reported back, and the authors use them to improve the model.
 
 **Evaluation.** - Industrial context: IBM Watsonx Code Assistant for Z.
 - The framework automates equivalence testing that was previously manual.
