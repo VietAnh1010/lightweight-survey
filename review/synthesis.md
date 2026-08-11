@@ -216,11 +216,15 @@ Concrete gaps, each with a reason it is feasible now.
 - The missing number is the rate at which a model produces a derivation the Rocq mechanization accepts.
 - Without it, proof-carrying bug reports remain a design rather than a result.
 
-**Constrain decoding with a proof obligation, not only with syntax.**
+**Score candidate annotations by a proof obligation, not only by syntax.**
 
-- `wei2023copiloting` prunes tokens a completion engine rules out.
-- No paper here prunes tokens a verifier's obligation rules out, though `sun2025veristruct` runs a verifier each round.
-- Verus and Dafny check fast enough to sit inside a decoding loop for short annotations.
+- `wei2023copiloting` prunes next tokens a completion engine rules out as ill-typed.
+- That question is prefix-answerable, which is what lets it run per token.
+- A verifier is not prefix-answerable: it judges a complete annotation, not a partial one.
+- So the analogue is beam search scored by the verifier, not per-token pruning.
+- No paper here does this. `sun2025veristruct` calls the verifier once per repair round.
+- Calling it per candidate is plausible because an invariant is one line and Verus is fast.
+- The open question is whether verifier scores discriminate early enough to steer a beam.
 
 **Report cost-normalized comparisons.**
 
