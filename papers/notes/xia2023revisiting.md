@@ -9,24 +9,41 @@
 
 ## Problem
 
-TODO — bullets, one claim each, ~100 characters
+- Template-based repair is limited in the bug types and patch variety it can produce.
+- Model-based repair does not know project-specific variable and method names.
+- The plastic surgery hypothesis says the fix ingredients already exist in the same project.
+- Model-based work had set that hypothesis aside.
 
 ## Main ideas
 
-TODO — bullets, one claim each, ~100 characters
+- FitRepair revives the hypothesis, and observes that models can automate it fully.
+- Two domain-specific fine-tuning strategies teach the model the project's own identifiers.
+- One prompting strategy supplies project-local code ingredients at repair time.
+- Fine-tuning and prompting attack the same gap from the parameter and context sides.
+- The hypothesis becomes automatic rather than encoded by hand as in template tools.
 
 ## Evaluation
 
-TODO — bullets, one claim each, ~100 characters
+- Defects4J 1.2 and 2.0: 89 and 44 bugs fixed.
+- That is 15 and 8 more than the best-performing baseline.
+- Both dataset versions are reported, which separates tuning from generalisation.
+- Not measured: how much each of the three strategies contributes.
 
 ## Limitations
 
-TODO — bullets, one claim each, ~100 characters
+- Ours: Defects4J predates model training cutoffs, so leakage is not addressed.
+- Ours: fixes are counted by test-suite passing, which admits overfitted patches.
+- Ours: no ablation across the two fine-tuning strategies and the prompting strategy.
+- Authors: models used for direct repair are unaware of project-specific information.
 
 ## Follow-ups
 
-TODO — bullets, one claim each, ~100 characters
+- Ablate the three strategies; fine-tuning per project is far costlier than prompting.
+- Test on post-cutoff bugs, since project-specific memorisation is the obvious confound.
+- Compare against retrieval over the project, which supplies ingredients without fine-tuning.
 
 ## Evidence
 
-> TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+> "The plastic surgery hypothesis is a well-known insight for APR, which states that the code ingredients to fix the bug usually already exist within the same project." — abstract
+> "we propose FitRepair, which combines the direct usage of LLMs with two domain-specific fine-tuning strategies and one prompting strategy for more powerful APR" — abstract
+> "FitRepair fixes 89 and 44 bugs (substantially outperforming the best-performing baseline by 15 and 8), respectively" — abstract

@@ -19,7 +19,7 @@
 - External calls are mocked, which is what makes symbolic execution tractable on enterprise code.
 - Those COBOL tests are transformed into JUnit tests that run against the translated Java.
 - The pair then forms a differential oracle for semantic equivalence.
-- Detected discrepancies feed back as signal to improve the translation model.
+- Detected discrepancies are reported back, and the authors use them to improve the model.
 
 ## Evaluation
 

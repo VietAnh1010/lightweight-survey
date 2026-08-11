@@ -9,24 +9,41 @@
 
 ## Problem
 
-TODO — bullets, one claim each, ~100 characters
+- Models hallucinate when writing unit tests: calls to methods that do not exist, wrong parameters.
+- The cause is no awareness of the project's global context.
+- Studies extract fixed patterns of context, which suits neither every model nor every focal method.
+- Excessive irrelevant context is its own failure, crowding out what matters.
 
 ## Main ideas
 
-TODO — bullets, one claim each, ~100 characters
+- RATester injects context on demand rather than packing a fixed amount in advance.
+- The gopls language server supplies definitions and documentation comments.
+- Lookup is triggered by the model meeting an unfamiliar identifier, such as a struct name.
+- That makes retrieval demand-driven, which is what avoids irrelevant context.
+- The language server is authoritative, so fetched definitions cannot be hallucinated.
 
 ## Evaluation
 
-TODO — bullets, one claim each, ~100 characters
+- The abstract states the mechanism and the intended reduction in hallucination.
+- No quantitative results appear in the abstract.
+- The target language is Go, matching the gopls dependency.
+- Not measured here: hallucination rate before and after, or coverage.
 
 ## Limitations
 
-TODO — bullets, one claim each, ~100 characters
+- Ours: no numbers in the abstract, so the effect size cannot be assessed.
+- Ours: the technique is tied to a language with a mature language server.
+- Ours: definition lookup fixes unknown identifiers, not wrong logic.
+- Authors: fixed context patterns may not suit all generation processes, which motivates the design.
 
 ## Follow-ups
 
-TODO — bullets, one claim each, ~100 characters
+- Report hallucination rates with and without gopls, which is the claim being made.
+- Measure cost: a language server query per unfamiliar identifier adds latency per test.
+- Test the same demand-driven pattern in Java or C++, where language servers also exist.
 
 ## Evidence
 
-> TODO quote the sentences supporting the claims above, each with its source (abstract / §N / Table N). Verbatim — never reworded.
+> "LLMs may exhibit hallucinations when generating unit tests for focal methods or functions due to their lack of awareness regarding the project's global context" — abstract
+> "When RATester encounters an unfamiliar identifier (e.g., an unfamiliar struct name), it first leverages gopls to fetch relevant definitions and documentation comments, and then uses this global knowledge to guide the LLM." — abstract
+> "they often extract fixed patterns of context for different models and focal methods, which may not be suitable for all generation processes" — abstract
